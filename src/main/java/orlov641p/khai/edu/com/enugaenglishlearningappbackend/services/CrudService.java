@@ -1,6 +1,6 @@
 package orlov641p.khai.edu.com.enugaenglishlearningappbackend.services;
 
-import java.util.Set;
+import java.util.List;
 
 /**
  * The CrudService interface provides CRUD (Create, Read, Update, Delete) operations
@@ -16,8 +16,7 @@ public interface CrudService<T, ID> {
      *
      * @return A set containing all entities.
      */
-    Set<T> findAll();
-
+    List<T> findAll();
     /**
      * Retrieves an entity by its identifier.
      *
