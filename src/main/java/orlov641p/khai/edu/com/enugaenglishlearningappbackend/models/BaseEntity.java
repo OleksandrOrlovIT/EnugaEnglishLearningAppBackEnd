@@ -7,14 +7,13 @@ import jakarta.persistence.MappedSuperclass;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import java.io.Serializable;
-/*
-* A main superclass to extend id generations for models.
-*/
+
+/**
+ * A main superclass to extend id generations for models.
+ */
+
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @MappedSuperclass
