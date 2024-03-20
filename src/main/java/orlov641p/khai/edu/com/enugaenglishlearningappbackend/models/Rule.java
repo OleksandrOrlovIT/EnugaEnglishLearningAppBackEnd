@@ -1,5 +1,6 @@
 package orlov641p.khai.edu.com.enugaenglishlearningappbackend.models;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.Builder;
@@ -20,6 +21,7 @@ public class Rule extends BaseEntity{
 
     private String ruleName;
 
+    @Column(length = 1000)
     private String description;
 
     @Builder
@@ -27,5 +29,13 @@ public class Rule extends BaseEntity{
         super(id);
         this.ruleName = ruleName;
         this.description = description;
+    }
+
+    @Override
+    public String toString() {
+        return "Rule{" +
+                "ruleName='" + ruleName + '\'' +
+                ", description='" + description + '\'' +
+                '}';
     }
 }
