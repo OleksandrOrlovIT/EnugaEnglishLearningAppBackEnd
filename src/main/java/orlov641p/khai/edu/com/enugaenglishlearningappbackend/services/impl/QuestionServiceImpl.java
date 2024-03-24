@@ -1,11 +1,13 @@
 package orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.impl;
 
+import org.springframework.stereotype.Service;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.Question;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.repositories.QuestionRepository;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.QuestionService;
 
 import java.util.List;
 
+@Service
 public class QuestionServiceImpl implements QuestionService {
 
     private final QuestionRepository questionRepository;

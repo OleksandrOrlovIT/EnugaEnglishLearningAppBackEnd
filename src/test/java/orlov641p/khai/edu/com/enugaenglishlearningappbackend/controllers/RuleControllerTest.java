@@ -45,7 +45,7 @@ class RuleControllerTest {
     }
 
     @Test
-    void retrieveBrands() throws Exception{
+    void retrieveRules() throws Exception{
         when(ruleService.findAll())
                 .thenReturn(Arrays.asList(Rule.builder().id(1L).build(), Rule.builder().id(2L).build()));
 
@@ -56,10 +56,10 @@ class RuleControllerTest {
     }
 
     @Test
-    void retrieveBrandById() throws Exception {
+    void retrieveRuleById() throws Exception {
         // Prepare test data
-        String tempName = "rulename", temdDescription = "desc";
-        Rule expectedRule = Rule.builder().id(ruleId).ruleName(tempName).description(temdDescription).build();
+        String tempName = "rulename", tempDescription = "desc";
+        Rule expectedRule = Rule.builder().id(ruleId).ruleName(tempName).description(tempDescription).build();
         when(ruleService.findById(ruleId)).thenReturn(expectedRule);
 
         // Perform the request
@@ -77,15 +77,16 @@ class RuleControllerTest {
     }
 
     @Test
-    void deleteBrand() throws Exception {
-        mockMvc.perform(delete("/v1/rule/1")).andExpect(status().is(204));
+    void deleteRule() throws Exception {
+        mockMvc.perform(delete("/v1/rule/{id}", 1)).andExpect(status().is(204));
     }
 
     @Test
-    void updateBrand() throws Exception {
+    void updateRule() throws Exception {
         // Prepare test data
         Rule originalRule = Rule.builder().id(ruleId).ruleName("rule1").description("rule1").build();
         Rule updateRule = Rule.builder().id(ruleId).ruleName("updatedRule").description("UpdatedRule").build();
+
         when(ruleService.findById(anyLong())).thenReturn(originalRule);
         when(ruleService.save(any())).thenReturn(updateRule);
 
@@ -106,10 +107,11 @@ class RuleControllerTest {
     }
 
     @Test
-    void createBrand() throws Exception{
+    void createRule() throws Exception{
         // Prepare test data
         Rule inputRule = Rule.builder().id(null).ruleName("ruleName").build();
         Rule savedRule = Rule.builder().id(ruleId).ruleName("ruleName").build();
+
         when(ruleService.save(any())).thenReturn(savedRule);
 
         // Perform the request
