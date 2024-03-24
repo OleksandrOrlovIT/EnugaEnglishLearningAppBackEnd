@@ -100,4 +100,14 @@ class QuestionServiceImplTest {
 
         verify(questionRepository, times(1)).delete(any());
     }
+
+    @Test
+    void getQuestionsByEnglishTestId(){
+        when(questionRepository.findByEnglishTestId(anyLong())).thenReturn(List.of(returnQuestion));
+
+        List<Question> questions = questionService.getQuestionsByEnglishTestId(1L);
+
+        verify(questionRepository, times(1)).findByEnglishTestId(anyLong());
+        assertEquals(questions.size(), 1);
+    }
 }
