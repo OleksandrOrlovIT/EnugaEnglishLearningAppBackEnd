@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Objects;
+
 /**
  * A Rule entity representing English grammar rules.
  */
@@ -37,5 +39,23 @@ public class Rule extends BaseEntity{
                 "ruleName='" + ruleName + '\'' +
                 ", description='" + description + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+
+        Rule rule = (Rule) object;
+
+        if (!Objects.equals(ruleName, rule.ruleName)) return false;
+        return Objects.equals(description, rule.description);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = ruleName != null ? ruleName.hashCode() : 0;
+        result = 31 * result + (description != null ? description.hashCode() : 0);
+        return result;
     }
 }
