@@ -22,8 +22,13 @@ public class QuestionController {
     public List<Question> retrieveQuestions(){return questionService.findAll();}
 
     @GetMapping("/question/{id}")
-    public Question retrieveQuestionById(@PathVariable long id){
+    public Question retrieveQuestionById(@PathVariable Long id){
         return questionService.findById(id);
+    }
+
+    @GetMapping("/questions/{englishTestId}")
+    public List<Question> retrieveQuestionsByEnglishTestId(@PathVariable Long englishTestId){
+        return questionService.getQuestionsByEnglishTestId(englishTestId);
     }
 
     @PostMapping("/question")

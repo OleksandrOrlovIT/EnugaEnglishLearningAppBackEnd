@@ -59,6 +59,7 @@ class QuestionControllerTest {
     void retrieveRuleById() throws Exception {
         String questionText = "Some text", answer = "answer";
         Question expectedQuestion = Question.builder().id(questionId).questionText(questionText).answer(answer).build();
+
         when(questionService.findById(questionId)).thenReturn(expectedQuestion);
 
         MvcResult result = mockMvc.perform(get("/v1/question/{id}", questionId)

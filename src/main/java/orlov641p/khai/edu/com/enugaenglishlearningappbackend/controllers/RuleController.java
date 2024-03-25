@@ -24,7 +24,7 @@ public class RuleController {
     }
 
     @GetMapping("/rule/{id}")
-    public Rule retrieveRuleById(@PathVariable long id){
+    public Rule retrieveRuleById(@PathVariable Long id){
         return ruleService.findById(id);
     }
 

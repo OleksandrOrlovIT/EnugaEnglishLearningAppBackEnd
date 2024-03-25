@@ -45,11 +45,31 @@ public class EnglishTestServiceImpl implements EnglishTestService {
     @Override
     public EnglishTest save(EnglishTest englishTest) {
         if(englishTest != null){
-            return englishTestRepository.save(englishTest);
+            List<Question> questionsWithEnglishTest = getQuestionListWithEnglishTest(englishTest);
+
+            EnglishTest savedEnglishTest = englishTestRepository.save(englishTest);
+
+            if(questionsWithEnglishTest != null) {
+                List<Question> savedQuestions = questionService.getQuestionsByEnglishTestId(savedEnglishTest.getId());
+                for (Question question : questionsWithEnglishTest) {
+                    question.setEnglishTest(savedEnglishTest);
+
+                    savedQuestions.remove(question);
+
+                    questionService.save(question);
+                }
+
+                for (Question remainQuestion : savedQuestions) {
+                    questionService.delete(remainQuestion);
+                }
+            }
+
+            return savedEnglishTest;
         }
 
         return null;
     }
+
 
     @Override
     public void delete(EnglishTest englishTest) {
@@ -75,5 +95,15 @@ public class EnglishTestServiceImpl implements EnglishTestService {
                 questionService.delete(question);
             }
         }
+    }
+
+    private List<Question> getQuestionListWithEnglishTest(EnglishTest englishTest){
+        List<Question> questions = englishTest.getQuestions();
+        if(questions != null) {
+            for (Question question : questions) {
+                question.setEnglishTest(englishTest);
+            }
+        }
+        return questions;
     }
 }

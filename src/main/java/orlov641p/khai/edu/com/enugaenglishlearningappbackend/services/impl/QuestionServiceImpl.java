@@ -1,6 +1,5 @@
 package orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.impl;
 
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.Question;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.repositories.QuestionRepository;
@@ -9,7 +8,6 @@ import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.QuestionSe
 import java.util.List;
 
 @Service
-@Transactional
 public class QuestionServiceImpl implements QuestionService {
 
     private final QuestionRepository questionRepository;
@@ -30,9 +28,10 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public Question save(Question question) {
-        if (question == null) {
+        if (question == null || (question.getId() != null && findById(question.getId()) != null)) {
             return null;
         }
+
         return questionRepository.save(question);
     }
 
