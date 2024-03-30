@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 class EnglishTestServiceImplTest {
     private static final String TEST_NAME = "Test Name";
 
-    private static  final long ID = 1L;
+    private static  final Long ID = 1L;
 
     private EnglishTest returnEnglishTest;
 
@@ -59,7 +59,7 @@ class EnglishTestServiceImplTest {
         List<Question> questions2 = List.of(Question.builder().build(), Question.builder().build());
 
         when(englishTestRepository.findAll()).thenReturn(englishTests);
-        when(questionService.getQuestionsByEnglishTestId(1L)).thenReturn(questions1);
+        when(questionService.getQuestionsByEnglishTestId(ID)).thenReturn(questions1);
         when(questionService.getQuestionsByEnglishTestId(2L)).thenReturn(questions2);
 
         List<EnglishTest> foundedEnglishTests = englishTestService.findAll();
@@ -74,7 +74,7 @@ class EnglishTestServiceImplTest {
         when(englishTestRepository.findById(anyLong())).thenReturn(Optional.ofNullable(returnEnglishTest));
         when(questionService.getQuestionsByEnglishTestId(anyLong())).thenReturn(List.of(Question.builder().build()));
 
-        EnglishTest englishTest = englishTestService.findById(1L);
+        EnglishTest englishTest = englishTestService.findById(ID);
 
         assertNotNull(englishTest);
         assertEquals(englishTest.getQuestions().size(), 1);
@@ -84,7 +84,7 @@ class EnglishTestServiceImplTest {
     void findByIdNotFound(){
         when(englishTestRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        EnglishTest englishTest = englishTestService.findById(1L);
+        EnglishTest englishTest = englishTestService.findById(ID);
 
         assertNull(englishTest);
     }

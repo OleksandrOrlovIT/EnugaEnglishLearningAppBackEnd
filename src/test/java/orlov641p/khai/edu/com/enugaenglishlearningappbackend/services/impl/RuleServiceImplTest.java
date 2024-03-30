@@ -98,8 +98,8 @@ class RuleServiceImplTest {
 
     @Test
     void deleteById() {
-        ruleService.delete(returnRule);
+        ruleService.deleteById(returnRule.getId());
 
-        verify(ruleRepository, times(1)).delete(any());
+        verify(ruleRepository, times(1)).deleteById(anyLong());
     }
 }

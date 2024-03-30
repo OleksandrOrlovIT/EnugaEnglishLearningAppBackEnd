@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 class RuleControllerTest {
 
-    private static final long ruleId = 1L;
+    private static final Long ruleId = 1L;
 
     @Mock
     RuleService ruleService;
@@ -78,7 +78,7 @@ class RuleControllerTest {
 
     @Test
     void deleteRule() throws Exception {
-        mockMvc.perform(delete("/v1/rule/{id}", 1)).andExpect(status().is(204));
+        mockMvc.perform(delete("/v1/rule/{id}", ruleId)).andExpect(status().is(204));
     }
 
     @Test
