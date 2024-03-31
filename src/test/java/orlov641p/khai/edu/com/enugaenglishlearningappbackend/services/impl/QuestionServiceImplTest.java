@@ -38,7 +38,6 @@ class QuestionServiceImplTest {
     void setUp() {
         returnQuestion = Question
                 .builder()
-                .id(ID)
                 .questionText(QUESTION_TEXT)
                 .answer(ANSWER)
                 .build();
@@ -47,8 +46,8 @@ class QuestionServiceImplTest {
     @Test
     void findAll() {
         List<Question> questions = new ArrayList<>();
-        questions.add(Question.builder().id(2L).build());
-        questions.add(Question.builder().id(3L).build());
+        questions.add(Question.builder().build());
+        questions.add(Question.builder().build());
 
         when(questionRepository.findAll()).thenReturn(questions);
 
@@ -81,7 +80,7 @@ class QuestionServiceImplTest {
     void save() {
         when(questionRepository.save(any())).thenReturn(returnQuestion);
 
-        Question question = questionService.save(Question.builder().id(1L).build());
+        Question question = questionService.save(Question.builder().build());
 
         assertNotNull(question);
         verify(questionRepository, times(1)).save(any());

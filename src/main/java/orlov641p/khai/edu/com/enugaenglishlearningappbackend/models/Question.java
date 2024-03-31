@@ -36,30 +36,34 @@ public class Question extends BaseEntity{
         this.englishTest = englishTest;
     }
 
-    public Question(String questionText, String answer, EnglishTest englishTest) {
-        this.questionText = questionText;
-        this.answer = answer;
-        this.englishTest = englishTest;
-    }
 
     @Override
     public boolean equals(Object object) {
-        if (this == object) return true;
-        if (object == null || getClass() != object.getClass()) return false;
+        if (!super.equals(object)) return false;
 
         Question question = (Question) object;
 
-        if (!Objects.equals(questionText, question.questionText))
+        if (!Objects.equals(questionText, question.questionText)) {
             return false;
-        if (!Objects.equals(answer, question.answer)) return false;
-        return Objects.equals(englishTest, question.englishTest);
+        }
+
+        return Objects.equals(answer, question.answer);
     }
 
     @Override
     public int hashCode() {
-        int result = questionText != null ? questionText.hashCode() : 0;
+        int result = super.hashCode();
+        result = 31 * result + (questionText != null ? questionText.hashCode() : 0);
         result = 31 * result + (answer != null ? answer.hashCode() : 0);
-        result = 31 * result + (englishTest != null ? englishTest.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Question{" +
+                "id=" + getId() +
+                ", questionText='" + questionText + '\'' +
+                ", answer='" + answer + '\'' +
+                '}';
     }
 }

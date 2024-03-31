@@ -30,8 +30,6 @@ public class RuleController {
 
     @PostMapping("/rule")
     public ResponseEntity<Rule> createRule(@RequestBody Rule rule){
-        rule.setId(null);
-
         Rule savedRule = ruleService.save(rule);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -48,7 +46,6 @@ public class RuleController {
             return null;
         }
 
-        rule.setId(id);
         return ruleService.save(rule);
     }
 

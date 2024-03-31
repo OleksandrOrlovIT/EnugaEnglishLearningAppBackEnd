@@ -33,8 +33,6 @@ public class QuestionController {
 
     @PostMapping("/question")
     public ResponseEntity<Question> createQuestion(@RequestBody Question question){
-        question.setId(null);
-
         Question savedQuestion = questionService.save(question);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -51,7 +49,6 @@ public class QuestionController {
             return null;
         }
 
-        question.setId(id);
         return questionService.save(question);
     }
 

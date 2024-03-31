@@ -34,17 +34,8 @@ public class Rule extends BaseEntity{
     }
 
     @Override
-    public String toString() {
-        return "Rule{" +
-                "ruleName='" + ruleName + '\'' +
-                ", description='" + description + '\'' +
-                '}';
-    }
-
-    @Override
     public boolean equals(Object object) {
-        if (this == object) return true;
-        if (object == null || getClass() != object.getClass()) return false;
+        if (!super.equals(object)) return false;
 
         Rule rule = (Rule) object;
 
@@ -54,8 +45,18 @@ public class Rule extends BaseEntity{
 
     @Override
     public int hashCode() {
-        int result = ruleName != null ? ruleName.hashCode() : 0;
+        int result = super.hashCode();
+        result = 31 * result + (ruleName != null ? ruleName.hashCode() : 0);
         result = 31 * result + (description != null ? description.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Rule{" +
+                "id=" + getId() +
+                ", ruleName='" + ruleName + '\'' +
+                ", description='" + description + '\'' +
+                '}';
     }
 }

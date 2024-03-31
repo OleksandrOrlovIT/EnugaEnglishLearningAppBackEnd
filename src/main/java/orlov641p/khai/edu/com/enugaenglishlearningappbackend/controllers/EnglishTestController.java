@@ -42,7 +42,6 @@ public class EnglishTestController {
             return null;
         }
 
-        englishTest.setId(id);
         return englishTestService.save(englishTest);
     }
 

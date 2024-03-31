@@ -47,7 +47,7 @@ class QuestionControllerTest {
     @Test
     void retrieveQuestions() throws Exception {
         when(questionService.findAll())
-                .thenReturn(Arrays.asList(Question.builder().id(1L).build(), Question.builder().id(2L).build()));
+                .thenReturn(Arrays.asList(Question.builder().build(), Question.builder().build()));
 
         mockMvc.perform(get("/v1/questions")
                     .contentType(MediaType.APPLICATION_JSON))
@@ -58,7 +58,11 @@ class QuestionControllerTest {
     @Test
     void retrieveRuleById() throws Exception {
         String questionText = "Some text", answer = "answer";
-        Question expectedQuestion = Question.builder().id(questionId).questionText(questionText).answer(answer).build();
+        Question expectedQuestion = Question.builder()
+                .id(questionId)
+                .questionText(questionText)
+                .answer(answer)
+                .build();
 
         when(questionService.findById(questionId)).thenReturn(expectedQuestion);
 
@@ -80,8 +84,10 @@ class QuestionControllerTest {
 
     @Test
     void updateQuestion() throws Exception {
-        Question originalQuestion = Question.builder().id(questionId).questionText("some text").answer("answer").build();
-        Question updateQuestion = Question.builder().id(questionId).questionText("updated text").answer("updated answer").build();
+        Question originalQuestion = Question.builder().questionText("some text").answer("answer").build();
+        Question updateQuestion = Question.builder()
+                .id(questionId).questionText("updated text").answer("updated answer")
+                .build();
 
         when(questionService.findById(anyLong())).thenReturn(originalQuestion);
         when(questionService.save(any())).thenReturn(updateQuestion);
@@ -101,7 +107,7 @@ class QuestionControllerTest {
 
     @Test
     void createQuestion() throws Exception {
-        Question inputQuestion = Question.builder().id(null).questionText("some text").build();
+        Question inputQuestion = Question.builder().questionText("some text").build();
         Question savedQuestion = Question.builder().id(questionId).questionText("some text").build();
 
         when(questionService.save(any())).thenReturn(savedQuestion);

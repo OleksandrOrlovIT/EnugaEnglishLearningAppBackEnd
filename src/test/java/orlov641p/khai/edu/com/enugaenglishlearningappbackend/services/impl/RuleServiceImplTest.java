@@ -50,8 +50,8 @@ class RuleServiceImplTest {
     @Test
     void findAll() {
         List<Rule> rules = new ArrayList<>();
-        rules.add(Rule.builder().id(2L).build());
-        rules.add(Rule.builder().id(3L).build());
+        rules.add(Rule.builder().build());
+        rules.add(Rule.builder().build());
 
         when(ruleRepository.findAll()).thenReturn(rules);
 
@@ -83,7 +83,7 @@ class RuleServiceImplTest {
     void save() {
         when(ruleRepository.save(any())).thenReturn(returnRule);
 
-        Rule rule = ruleService.save(Rule.builder().id(1L).build());
+        Rule rule = ruleService.save(Rule.builder().build());
 
         assertNotNull(rule);
         verify(ruleRepository, times(1)).save(any());

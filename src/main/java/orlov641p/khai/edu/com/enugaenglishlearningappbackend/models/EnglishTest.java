@@ -30,28 +30,26 @@ public class EnglishTest extends BaseEntity{
     }
 
     @Override
-    public String toString() {
-        return "EnglishTest{" +
-                "testName='" + testName + '\'' +
-                ", questions=" + questions +
-                '}';
-    }
-
-    @Override
     public boolean equals(Object object) {
-        if (this == object) return true;
-        if (object == null || getClass() != object.getClass()) return false;
+        if (!super.equals(object)) return false;
 
-        EnglishTest englishTest = (EnglishTest) object;
+        EnglishTest that = (EnglishTest) object;
 
-        if (!Objects.equals(testName, englishTest.testName)) return false;
-        return Objects.equals(questions, englishTest.questions);
+        return Objects.equals(testName, that.testName);
     }
 
     @Override
     public int hashCode() {
-        int result = testName != null ? testName.hashCode() : 0;
-        result = 31 * result + (questions != null ? questions.hashCode() : 0);
+        int result = super.hashCode();
+        result = 31 * result + (testName != null ? testName.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "EnglishTest{" +
+                "id=" + getId() +
+                ", testName='" + testName + '\'' +
+                '}';
     }
 }

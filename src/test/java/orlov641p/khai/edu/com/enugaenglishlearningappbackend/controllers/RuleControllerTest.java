@@ -47,7 +47,7 @@ class RuleControllerTest {
     @Test
     void retrieveRules() throws Exception{
         when(ruleService.findAll())
-                .thenReturn(Arrays.asList(Rule.builder().id(1L).build(), Rule.builder().id(2L).build()));
+                .thenReturn(Arrays.asList(Rule.builder().build(), Rule.builder().build()));
 
         mockMvc.perform(get("/v1/rules")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -57,22 +57,21 @@ class RuleControllerTest {
 
     @Test
     void retrieveRuleById() throws Exception {
-        // Prepare test data
         String tempName = "rulename", tempDescription = "desc";
-        Rule expectedRule = Rule.builder().id(ruleId).ruleName(tempName).description(tempDescription).build();
+        Rule expectedRule = Rule.builder()
+                .id(ruleId).ruleName(tempName).description(tempDescription)
+                .build();
+
         when(ruleService.findById(ruleId)).thenReturn(expectedRule);
 
-        // Perform the request
         MvcResult result = mockMvc.perform(get("/v1/rule/{id}", ruleId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
 
-        // Verify the response
         String responseBody = result.getResponse().getContentAsString();
         EntityModel<Rule> responseModel = new ObjectMapper().readValue(responseBody, new TypeReference<>() {});
 
-        // Assertions
         assertEquals(expectedRule, responseModel.getContent());
     }
 
@@ -83,25 +82,23 @@ class RuleControllerTest {
 
     @Test
     void updateRule() throws Exception {
-        // Prepare test data
-        Rule originalRule = Rule.builder().id(ruleId).ruleName("rule1").description("rule1").build();
-        Rule updateRule = Rule.builder().id(ruleId).ruleName("updatedRule").description("UpdatedRule").build();
+        Rule originalRule = Rule.builder().ruleName("rule1").description("rule1").build();
+        Rule updateRule = Rule.builder()
+                .id(ruleId).ruleName("updatedRule").description("UpdatedRule")
+                .build();
 
         when(ruleService.findById(anyLong())).thenReturn(originalRule);
         when(ruleService.save(any())).thenReturn(updateRule);
 
-        // Perform the request
         MvcResult result = mockMvc.perform(put("/v1/rule/{id}", ruleId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(updateRule)))
                 .andExpect(status().isOk())
                 .andReturn();
 
-        // Verify the response
         String responseBody = result.getResponse().getContentAsString();
         Rule responseRule = new ObjectMapper().readValue(responseBody, Rule.class);
 
-        // Assertions
         assertNotNull(responseRule);
         assertEquals(updateRule, responseRule);
     }
@@ -109,22 +106,19 @@ class RuleControllerTest {
     @Test
     void createRule() throws Exception{
         // Prepare test data
-        Rule inputRule = Rule.builder().id(null).ruleName("ruleName").build();
+        Rule inputRule = Rule.builder().ruleName("ruleName").build();
         Rule savedRule = Rule.builder().id(ruleId).ruleName("ruleName").build();
 
         when(ruleService.save(any())).thenReturn(savedRule);
 
-        // Perform the request
         MvcResult result = mockMvc.perform(post("/v1/rule")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(inputRule)))
                 .andExpect(status().isCreated())
                 .andReturn();
 
-        // Verify the response
         String locationHeader = result.getResponse().getHeader("Location");
 
-        // Assertions
         assertNotNull(locationHeader);
         assertEquals("http://localhost/v1/rule/1", locationHeader);
     }

@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -51,12 +50,17 @@ class EnglishTestServiceImplTest {
 
     @Test
     void findAll() {
+        EnglishTest englishTest2 = EnglishTest.builder().id(2L).build();
+        Question question1 = Question.builder().id(ID).build();
+        Question question2 = Question.builder().build();
+        Question question3 = Question.builder().id(2L).build();
+
         List<EnglishTest> englishTests = new ArrayList<>();
         englishTests.add(returnEnglishTest);
-        englishTests.add(EnglishTest.builder().id(2L).build());
+        englishTests.add(englishTest2);
 
-        List<Question> questions1 = List.of(Question.builder().build());
-        List<Question> questions2 = List.of(Question.builder().build(), Question.builder().build());
+        List<Question> questions1 = List.of(question1);
+        List<Question> questions2 = List.of(question2, question3);
 
         when(englishTestRepository.findAll()).thenReturn(englishTests);
         when(questionService.getQuestionsByEnglishTestId(ID)).thenReturn(questions1);

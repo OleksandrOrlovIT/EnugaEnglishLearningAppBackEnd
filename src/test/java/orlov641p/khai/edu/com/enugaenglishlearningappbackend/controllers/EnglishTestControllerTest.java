@@ -57,7 +57,10 @@ public class EnglishTestControllerTest {
     @Test
     void retrieveEnglishTestById() throws Exception {
         String englishTestName = "name";
-        EnglishTest expectedEnglishTest = EnglishTest.builder().id(englishTestId).testName(englishTestName).build();
+        EnglishTest expectedEnglishTest = EnglishTest.builder()
+                .id(englishTestId)
+                .testName(englishTestName)
+                .build();
 
         when(englishTestService.findById(englishTestId)).thenReturn(expectedEnglishTest);
 
@@ -100,10 +103,9 @@ public class EnglishTestControllerTest {
 
     @Test
     void createEnglishTest() throws Exception {
-        EnglishTest inputEnglishTest = EnglishTest.builder().id(null).testName("name").build();
-        EnglishTest savedEnglishTest = EnglishTest.builder().id(englishTestId).testName("name").build();
+        EnglishTest inputEnglishTest = EnglishTest.builder().id(englishTestId).build();
 
-        when(englishTestService.save(any())).thenReturn(savedEnglishTest);
+        when(englishTestService.save(any())).thenReturn(inputEnglishTest);
 
         MvcResult result = mockMvc.perform(post("/v1/english-test")
                         .contentType(MediaType.APPLICATION_JSON)

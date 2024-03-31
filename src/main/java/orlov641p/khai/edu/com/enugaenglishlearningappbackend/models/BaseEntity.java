@@ -1,6 +1,5 @@
 package orlov641p.khai.edu.com.enugaenglishlearningappbackend.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -16,10 +15,10 @@ import java.io.Serializable;
  * A main superclass to extend id generations for models.
  */
 
-@Setter
 @Getter
-@NoArgsConstructor
+@Setter
 @AllArgsConstructor
+@NoArgsConstructor
 @MappedSuperclass
 public abstract class BaseEntity implements Serializable {
 
@@ -27,4 +26,18 @@ public abstract class BaseEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+
+        BaseEntity that = (BaseEntity) object;
+
+        return id.equals(that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) (id ^ (id >>> 32));
+    }
 }
