@@ -6,4 +6,7 @@ import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.Question;
 import java.util.List;
 
 public interface EnglishTestService extends CrudService<EnglishTest, Long>{
+    void addQuestion(Question question);
+
+    void deleteQuestion(Question question);
 }

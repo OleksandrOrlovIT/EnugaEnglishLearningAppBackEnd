@@ -88,7 +88,7 @@ class RuleControllerTest {
                 .build();
 
         when(ruleService.findById(anyLong())).thenReturn(originalRule);
-        when(ruleService.save(any())).thenReturn(updateRule);
+        when(ruleService.update(any())).thenReturn(updateRule);
 
         MvcResult result = mockMvc.perform(put("/v1/rule/{id}", ruleId)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -109,7 +109,7 @@ class RuleControllerTest {
         Rule inputRule = Rule.builder().ruleName("ruleName").build();
         Rule savedRule = Rule.builder().id(ruleId).ruleName("ruleName").build();
 
-        when(ruleService.save(any())).thenReturn(savedRule);
+        when(ruleService.create(any())).thenReturn(savedRule);
 
         MvcResult result = mockMvc.perform(post("/v1/rule")
                         .contentType(MediaType.APPLICATION_JSON)

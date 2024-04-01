@@ -30,7 +30,7 @@ public class RuleController {
 
     @PostMapping("/rule")
     public ResponseEntity<Rule> createRule(@RequestBody Rule rule){
-        Rule savedRule = ruleService.save(rule);
+        Rule savedRule = ruleService.create(rule);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
@@ -46,7 +46,7 @@ public class RuleController {
             return null;
         }
 
-        return ruleService.save(rule);
+        return ruleService.update(rule);
     }
 
     @DeleteMapping("/rule/{id}")

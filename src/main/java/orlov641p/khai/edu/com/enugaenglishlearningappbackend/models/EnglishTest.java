@@ -2,6 +2,7 @@ package orlov641p.khai.edu.com.enugaenglishlearningappbackend.models;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,7 +20,7 @@ public class EnglishTest extends BaseEntity{
 
     private String testName;
 
-    @OneToMany(mappedBy = "englishTest", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "englishTest", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
     private List<Question> questions;
 
     @Builder

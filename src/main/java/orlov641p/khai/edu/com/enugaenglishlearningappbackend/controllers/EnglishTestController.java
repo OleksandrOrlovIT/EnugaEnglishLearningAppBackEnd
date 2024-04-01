@@ -26,7 +26,7 @@ public class EnglishTestController {
 
     @PostMapping("/english-test")
     public ResponseEntity<EnglishTest> createEnglishTest(@RequestBody EnglishTest englishTest){
-        EnglishTest savedEnglishTest = englishTestService.save(englishTest);
+        EnglishTest savedEnglishTest = englishTestService.create(englishTest);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
@@ -42,7 +42,7 @@ public class EnglishTestController {
             return null;
         }
 
-        return englishTestService.save(englishTest);
+        return englishTestService.update(englishTest);
     }
 
     @DeleteMapping("/english-test/{id}")

@@ -1,10 +1,7 @@
 package orlov641p.khai.edu.com.enugaenglishlearningappbackend.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,8 +21,8 @@ public class Question extends BaseEntity{
     private String answer;
 
     @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "english_test_id")
+    @ManyToOne()
+    @JoinColumn(name = "english_test_id", nullable = false)
     private EnglishTest englishTest;
 
     @Builder
@@ -35,7 +32,6 @@ public class Question extends BaseEntity{
         this.answer = answer;
         this.englishTest = englishTest;
     }
-
 
     @Override
     public boolean equals(Object object) {

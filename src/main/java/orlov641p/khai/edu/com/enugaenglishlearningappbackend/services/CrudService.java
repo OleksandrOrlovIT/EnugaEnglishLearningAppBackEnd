@@ -26,12 +26,20 @@ public interface CrudService<T, ID> {
     T findById(ID id);
 
     /**
-     * Saves a new entity or updates an existing one.
+     * Saves a new entity.
      *
      * @param object The entity to save or update.
      * @return The saved or updated entity.
      */
-    T save(T object);
+    T create(T object);
+
+    /**
+     * Updates a new entity.
+     *
+     * @param object The entity to save or update.
+     * @return The saved or updated entity.
+     */
+    T update(T object);
 
     /**
      * Deletes the specified entity.

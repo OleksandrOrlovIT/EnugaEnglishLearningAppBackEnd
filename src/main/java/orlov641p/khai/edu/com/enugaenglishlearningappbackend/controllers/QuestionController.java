@@ -33,7 +33,7 @@ public class QuestionController {
 
     @PostMapping("/question")
     public ResponseEntity<Question> createQuestion(@RequestBody Question question){
-        Question savedQuestion = questionService.save(question);
+        Question savedQuestion = questionService.create(question);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
@@ -49,7 +49,7 @@ public class QuestionController {
             return null;
         }
 
-        return questionService.save(question);
+        return questionService.update(question);
     }
 
     @DeleteMapping("/question/{id}")

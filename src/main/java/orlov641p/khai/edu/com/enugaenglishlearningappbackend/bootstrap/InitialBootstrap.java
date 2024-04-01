@@ -1,6 +1,7 @@
 package orlov641p.khai.edu.com.enugaenglishlearningappbackend.bootstrap;
 
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.EnglishTest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.Question;
@@ -12,6 +13,7 @@ import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.RuleServic
 import java.util.List;
 
 @Component
+@Profile("!test")
 public class InitialBootstrap implements CommandLineRunner {
 
     private final RuleService ruleService;
@@ -24,10 +26,11 @@ public class InitialBootstrap implements CommandLineRunner {
         this.englishTestService = englishTestService;
     }
 
+    //TODO fix
     @Override
     public void run(String... args) throws Exception {
-        loadRules();
-        loadQuestionsAndTests();
+//        loadRules();
+//        loadQuestionsAndTests();
     }
 
     private void loadRules(){
@@ -55,8 +58,8 @@ public class InitialBootstrap implements CommandLineRunner {
                         "\n ©ChatGPT OpenAI")
                 .build();
 
-        ruleService.save(presentSimple);
-        ruleService.save(presentContinuous);
+        ruleService.create(presentSimple);
+        ruleService.create(presentContinuous);
     }
 
     private void loadQuestionsAndTests(){
@@ -88,11 +91,11 @@ public class InitialBootstrap implements CommandLineRunner {
         question2Test1.setEnglishTest(englishTest1);
         question3Test1.setEnglishTest(englishTest1);
 
-        englishTestService.save(englishTest1);
+        englishTestService.create(englishTest1);
 
-        questionService.save(question1Test1);
-        questionService.save(question2Test1);
-        questionService.save(question3Test1);
+        questionService.create(question1Test1);
+        questionService.create(question2Test1);
+        questionService.create(question3Test1);
     }
 
     private void loadTest2WithQuestions(){
@@ -113,9 +116,9 @@ public class InitialBootstrap implements CommandLineRunner {
         question1Test2.setEnglishTest(englishTest2);
         question2Test2.setEnglishTest(englishTest2);
 
-        englishTestService.save(englishTest2);
+        englishTestService.create(englishTest2);
 
-        questionService.save(question1Test2);
-        questionService.save(question2Test2);
+        questionService.create(question1Test2);
+        questionService.create(question2Test2);
     }
 }

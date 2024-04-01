@@ -8,6 +8,7 @@ import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.EnglishTes
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.QuestionService;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class EnglishTestServiceImpl implements EnglishTestService {
@@ -16,94 +17,73 @@ public class EnglishTestServiceImpl implements EnglishTestService {
     private final QuestionService questionService;
 
     public EnglishTestServiceImpl(EnglishTestRepository englishTestRepository, QuestionService questionService) {
-        this.englishTestRepository = englishTestRepository;
-        this.questionService = questionService;
+        this.englishTestRepository = Objects.requireNonNull(englishTestRepository, "EnglishTestRepository cannot be null");
+        this.questionService = Objects.requireNonNull(questionService, "QuestionService cannot be null");
     }
 
     @Override
     public List<EnglishTest> findAll() {
-        List<EnglishTest> englishTests = englishTestRepository.findAll();
-
-        for(EnglishTest englishTest : englishTests){
-            englishTest.setQuestions(questionService.getQuestionsByEnglishTestId(englishTest.getId()));
-        }
-
-        return englishTests;
+        return englishTestRepository.findAll();
     }
 
     @Override
     public EnglishTest findById(Long id) {
-        EnglishTest englishTest = englishTestRepository.findById(id).orElse(null);
-        if(englishTest != null){
-            englishTest.setQuestions(questionService.getQuestionsByEnglishTestId(id));
-            return englishTest;
-        } else {
-            return null;
-        }
+        Objects.requireNonNull(id, "EnglishTest id cannot be null");
+        return englishTestRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("EnglishTest with id = " + id + " doesn't exist"));
     }
 
     @Override
-    public EnglishTest save(EnglishTest englishTest) {
-        if(englishTest != null){
-            List<Question> questionsWithEnglishTest = getQuestionListWithEnglishTest(englishTest);
-
-            EnglishTest savedEnglishTest = englishTestRepository.save(englishTest);
-
-            if(questionsWithEnglishTest != null) {
-                List<Question> savedQuestions = questionService.getQuestionsByEnglishTestId(savedEnglishTest.getId());
-                for (Question question : questionsWithEnglishTest) {
-                    question.setEnglishTest(savedEnglishTest);
-
-                    savedQuestions.remove(question);
-
-                    questionService.save(question);
-                }
-
-                for (Question remainQuestion : savedQuestions) {
-                    questionService.delete(remainQuestion);
-                }
-            }
-
-            return savedEnglishTest;
-        }
-
-        return null;
+    public EnglishTest create(EnglishTest englishTest) {
+        validateEnglishTestForCreation(englishTest);
+        return englishTestRepository.save(englishTest);
     }
 
+    @Override
+    public EnglishTest update(EnglishTest englishTest) {
+        validateEnglishTestForUpdate(englishTest);
+        return englishTestRepository.save(englishTest);
+    }
 
     @Override
     public void delete(EnglishTest englishTest) {
-        if(findById(englishTest.getId()) != null){
-            deleteAllQuestions(englishTest);
-            englishTestRepository.delete(englishTest);
-        }
+        Objects.requireNonNull(englishTest, "EnglishTest cannot be null");
+        englishTestRepository.delete(englishTest);
     }
 
     @Override
     public void deleteById(Long id) {
-        EnglishTest englishTest = findById(id);
-        if(englishTest != null) {
-            deleteAllQuestions(englishTest);
-            englishTestRepository.deleteById(id);
+        Objects.requireNonNull(id, "EnglishTest id cannot be null");
+        englishTestRepository.deleteById(id);
+    }
+
+    //TODO add more tests with nulls for add and delete
+    @Override
+    public void addQuestion(Question question) {
+        questionService.create(question);
+    }
+
+    @Override
+    public void deleteQuestion(Question question) {
+        question.getEnglishTest().getQuestions().remove(question);
+
+        englishTestRepository.save(question.getEnglishTest());
+
+        questionService.delete(question);
+    }
+
+    private void validateEnglishTestForCreation(EnglishTest englishTest) {
+        Objects.requireNonNull(englishTest, "EnglishTest cannot be null");
+        if (englishTest.getId() != null) {
+            throw new IllegalArgumentException("EnglishTest ID should not be provided for creation");
         }
     }
 
-    private void deleteAllQuestions(EnglishTest englishTest){
-        List<Question> questions = englishTest.getQuestions();
-        if(questions != null) {
-            for (Question question : englishTest.getQuestions()) {
-                questionService.delete(question);
-            }
+    private void validateEnglishTestForUpdate(EnglishTest englishTest) {
+        Objects.requireNonNull(englishTest, "EnglishTest cannot be null");
+        Objects.requireNonNull(englishTest.getId(), "EnglishTest ID must be provided for update");
+        if (!englishTestRepository.existsById(englishTest.getId())) {
+            throw new IllegalArgumentException("EnglishTest with id = " + englishTest.getId() + " does not exist");
         }
-    }
-
-    private List<Question> getQuestionListWithEnglishTest(EnglishTest englishTest){
-        List<Question> questions = englishTest.getQuestions();
-        if(questions != null) {
-            for (Question question : questions) {
-                question.setEnglishTest(englishTest);
-            }
-        }
-        return questions;
     }
 }

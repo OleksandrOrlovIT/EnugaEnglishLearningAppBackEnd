@@ -90,7 +90,7 @@ class QuestionControllerTest {
                 .build();
 
         when(questionService.findById(anyLong())).thenReturn(originalQuestion);
-        when(questionService.save(any())).thenReturn(updateQuestion);
+        when(questionService.update(any())).thenReturn(updateQuestion);
 
         MvcResult result = mockMvc.perform(put("/v1/question/{id}", questionId)
                     .contentType(MediaType.APPLICATION_JSON)
@@ -110,7 +110,7 @@ class QuestionControllerTest {
         Question inputQuestion = Question.builder().questionText("some text").build();
         Question savedQuestion = Question.builder().id(questionId).questionText("some text").build();
 
-        when(questionService.save(any())).thenReturn(savedQuestion);
+        when(questionService.create(any())).thenReturn(savedQuestion);
 
         MvcResult result = mockMvc.perform(post("/v1/question")
                     .contentType(MediaType.APPLICATION_JSON)

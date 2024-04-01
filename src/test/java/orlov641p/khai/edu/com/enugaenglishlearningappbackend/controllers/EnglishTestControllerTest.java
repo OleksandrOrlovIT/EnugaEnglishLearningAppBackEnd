@@ -86,7 +86,7 @@ public class EnglishTestControllerTest {
         EnglishTest updatedEnglishTest = EnglishTest.builder().id(englishTestId).testName("updated name").build();
 
         when(englishTestService.findById(anyLong())).thenReturn(originalEnglishTest);
-        when(englishTestService.save(any())).thenReturn(updatedEnglishTest);
+        when(englishTestService.update(any())).thenReturn(updatedEnglishTest);
 
         MvcResult result = mockMvc.perform(put("/v1/english-test/{id}", englishTestId)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -105,7 +105,7 @@ public class EnglishTestControllerTest {
     void createEnglishTest() throws Exception {
         EnglishTest inputEnglishTest = EnglishTest.builder().id(englishTestId).build();
 
-        when(englishTestService.save(any())).thenReturn(inputEnglishTest);
+        when(englishTestService.create(any())).thenReturn(inputEnglishTest);
 
         MvcResult result = mockMvc.perform(post("/v1/english-test")
                         .contentType(MediaType.APPLICATION_JSON)

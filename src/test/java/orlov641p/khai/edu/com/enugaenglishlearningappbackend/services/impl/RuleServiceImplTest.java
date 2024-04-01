@@ -1,45 +1,39 @@
 package orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.impl;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.Rule;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.repositories.RuleRepository;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.*;
 
 /**
  * Test class for the RuleServiceImpl class.
  */
 
-@ExtendWith(MockitoExtension.class)
+@ActiveProfiles("test")
+@SpringBootTest
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@ExtendWith(SpringExtension.class)
 class RuleServiceImplTest {
 
     private static final String RULE_NAME = "RuleName";
     private static final String DESCRIPTION = "Description";
     private static final long ID = 1L;
 
-    private Rule returnRule;
+    private static Rule validRule;
 
-    @Mock
-    RuleRepository ruleRepository;
-
-    @InjectMocks
+    @Autowired
     RuleServiceImpl ruleService;
 
-    @BeforeEach
-    void setUp() {
-        returnRule = Rule
+    @BeforeAll
+    static void setUp() {
+        validRule = Rule
                 .builder()
                 .id(ID)
                 .ruleName(RULE_NAME)
@@ -48,58 +42,122 @@ class RuleServiceImplTest {
     }
 
     @Test
-    void findAll() {
-        List<Rule> rules = new ArrayList<>();
-        rules.add(Rule.builder().build());
-        rules.add(Rule.builder().build());
-
-        when(ruleRepository.findAll()).thenReturn(rules);
-
-        List<Rule> returnedRules = ruleRepository.findAll();
-
-        assertNotNull(returnedRules);
-        assertEquals(rules, returnedRules);
+    @Order(1)
+    void create_NullRule(){
+        assertThrows(IllegalArgumentException.class, () -> ruleService.create(null));
     }
 
     @Test
-    void findById() {
-        when(ruleRepository.findById(anyLong())).thenReturn(Optional.ofNullable(returnRule));
+    @Order(2)
+    void create_ValidRule(){
+        Rule rule = ruleService.create(validRule);
 
-        Rule rule = ruleService.findById(ID);
-
-        assertNotNull(rule);
+        assertEquals(rule, validRule);
     }
 
     @Test
-    void findByIdNotFound() {
-        when(ruleRepository.findById(anyLong())).thenReturn(Optional.empty());
-
-        Rule rule = ruleService.findById(ID);
-
-        assertNull(rule);
+    @Order(3)
+    void findById_InvalidId(){
+        assertThrows(IllegalArgumentException.class, () -> ruleService.findById(null));
     }
 
     @Test
-    void save() {
-        when(ruleRepository.save(any())).thenReturn(returnRule);
+    @Order(4)
+    void findById_ValidId(){
+        Rule rule = ruleService.findById(validRule.getId());
 
-        Rule rule = ruleService.save(Rule.builder().build());
-
-        assertNotNull(rule);
-        verify(ruleRepository, times(1)).save(any());
+        assertEquals(rule, validRule);
     }
 
     @Test
-    void delete() {
-        ruleService.delete(returnRule);
-
-        verify(ruleRepository, times(1)).delete(any());
+    @Order(5)
+    void update_Null(){
+        assertThrows(IllegalArgumentException.class, () -> ruleService.update(null));
     }
 
     @Test
-    void deleteById() {
-        ruleService.deleteById(returnRule.getId());
+    @Order(6)
+    void update_RuleWithNullId(){
+        assertThrows(IllegalArgumentException.class, () -> ruleService.update(Rule.builder().id(null).build()));
+    }
 
-        verify(ruleRepository, times(1)).deleteById(anyLong());
+    @Test
+    @Order(7)
+    void update_ruleWithWrongId(){
+        Rule rule = Rule.builder().id(validRule.getId() + 100L).build();
+        assertThrows(IllegalArgumentException.class, () -> ruleService.update(rule));
+    }
+
+    @Test
+    @Order(8)
+    void update_validRule(){
+        String updatedRuleName = RULE_NAME + "Update";
+        String updatedDescription = DESCRIPTION + "Update";
+
+        Rule rule = Rule.builder()
+                .id(ID)
+                .ruleName(updatedRuleName)
+                .description(updatedDescription)
+                .build();
+
+        validRule = ruleService.update(rule);
+
+        assertEquals(validRule, rule);
+    }
+
+    @Test
+    @Order(9)
+    void findAll(){
+        List<Rule> rules = new java.util.ArrayList<>(List.of(validRule));
+        assertEquals(rules, ruleService.findAll());
+
+        Rule rule = Rule.builder().id(ID + 1).build();
+        rules.add(rule);
+        ruleService.create(rule);
+
+        assertEquals(rules, ruleService.findAll());
+    }
+
+    @Test
+    @Order(10)
+    void delete_null(){
+        assertThrows(IllegalArgumentException.class, () -> ruleService.delete(null));
+    }
+
+    @Test
+    @Order(11)
+    void delete_nonExistingRule(){
+        assertDoesNotThrow(() -> ruleService.delete(Rule.builder().build()));
+    }
+
+    @Test
+    @Order(12)
+    void delete_ExistingRule(){
+        Long savedId = validRule.getId();
+        assertDoesNotThrow(() -> ruleService.delete(validRule));
+
+        assertThrows(IllegalArgumentException.class, () -> ruleService.findById(savedId));
+    }
+
+    @Test
+    @Order(13)
+    void deleteById_null(){
+        assertThrows(IllegalArgumentException.class, () -> ruleService.deleteById(null));
+    }
+
+    @Test
+    @Order(14)
+    void deleteById_nonExistingRuleId(){
+        ruleService.deleteById(100000L);
+
+        assertDoesNotThrow(() -> ruleService.findById(ID + 1));
+    }
+
+    @Test
+    @Order(15)
+    void deleteById_validRule(){
+        ruleService.deleteById(ID + 1);
+
+        assertThrows(IllegalArgumentException.class, () -> ruleService.findById(ID + 1));
     }
 }
