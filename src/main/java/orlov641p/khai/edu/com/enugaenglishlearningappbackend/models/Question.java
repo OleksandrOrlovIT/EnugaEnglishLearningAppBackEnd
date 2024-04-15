@@ -21,7 +21,7 @@ public class Question extends BaseEntity{
     private String answer;
 
     @JsonIgnore
-    @ManyToOne()
+    @ManyToOne
     @JoinColumn(name = "english_test_id", nullable = false)
     private EnglishTest englishTest;
 

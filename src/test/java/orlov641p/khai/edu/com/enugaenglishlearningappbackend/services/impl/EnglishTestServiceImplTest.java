@@ -1,11 +1,14 @@
 package orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.impl;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.EnglishTest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.Question;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.EnglishTestService;
@@ -16,8 +19,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ActiveProfiles("test")
 @SpringBootTest
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ExtendWith(SpringExtension.class)
+@Transactional
 class EnglishTestServiceImplTest {
     private static final String TEST_NAME = "Test Name";
 
@@ -28,8 +31,11 @@ class EnglishTestServiceImplTest {
     @Autowired
     private EnglishTestService englishTestService;
 
-    @BeforeAll
-    static void setUpValidEnglishTest(){
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    @BeforeEach
+    void setUpValidEnglishTest(){
         validEnglishTest = EnglishTest
                 .builder()
                 .testName(TEST_NAME)
@@ -37,91 +43,96 @@ class EnglishTestServiceImplTest {
     }
 
     @Test
-    @Order(1)
+    @Transactional
     void createEnglishTest_null(){
         assertThrows(NullPointerException.class, () -> englishTestService.create(null));
     }
 
     @Test
-    @Order(2)
+    @Transactional
     void createEnglishTest_IdNotNull(){
         assertThrows(IllegalArgumentException.class,
                 () -> englishTestService.create(EnglishTest.builder().id(1L).build()));
     }
 
     @Test
-    @Order(3)
+    @Transactional
     void createEnglishTest_validEnglishTest(){
-        EnglishTest englishTest = englishTestService.create(validEnglishTest);
+        validEnglishTest = englishTestService.create(validEnglishTest);
+
+        EnglishTest englishTest = validEnglishTest;
+        englishTest.setId(null);
+
+        englishTest = englishTestService.create(englishTest);
 
         assertNotNull(englishTest);
-
-        validEnglishTest = englishTest;
     }
 
     @Test
-    @Order(4)
+    @Transactional
     void updateEnglishTest_null(){
         assertThrows(NullPointerException.class, () -> englishTestService.update(null));
     }
 
     @Test
-    @Order(5)
+    @Transactional
     void updateEnglishTest_nullId(){
         assertThrows(NullPointerException.class,
                 () -> englishTestService.update(EnglishTest.builder().id(null).build()));
     }
 
     @Test
-    @Order(6)
+    @Transactional
     void updateEnglishTest_IdDoesntExist(){
         assertThrows(IllegalArgumentException.class,
                 () -> englishTestService.update(EnglishTest.builder().id(1000000L).build()));
     }
 
     @Test
-    @Order(7)
+    @Transactional
     void updateEnglishTest_valid(){
+        validEnglishTest = englishTestService.create(validEnglishTest);
+
         String tempName = TEST_NAME + "111";
         EnglishTest englishTest = EnglishTest.builder().id(validEnglishTest.getId()).testName(tempName).build();
 
         englishTest = englishTestService.update(englishTest);
         assertEquals(englishTest.getTestName(), tempName);
         assertEquals(englishTestService.findById(validEnglishTest.getId()).getTestName(), tempName);
-
-        englishTestService.update(validEnglishTest);
-        assertEquals(englishTestService.findById(validEnglishTest.getId()).getTestName(), TEST_NAME);
     }
 
     @Test
-    @Order(8)
+    @Transactional
     void findById_NullId(){
         assertThrows(NullPointerException.class, () -> englishTestService.findById(null));
     }
 
     @Test
-    @Order(9)
+    @Transactional
     void findById_IdDoesntExist(){
         assertThrows(IllegalArgumentException.class, () -> englishTestService.findById(2000000L));
     }
 
     @Test
-    @Order(10)
+    @Transactional
     void findById_validId(){
+        validEnglishTest = englishTestService.create(validEnglishTest);
+
         EnglishTest englishTest = englishTestService.findById(validEnglishTest.getId());
         assertEquals(englishTest, validEnglishTest);
     }
 
     @Test
-    @Order(11)
+    @Transactional
     void findAll_one(){
+        validEnglishTest = englishTestService.create(validEnglishTest);
         List<EnglishTest> englishTestList = List.of(validEnglishTest);
         assertEquals(englishTestList, englishTestService.findAll());
     }
 
 
     @Test
-    @Order(12)
+    @Transactional
     void findAll_zero(){
         englishTestService.delete(validEnglishTest);
         List<EnglishTest> englishTestList = List.of();
@@ -129,7 +140,7 @@ class EnglishTestServiceImplTest {
     }
 
     @Test
-    @Order(13)
+    @Transactional
     void findAll_2(){
         validEnglishTest.setId(null);
         englishTestService.create(validEnglishTest);
@@ -141,8 +152,10 @@ class EnglishTestServiceImplTest {
     }
 
     @Test
-    @Order(14)
+    @Transactional
     void addQuestion_Valid(){
+        validEnglishTest = englishTestService.create(validEnglishTest);
+
         Question question = Question.builder()
                 .questionText("Text")
                 .answer("Answer")
@@ -156,12 +169,20 @@ class EnglishTestServiceImplTest {
     }
 
     @Test
-    @Order(15)
+    @Transactional
     void deleteQuestion_Valid(){
-        Question question = validEnglishTest.getQuestions().get(0);
+        validEnglishTest = englishTestService.create(validEnglishTest);
 
-        System.out.println("Question = " + question);
-        System.out.println(question.getEnglishTest());
+        validEnglishTest = englishTestService.findById(validEnglishTest.getId());
+
+        Question question = Question.builder()
+                .questionText("Text")
+                .answer("Answer")
+                .englishTest(validEnglishTest)
+                .build();
+
+        englishTestService.addQuestion(question);
+
         englishTestService.deleteQuestion(question);
 
         validEnglishTest = englishTestService.findById(validEnglishTest.getId());
@@ -170,27 +191,31 @@ class EnglishTestServiceImplTest {
     }
 
     @Test
-    @Order(16)
+    @Transactional
     void delete_null(){
         assertThrows(NullPointerException.class, () -> englishTestService.delete(null));
     }
 
     @Test
-    @Order(17)
+    @Transactional
     void delete_valid(){
-        englishTestService.delete(validEnglishTest);
+        validEnglishTest = englishTestService.create(validEnglishTest);
 
         assertEquals(1, englishTestService.findAll().size());
+
+        englishTestService.delete(validEnglishTest);
+
+        assertEquals(0, englishTestService.findAll().size());
     }
 
     @Test
-    @Order(18)
+    @Transactional
     void deleteById_null(){
         assertThrows(NullPointerException.class, () -> englishTestService.deleteById(null));
     }
 
     @Test
-    @Order(19)
+    @Transactional
     void deleteById_valid(){
         englishTestService.deleteById(ID);
 

@@ -17,10 +17,10 @@ import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.Question;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.QuestionService;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -122,5 +122,34 @@ class QuestionControllerTest {
 
         assertNotNull(locationHeader);
         assertEquals("http://localhost/v1/question/1", locationHeader);
+    }
+
+    @Test
+    void retrieveQuestionsByEnglishTestId() throws Exception {
+        List<Question> questions = List.of(new Question(), new Question());
+        when(questionService.getQuestionsByEnglishTestId(anyLong())).thenReturn(questions);
+
+        mockMvc.perform(get("/v1/questions/1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)));
+    }
+
+    @Test
+    void updateQuestion_findByIdNull() throws Exception {
+        Question updateQuestion = Question.builder()
+                .id(questionId).questionText("updated text").answer("updated answer")
+                .build();
+
+        when(questionService.findById(anyLong())).thenReturn(null);
+
+        MvcResult result = mockMvc.perform(put("/v1/question/{id}", questionId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(updateQuestion)))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String responseBody = result.getResponse().getContentAsString();
+        assertEquals(0, responseBody.length());
     }
 }

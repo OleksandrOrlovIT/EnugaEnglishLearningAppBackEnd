@@ -102,7 +102,7 @@ public class EnglishTestControllerTest {
     }
 
     @Test
-    void createEnglishTest() throws Exception {
+        void createEnglishTest() throws Exception {
         EnglishTest inputEnglishTest = EnglishTest.builder().id(englishTestId).build();
 
         when(englishTestService.create(any())).thenReturn(inputEnglishTest);
@@ -117,5 +117,21 @@ public class EnglishTestControllerTest {
 
         assertNotNull(locationHeader);
         assertEquals("http://localhost/v1/english-test/1", locationHeader);
+    }
+
+    @Test
+    void updateEnglishTest_findByIdNull() throws Exception {
+        EnglishTest updatedEnglishTest = EnglishTest.builder().id(englishTestId).testName("updated name").build();
+
+        when(englishTestService.findById(anyLong())).thenReturn(null);
+
+        MvcResult result = mockMvc.perform(put("/v1/english-test/{id}", englishTestId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(updatedEnglishTest)))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String responseBody = result.getResponse().getContentAsString();
+        assertEquals(0, responseBody.length());
     }
 }

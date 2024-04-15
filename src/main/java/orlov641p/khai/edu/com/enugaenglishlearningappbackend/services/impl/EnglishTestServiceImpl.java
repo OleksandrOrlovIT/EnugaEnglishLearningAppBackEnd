@@ -29,8 +29,12 @@ public class EnglishTestServiceImpl implements EnglishTestService {
     @Override
     public EnglishTest findById(Long id) {
         Objects.requireNonNull(id, "EnglishTest id cannot be null");
-        return englishTestRepository.findById(id)
+
+        EnglishTest englishTest = englishTestRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("EnglishTest with id = " + id + " doesn't exist"));
+        englishTest.setQuestions(questionService.getQuestionsByEnglishTestId(englishTest.getId()));
+
+        return englishTest;
     }
 
     @Override

@@ -20,7 +20,7 @@ public class EnglishTest extends BaseEntity{
 
     private String testName;
 
-    @OneToMany(mappedBy = "englishTest", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "englishTest", cascade = CascadeType.REMOVE)
     private List<Question> questions;
 
     @Builder

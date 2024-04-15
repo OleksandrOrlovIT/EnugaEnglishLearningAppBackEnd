@@ -49,9 +49,7 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public void delete(Question question) {
-        System.out.println("Worked delete");
         Objects.requireNonNull(question, "Question cannot be null");
-        System.out.println("Question = " + question);
         questionRepository.delete(question);
     }
 

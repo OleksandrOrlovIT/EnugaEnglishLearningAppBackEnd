@@ -105,7 +105,6 @@ class RuleControllerTest {
 
     @Test
     void createRule() throws Exception{
-        // Prepare test data
         Rule inputRule = Rule.builder().ruleName("ruleName").build();
         Rule savedRule = Rule.builder().id(ruleId).ruleName("ruleName").build();
 
@@ -123,4 +122,21 @@ class RuleControllerTest {
         assertEquals("http://localhost/v1/rule/1", locationHeader);
     }
 
+    @Test
+    void updateRule_findByIdNull() throws Exception {
+        Rule updateRule = Rule.builder()
+                .id(ruleId).ruleName("updatedRule").description("UpdatedRule")
+                .build();
+
+        when(ruleService.findById(anyLong())).thenReturn(null);
+
+        MvcResult result = mockMvc.perform(put("/v1/rule/{id}", ruleId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(updateRule)))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String responseBody = result.getResponse().getContentAsString();
+        assertEquals(0, responseBody.length());
+    }
 }

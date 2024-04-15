@@ -1,11 +1,14 @@
 package orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.impl;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.Rule;
 
 import java.util.List;
@@ -18,8 +21,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ActiveProfiles("test")
 @SpringBootTest
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ExtendWith(SpringExtension.class)
+@Transactional
 class RuleServiceImplTest {
 
     private static final String RULE_NAME = "RuleName";
@@ -27,6 +30,9 @@ class RuleServiceImplTest {
     private static final long ID = 1L;
 
     private static Rule validRule;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Autowired
     RuleServiceImpl ruleService;
@@ -42,55 +48,59 @@ class RuleServiceImplTest {
     }
 
     @Test
-    @Order(1)
+    @Transactional
     void create_NullRule(){
         assertThrows(IllegalArgumentException.class, () -> ruleService.create(null));
     }
 
     @Test
-    @Order(2)
+    @Transactional
     void create_ValidRule(){
-        Rule rule = ruleService.create(validRule);
+        validRule = ruleService.create(validRule);
 
-        assertEquals(rule, validRule);
+        assertNotNull(validRule);
     }
 
     @Test
-    @Order(3)
+    @Transactional
     void findById_InvalidId(){
         assertThrows(IllegalArgumentException.class, () -> ruleService.findById(null));
     }
 
     @Test
-    @Order(4)
+    @Transactional
     void findById_ValidId(){
+        validRule = ruleService.create(validRule);
+
         Rule rule = ruleService.findById(validRule.getId());
 
         assertEquals(rule, validRule);
     }
 
     @Test
-    @Order(5)
+    @Transactional
     void update_Null(){
         assertThrows(IllegalArgumentException.class, () -> ruleService.update(null));
     }
 
     @Test
-    @Order(6)
+    @Transactional
     void update_RuleWithNullId(){
         assertThrows(IllegalArgumentException.class, () -> ruleService.update(Rule.builder().id(null).build()));
     }
 
     @Test
-    @Order(7)
+    @Transactional
     void update_ruleWithWrongId(){
         Rule rule = Rule.builder().id(validRule.getId() + 100L).build();
         assertThrows(IllegalArgumentException.class, () -> ruleService.update(rule));
     }
 
     @Test
-    @Order(8)
+    @Transactional
     void update_validRule(){
+        validRule = ruleService.create(validRule);
+
         String updatedRuleName = RULE_NAME + "Update";
         String updatedDescription = DESCRIPTION + "Update";
 
@@ -106,12 +116,14 @@ class RuleServiceImplTest {
     }
 
     @Test
-    @Order(9)
+    @Transactional
     void findAll(){
+        validRule = ruleService.create(validRule);
+
         List<Rule> rules = new java.util.ArrayList<>(List.of(validRule));
         assertEquals(rules, ruleService.findAll());
 
-        Rule rule = Rule.builder().id(ID + 1).build();
+        Rule rule = Rule.builder().build();
         rules.add(rule);
         ruleService.create(rule);
 
@@ -119,19 +131,19 @@ class RuleServiceImplTest {
     }
 
     @Test
-    @Order(10)
+    @Transactional
     void delete_null(){
         assertThrows(IllegalArgumentException.class, () -> ruleService.delete(null));
     }
 
     @Test
-    @Order(11)
+    @Transactional
     void delete_nonExistingRule(){
         assertDoesNotThrow(() -> ruleService.delete(Rule.builder().build()));
     }
 
     @Test
-    @Order(12)
+    @Transactional
     void delete_ExistingRule(){
         Long savedId = validRule.getId();
         assertDoesNotThrow(() -> ruleService.delete(validRule));
@@ -140,21 +152,19 @@ class RuleServiceImplTest {
     }
 
     @Test
-    @Order(13)
+    @Transactional
     void deleteById_null(){
         assertThrows(IllegalArgumentException.class, () -> ruleService.deleteById(null));
     }
 
     @Test
-    @Order(14)
+    @Transactional
     void deleteById_nonExistingRuleId(){
-        ruleService.deleteById(100000L);
-
-        assertDoesNotThrow(() -> ruleService.findById(ID + 1));
+        assertDoesNotThrow(() -> ruleService.deleteById(100000L));
     }
 
     @Test
-    @Order(15)
+    @Transactional
     void deleteById_validRule(){
         ruleService.deleteById(ID + 1);
 
