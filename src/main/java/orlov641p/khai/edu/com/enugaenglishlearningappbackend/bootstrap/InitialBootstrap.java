@@ -10,8 +10,6 @@ import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.EnglishTes
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.QuestionService;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.RuleService;
 
-import java.util.List;
-
 @Component
 @Profile("!test")
 public class InitialBootstrap implements CommandLineRunner {

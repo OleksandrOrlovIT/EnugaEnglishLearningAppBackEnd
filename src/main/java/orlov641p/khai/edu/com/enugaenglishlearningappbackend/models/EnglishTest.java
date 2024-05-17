@@ -2,7 +2,6 @@ package orlov641p.khai.edu.com.enugaenglishlearningappbackend.models;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 import lombok.Builder;
 import lombok.Getter;
