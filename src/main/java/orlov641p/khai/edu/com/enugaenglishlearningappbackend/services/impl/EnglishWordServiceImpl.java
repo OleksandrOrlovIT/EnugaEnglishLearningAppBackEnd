@@ -1,5 +1,6 @@
 package orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.impl;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.EnglishWord;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.repositories.EnglishWordRepository;
@@ -24,7 +25,7 @@ public class EnglishWordServiceImpl implements EnglishWordService {
         EnglishWord englishWord = englishWordRepository.findById(id).orElse(null);
 
         if(englishWord == null){
-            throw new IllegalArgumentException("EnglishWord with id = " + id + " doesn't exist");
+            throw new EntityNotFoundException("EnglishWord with id = " + id + " doesn't exist");
         }
 
         return englishWord;

@@ -1,5 +1,6 @@
 package orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.impl;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.UkrainianWord;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.repositories.UkrainianWordRepository;
@@ -24,7 +25,7 @@ public class UkrainianWordServiceImpl implements UkrainianWordService {
         UkrainianWord ukrainianWord = ukrainianWordRepository.findById(id).orElse(null);
 
         if(ukrainianWord == null){
-            throw new IllegalArgumentException("UkrainianWord with id = " + id + " doesn't exist");
+            throw new EntityNotFoundException("UkrainianWord with id = " + id + " doesn't exist");
         }
 
         return ukrainianWord;

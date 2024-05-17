@@ -1,5 +1,6 @@
 package orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.impl;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.EnglishTest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.Question;
@@ -31,7 +32,7 @@ public class EnglishTestServiceImpl implements EnglishTestService {
         Objects.requireNonNull(id, "EnglishTest id cannot be null");
 
         EnglishTest englishTest = englishTestRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("EnglishTest with id = " + id + " doesn't exist"));
+                .orElseThrow(() -> new EntityNotFoundException("EnglishTest with id = " + id + " doesn't exist"));
         englishTest.setQuestions(questionService.getQuestionsByEnglishTestId(englishTest.getId()));
 
         return englishTest;

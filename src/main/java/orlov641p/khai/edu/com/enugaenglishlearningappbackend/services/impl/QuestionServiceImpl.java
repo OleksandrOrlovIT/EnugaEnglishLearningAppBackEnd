@@ -1,5 +1,6 @@
 package orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.impl;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.EnglishTest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.Question;
@@ -30,7 +31,7 @@ public class QuestionServiceImpl implements QuestionService {
     public Question findById(Long id) {
         Objects.requireNonNull(id, "Question id cannot be null");
         return questionRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Question with id = " + id + " doesn't exist"));
+                .orElseThrow(() -> new EntityNotFoundException("Question with id = " + id + " doesn't exist"));
     }
 
     @Override

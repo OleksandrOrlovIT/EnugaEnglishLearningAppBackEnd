@@ -1,6 +1,7 @@
 package orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.impl;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -110,7 +111,7 @@ class EnglishTestServiceImplTest {
     @Test
     @Transactional
     void findById_IdDoesntExist(){
-        assertThrows(IllegalArgumentException.class, () -> englishTestService.findById(2000000L));
+        assertThrows(EntityNotFoundException.class, () -> englishTestService.findById(2000000L));
     }
 
     @Test

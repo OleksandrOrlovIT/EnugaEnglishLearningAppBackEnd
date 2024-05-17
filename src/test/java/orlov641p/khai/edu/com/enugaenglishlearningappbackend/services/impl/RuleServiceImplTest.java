@@ -1,6 +1,7 @@
 package orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.impl;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -93,7 +94,7 @@ class RuleServiceImplTest {
     @Transactional
     void update_ruleWithWrongId(){
         Rule rule = Rule.builder().id(validRule.getId() + 100L).build();
-        assertThrows(IllegalArgumentException.class, () -> ruleService.update(rule));
+        assertThrows(EntityNotFoundException.class, () -> ruleService.update(rule));
     }
 
     @Test
@@ -148,7 +149,7 @@ class RuleServiceImplTest {
         Long savedId = validRule.getId();
         assertDoesNotThrow(() -> ruleService.delete(validRule));
 
-        assertThrows(IllegalArgumentException.class, () -> ruleService.findById(savedId));
+        assertThrows(EntityNotFoundException.class, () -> ruleService.findById(savedId));
     }
 
     @Test
@@ -168,6 +169,6 @@ class RuleServiceImplTest {
     void deleteById_validRule(){
         ruleService.deleteById(ID + 1);
 
-        assertThrows(IllegalArgumentException.class, () -> ruleService.findById(ID + 1));
+        assertThrows(EntityNotFoundException.class, () -> ruleService.findById(ID + 1));
     }
 }

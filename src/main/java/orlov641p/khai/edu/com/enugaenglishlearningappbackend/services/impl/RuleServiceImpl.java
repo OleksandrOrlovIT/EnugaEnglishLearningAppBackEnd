@@ -1,5 +1,6 @@
 package orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.impl;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.Rule;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.repositories.RuleRepository;
@@ -38,7 +39,7 @@ public class RuleServiceImpl implements RuleService {
         Rule rule = ruleRepository.findById(id).orElse(null);
 
         if(rule == null){
-            throw new IllegalArgumentException("Rule with id = " + id + " doesn't exist");
+            throw new EntityNotFoundException("Rule with id = " + id + " doesn't exist");
         }
 
         return rule;

@@ -1,9 +1,11 @@
 package orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.impl;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.internal.matchers.Null;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -82,7 +84,7 @@ class QuestionServiceImplTest {
         validQuestion = questionService.create(validQuestion);
 
         assertThrows(NullPointerException.class, () -> questionService.findById(null));
-        assertThrows(IllegalArgumentException.class, () -> questionService.findById(validQuestion.getId() + 100));
+        assertThrows(EntityNotFoundException.class, () -> questionService.findById(validQuestion.getId() + 100));
     }
 
     @Test
@@ -207,7 +209,7 @@ class QuestionServiceImplTest {
         Long savedId = validQuestion.getId();
         assertDoesNotThrow(() -> questionService.delete(validQuestion));
 
-        assertThrows(IllegalArgumentException.class, () -> questionService.findById(savedId));
+        assertThrows(EntityNotFoundException.class, () -> questionService.findById(savedId));
     }
 
     @Test
@@ -229,7 +231,7 @@ class QuestionServiceImplTest {
 
         questionService.deleteById(validQuestion.getId() + 1);
 
-        assertThrows(IllegalArgumentException.class, () -> questionService.findById(validQuestion.getId() + 1));
+        assertThrows(EntityNotFoundException.class, () -> questionService.findById(validQuestion.getId() + 1));
     }
 
     @Test
