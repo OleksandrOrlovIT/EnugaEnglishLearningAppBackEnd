@@ -1,15 +1,18 @@
 package orlov641p.khai.edu.com.enugaenglishlearningappbackend.bootstrap;
 
+import lombok.AllArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.EnglishTest;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.Question;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.Rule;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.EnglishTestService;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.QuestionService;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.RuleService;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.*;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.*;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.stream.Stream;
+
+@AllArgsConstructor
 @Component
 @Profile("!test")
 public class InitialBootstrap implements CommandLineRunner {
@@ -17,18 +20,14 @@ public class InitialBootstrap implements CommandLineRunner {
     private final RuleService ruleService;
     private final QuestionService questionService;
     private final EnglishTestService englishTestService;
+    private final UkrainianWordService ukrainianWordService;
+    private final EnglishWordService englishWordService;
+    private final TranslationPairService translationPairService;
 
-    public InitialBootstrap(RuleService ruleService, QuestionService questionService, EnglishTestService englishTestService) {
-        this.ruleService = ruleService;
-        this.questionService = questionService;
-        this.englishTestService = englishTestService;
-    }
-
-    //TODO fix
     @Override
     public void run(String... args) throws Exception {
-//        loadRules();
-//        loadQuestionsAndTests();
+        loadRules();
+        loadQuestionsAndTests();
     }
 
     private void loadRules(){
@@ -63,6 +62,7 @@ public class InitialBootstrap implements CommandLineRunner {
     private void loadQuestionsAndTests(){
         loadTest1WithQuestions();
         loadTest2WithQuestions();
+        loadWordsToDB();
     }
 
     private void loadTest1WithQuestions(){
@@ -118,5 +118,29 @@ public class InitialBootstrap implements CommandLineRunner {
 
         questionService.create(question1Test2);
         questionService.create(question2Test2);
+    }
+
+    private void loadWordsToDB(){
+        Path path = Paths.get("src/main/resources/static/english-ukraine.txt");
+
+        try (Stream<String> lines = Files.lines(path)) {
+            lines.forEach(this::addWordsFromLine);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void addWordsFromLine(String line){
+        String[] words = line.split(" ");
+        EnglishWord englishWord = EnglishWord.builder().word(words[0]).build();
+        UkrainianWord ukrainianWord = UkrainianWord.builder().word(words[1]).build();
+        TranslationPair translationPair = TranslationPair.builder()
+                .englishWord(englishWord)
+                .ukrainianWord(ukrainianWord)
+                .build();
+
+        englishWordService.create(englishWord);
+        ukrainianWordService.create(ukrainianWord);
+        translationPairService.create(translationPair);
     }
 }

@@ -2,6 +2,7 @@ package orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.impl;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.UkrainianWord;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.repositories.UkrainianWordRepository;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.UkrainianWordService;
@@ -9,6 +10,7 @@ import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.UkrainianW
 import java.util.List;
 
 @AllArgsConstructor
+@Service
 public class UkrainianWordServiceImpl implements UkrainianWordService {
 
     private final UkrainianWordRepository ukrainianWordRepository;

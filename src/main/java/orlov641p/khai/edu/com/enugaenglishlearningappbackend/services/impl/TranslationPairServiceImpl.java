@@ -2,6 +2,7 @@ package orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.impl;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.TranslationPair;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.repositories.TranslationPairRepository;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.TranslationPairService;
@@ -9,6 +10,7 @@ import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.Translatio
 import java.util.List;
 
 @AllArgsConstructor
+@Service
 public class TranslationPairServiceImpl implements TranslationPairService {
 
     private final TranslationPairRepository translationPairRepository;
