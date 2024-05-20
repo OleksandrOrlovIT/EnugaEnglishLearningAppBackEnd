@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.dto.PageRequest;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.dto.CustomPageRequest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.EnglishWord;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.EnglishWordService;
 
@@ -26,10 +26,10 @@ public class EnglishWordController {
     }
 
     @PostMapping("/eng-words")
-    public Page<EnglishWord> retrieveEnglishWordsByPage(@RequestBody @Validated PageRequest pageRequest){
+    public Page<EnglishWord> retrieveEnglishWordsByPage(@RequestBody @Validated CustomPageRequest customPageRequest){
         Pageable pageable = Pageable
-                .ofSize(pageRequest.getSize())
-                .withPage(pageRequest.getPage());
+                .ofSize(customPageRequest.getSize())
+                .withPage(customPageRequest.getPage());
 
         return englishWordService.findPageEnglishWords(pageable);
     }

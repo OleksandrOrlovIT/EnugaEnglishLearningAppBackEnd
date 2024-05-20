@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class PageRequest {
+public class CustomPageRequest {
 
     @NotNull(message = "Page number cannot be null")
     @Min(value = 0, message = "Page number cannot be less then 0")
@@ -19,7 +19,7 @@ public class PageRequest {
     @Min(value = 1, message = "Page size cannot be less then 0")
     private int size;
 
-    public PageRequest(int page, int size) {
+    public CustomPageRequest(int page, int size) {
         this.page = page;
         this.size = size;
     }

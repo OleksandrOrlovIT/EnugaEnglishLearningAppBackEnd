@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.dto.PageRequest;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.dto.CustomPageRequest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.TranslationPair;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.TranslationPairService;
 
@@ -26,10 +26,10 @@ public class TranslationPairController {
     }
 
     @PostMapping("/translation-pairs")
-    public Page<TranslationPair> retrieveTranslationPairsByPage(@RequestBody @Validated PageRequest pageRequest){
+    public Page<TranslationPair> retrieveTranslationPairsByPage(@RequestBody @Validated CustomPageRequest customPageRequest){
         Pageable pageable = Pageable
-                .ofSize(pageRequest.getSize())
-                .withPage(pageRequest.getPage());
+                .ofSize(customPageRequest.getSize())
+                .withPage(customPageRequest.getPage());
 
         return translationPairService.findPageTranslationPairs(pageable);
     }
@@ -40,24 +40,24 @@ public class TranslationPairController {
     }
 
     @PostMapping("/translation-pair")
-    public ResponseEntity<TranslationPair> createTranslationPair(@RequestBody TranslationPair englishWord){
-        TranslationPair savedEnglishWord = translationPairService.create(englishWord);
+    public ResponseEntity<TranslationPair> createTranslationPair(@RequestBody TranslationPair translationPair){
+        TranslationPair savedTranslationPair = translationPairService.create(translationPair);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(savedEnglishWord.getId())
+                .buildAndExpand(savedTranslationPair.getId())
                 .toUri();
 
-        return ResponseEntity.created(location).body(savedEnglishWord);
+        return ResponseEntity.created(location).body(savedTranslationPair);
     }
 
     @PutMapping("/translation-pair/{id}")
-    public TranslationPair updateTranslationPair(@PathVariable Long id, @RequestBody TranslationPair englishWord){
+    public TranslationPair updateTranslationPair(@PathVariable Long id, @RequestBody TranslationPair translationPair){
         if(translationPairService.findById(id) == null) {
             return null;
         }
 
-        return translationPairService.update(englishWord);
+        return translationPairService.update(translationPair);
     }
 
     @DeleteMapping("/translation-pair/{id}")
