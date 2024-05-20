@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  mysql:
+    container_name: enuga_mysql_container
+    image: mysql:latest
+    environment:
+      - MYSQL_DATABASE=enuga_mysql
+      - MYSQL_USER=enuga_user
+      - MYSQL_PASSWORD=mysecretpassword
+      - MYSQL_ROOT_PASSWORD=rootpassword
+    ports:
+      - '3306:3306'

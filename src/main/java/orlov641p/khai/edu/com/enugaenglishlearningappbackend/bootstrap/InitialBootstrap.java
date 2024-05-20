@@ -26,8 +26,15 @@ public class InitialBootstrap implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        loadRules();
-        loadQuestionsAndTests();
+        if(ruleService.findAll().isEmpty()) {
+            loadRules();
+        }
+        if(questionService.findAll().isEmpty()) {
+            loadQuestionsAndTests();
+        }
+        if(translationPairService.findAll().isEmpty()) {
+            loadWordsToDB();
+        }
     }
 
     private void loadRules(){
@@ -62,7 +69,6 @@ public class InitialBootstrap implements CommandLineRunner {
     private void loadQuestionsAndTests(){
         loadTest1WithQuestions();
         loadTest2WithQuestions();
-        loadWordsToDB();
     }
 
     private void loadTest1WithQuestions(){
