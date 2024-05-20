@@ -2,12 +2,16 @@ package orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.impl;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.TranslationPair;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.UkrainianWord;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.repositories.UkrainianWordRepository;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.UkrainianWordService;
 
 import java.util.List;
+import java.util.Map;
 
 @AllArgsConstructor
 @Service
@@ -34,7 +38,7 @@ public class UkrainianWordServiceImpl implements UkrainianWordService {
     }
 
     @Override
-    public UkrainianWord create(UkrainianWord ukrainianWord) {
+    public synchronized UkrainianWord create(UkrainianWord ukrainianWord) {
         checkUkrainianWordNull(ukrainianWord);
 
         return ukrainianWordRepository.save(ukrainianWord);
@@ -61,6 +65,22 @@ public class UkrainianWordServiceImpl implements UkrainianWordService {
         checkUkrainianWordIdNull(id);
 
         ukrainianWordRepository.deleteById(id);
+    }
+
+    @Override
+    public Page<UkrainianWord> findPageUkrainianWords(Pageable pageable) {
+        return ukrainianWordRepository.findAll(pageable);
+    }
+
+    @Override
+    public UkrainianWord getFirst() {
+        Pageable pageable = Pageable
+                .ofSize(1)
+                .first();
+
+        Page<UkrainianWord> ukrainianWords = findPageUkrainianWords(pageable);
+
+        return ukrainianWords.hasContent() ? ukrainianWords.getContent().get(0) : null;
     }
 
     private void checkUkrainianWordNull(UkrainianWord ukrainianWord){

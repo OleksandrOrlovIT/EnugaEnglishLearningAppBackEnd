@@ -26,13 +26,13 @@ public class InitialBootstrap implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        if(ruleService.findAll().isEmpty()) {
+        if(ruleService.getFirst() == null) {
             loadRules();
         }
-        if(questionService.findAll().isEmpty()) {
+        if(questionService.getFirst() == null) {
             loadQuestionsAndTests();
         }
-        if(translationPairService.findAll().isEmpty()) {
+        if(translationPairService.getFirst() == null) {
             loadWordsToDB();
         }
     }
@@ -126,11 +126,11 @@ public class InitialBootstrap implements CommandLineRunner {
         questionService.create(question2Test2);
     }
 
-    private void loadWordsToDB(){
+    private void loadWordsToDB() {
         Path path = Paths.get("src/main/resources/static/english-ukraine.txt");
 
         try (Stream<String> lines = Files.lines(path)) {
-            lines.forEach(this::addWordsFromLine);
+            lines.parallel().forEach(this::addWordsFromLine);
         } catch (Exception e) {
             e.printStackTrace();
         }

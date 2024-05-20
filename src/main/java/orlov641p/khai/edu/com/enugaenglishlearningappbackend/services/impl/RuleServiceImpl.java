@@ -1,7 +1,10 @@
 package orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.impl;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.Question;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.Rule;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.repositories.RuleRepository;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.RuleService;
@@ -73,6 +76,17 @@ public class RuleServiceImpl implements RuleService {
         checkRuleIdNull(id);
 
         ruleRepository.deleteById(id);
+    }
+
+    @Override
+    public Rule getFirst() {
+        Pageable pageable = Pageable
+                .ofSize(1)
+                .first();
+
+        Page<Rule> rules = ruleRepository.findAll(pageable);
+
+        return rules.hasContent() ? rules.getContent().get(0) : null;
     }
 
     private void checkRuleNull(Rule rule){

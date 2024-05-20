@@ -1,8 +1,11 @@
 package orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.impl;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.EnglishTest;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.EnglishWord;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.Question;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.repositories.EnglishTestRepository;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.repositories.QuestionRepository;
@@ -64,6 +67,17 @@ public class QuestionServiceImpl implements QuestionService {
     public List<Question> getQuestionsByEnglishTestId(Long id) {
         Objects.requireNonNull(id, "English Test id cannot be null");
         return questionRepository.findByEnglishTestId(id);
+    }
+
+    @Override
+    public Question getFirst() {
+        Pageable pageable = Pageable
+                .ofSize(1)
+                .first();
+
+        Page<Question> questions = questionRepository.findAll(pageable);
+
+        return questions.hasContent() ? questions.getContent().get(0) : null;
     }
 
     private void validateQuestionForCreation(Question question) {

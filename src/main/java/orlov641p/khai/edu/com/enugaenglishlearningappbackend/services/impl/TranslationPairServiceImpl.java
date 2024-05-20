@@ -2,6 +2,8 @@ package orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.impl;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.TranslationPair;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.repositories.TranslationPairRepository;
@@ -34,7 +36,7 @@ public class TranslationPairServiceImpl implements TranslationPairService {
     }
 
     @Override
-    public TranslationPair create(TranslationPair translationPair) {
+    public synchronized TranslationPair create(TranslationPair translationPair) {
         checkTranslationPairNull(translationPair);
 
         return translationPairRepository.save(translationPair);
@@ -61,6 +63,22 @@ public class TranslationPairServiceImpl implements TranslationPairService {
         checkTranslationPairIdNull(id);
 
         translationPairRepository.deleteById(id);
+    }
+
+    @Override
+    public TranslationPair getFirst() {
+        Pageable pageable = Pageable
+                .ofSize(1)
+                .first();
+
+        Page<TranslationPair> translationPairs = translationPairRepository.findAll(pageable);
+
+        return translationPairs.hasContent() ? translationPairs.getContent().get(0) : null;
+    }
+
+    @Override
+    public Page<TranslationPair> findPageTranslationPairs(Pageable pageable) {
+        return translationPairRepository.findAll(pageable);
     }
 
     private void checkTranslationPairNull(TranslationPair translationPair){

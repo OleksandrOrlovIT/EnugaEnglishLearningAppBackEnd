@@ -2,6 +2,8 @@ package orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.impl;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.EnglishWord;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.repositories.EnglishWordRepository;
@@ -34,7 +36,7 @@ public class EnglishWordServiceImpl implements EnglishWordService {
     }
 
     @Override
-    public EnglishWord create(EnglishWord englishWord) {
+    public synchronized EnglishWord create(EnglishWord englishWord) {
         checkEnglishWordNull(englishWord);
 
         return englishWordRepository.save(englishWord);
@@ -61,6 +63,22 @@ public class EnglishWordServiceImpl implements EnglishWordService {
         checkEnglishWordIdNull(id);
 
         englishWordRepository.deleteById(id);
+    }
+
+    @Override
+    public EnglishWord getFirst() {
+        Pageable pageable = Pageable
+                .ofSize(1)
+                .first();
+
+        Page<EnglishWord> englishWords = englishWordRepository.findAll(pageable);
+
+        return englishWords.hasContent() ? englishWords.getContent().get(0) : null;
+    }
+
+    @Override
+    public Page<EnglishWord> findPageEnglishWords(Pageable pageable) {
+        return englishWordRepository.findAll(pageable);
     }
 
     private void checkEnglishWordNull(EnglishWord englishWord){
