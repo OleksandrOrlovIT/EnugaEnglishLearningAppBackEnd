@@ -17,7 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.dto.CustomPageRequest;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.dto.request.CustomPageRequest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.EnglishWord;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.EnglishWordService;
 

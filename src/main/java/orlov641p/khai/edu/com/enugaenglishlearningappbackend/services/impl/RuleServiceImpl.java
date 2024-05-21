@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.Rule;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.repositories.RuleRepository;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.RuleService;
@@ -16,6 +17,7 @@ import java.util.List;
  * managing Rule entities.
  */
 @Service
+@Transactional
 public class RuleServiceImpl implements RuleService {
 
     private final RuleRepository ruleRepository;

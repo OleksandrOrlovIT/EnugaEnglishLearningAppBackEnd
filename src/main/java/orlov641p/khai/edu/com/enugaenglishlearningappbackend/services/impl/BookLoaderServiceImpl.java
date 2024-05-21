@@ -2,6 +2,7 @@ package orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.impl;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.Book;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.Page;
@@ -12,10 +13,10 @@ import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.PageServic
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @AllArgsConstructor
 @Service
+@Transactional
 public class BookLoaderServiceImpl implements BookLoaderService {
 
     private final BookService bookService;

@@ -1,6 +1,7 @@
 package orlov641p.khai.edu.com.enugaenglishlearningappbackend.bootstrap;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -16,6 +17,7 @@ import java.util.stream.Stream;
 
 @AllArgsConstructor
 @Component
+@Slf4j
 @Profile("!test")
 public class InitialBootstrap implements CommandLineRunner {
 
@@ -33,15 +35,22 @@ public class InitialBootstrap implements CommandLineRunner {
         if (ruleService.getFirst() == null) {
             loadRules();
         }
+        log.info("Rules were loaded or skipped");
+
         if (questionService.getFirst() == null) {
             loadQuestionsAndTests();
         }
-        if (translationPairService.getFirst() == null) {
-            loadWordsToDB();
-        }
+        log.info("Questions were loaded or skipped");
+
         if (bookService.getFirst() == null) {
             loadBooks();
         }
+        log.info("Books were loaded or skipped");
+
+        if (translationPairService.getFirst() == null) {
+            loadWordsToDB();
+        }
+        log.info("Translation pairs were loaded or skipped");
     }
 
     private void loadRules() {

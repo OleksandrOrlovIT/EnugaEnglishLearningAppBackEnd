@@ -1,4 +1,4 @@
-package orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.dto;
+package orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.dto.request;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;

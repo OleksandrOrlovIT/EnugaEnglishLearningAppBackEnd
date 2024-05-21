@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.EnglishWord;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.repositories.EnglishWordRepository;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.EnglishWordService;
@@ -13,6 +14,7 @@ import java.util.List;
 
 @AllArgsConstructor
 @Service
+@Transactional
 public class EnglishWordServiceImpl implements EnglishWordService {
 
     private final EnglishWordRepository englishWordRepository;

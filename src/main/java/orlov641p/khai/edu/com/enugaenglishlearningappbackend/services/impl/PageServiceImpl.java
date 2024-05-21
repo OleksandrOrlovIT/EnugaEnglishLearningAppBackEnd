@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.Page;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.repositories.PageRepository;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.PageService;
@@ -12,6 +13,7 @@ import java.util.List;
 
 @AllArgsConstructor
 @Service
+@Transactional
 public class PageServiceImpl implements PageService {
 
     private final PageRepository pageRepository;

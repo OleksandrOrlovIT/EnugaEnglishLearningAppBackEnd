@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.EnglishTest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.Question;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.repositories.EnglishTestRepository;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
+@Transactional
 public class EnglishTestServiceImpl implements EnglishTestService {
 
     private final EnglishTestRepository englishTestRepository;

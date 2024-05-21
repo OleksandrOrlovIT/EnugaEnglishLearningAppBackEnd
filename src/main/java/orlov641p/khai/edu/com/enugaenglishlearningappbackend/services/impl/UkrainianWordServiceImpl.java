@@ -5,16 +5,17 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.TranslationPair;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.UkrainianWord;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.repositories.UkrainianWordRepository;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.UkrainianWordService;
 
 import java.util.List;
-import java.util.Map;
 
 @AllArgsConstructor
 @Service
+@Transactional
 public class UkrainianWordServiceImpl implements UkrainianWordService {
 
     private final UkrainianWordRepository ukrainianWordRepository;
