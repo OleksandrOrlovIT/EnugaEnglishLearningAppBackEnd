@@ -4,7 +4,6 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.Question;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.Rule;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.repositories.RuleRepository;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.RuleService;
