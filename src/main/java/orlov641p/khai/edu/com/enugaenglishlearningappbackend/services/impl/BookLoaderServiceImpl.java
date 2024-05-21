@@ -9,11 +9,10 @@ import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.BookLoader
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.BookService;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.PageService;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Objects;
 
 @AllArgsConstructor
 @Service
@@ -23,14 +22,20 @@ public class BookLoaderServiceImpl implements BookLoaderService {
     private final PageService pageService;
 
     @Override
-    public void loadBookFromFile(MultipartFile file, String title, String author) throws Exception {
-        Book book = new Book();
-        book.setTitle(title);
-        book.setAuthor(author);
+    public void loadBookFromMultipartFile(MultipartFile file, Book book) throws Exception {
+        loadBook(file.getInputStream(), book);
+    }
+
+    @Override
+    public void loadBookFromFile(File file, Book book) throws Exception {
+        loadBook(new FileInputStream(file), book);
+    }
+
+    private void loadBook(InputStream inputStream, Book book) throws Exception {
         bookService.create(book);
         List<Page> pages = new ArrayList<>();
 
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
             StringBuilder pageContent = new StringBuilder();
             String line;
             int pageNumber = 1;
@@ -60,11 +65,12 @@ public class BookLoaderServiceImpl implements BookLoaderService {
                 pageService.create(page);
                 pages.add(page);
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             bookService.delete(book);
-            for(Page page : pages){
+            for (Page page : pages) {
                 pageService.delete(page);
             }
+            throw e;
         }
     }
 }

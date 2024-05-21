@@ -15,6 +15,7 @@ public class Page extends BaseEntity{
     private int pageNumber;
 
     @Lob
+    @Column(length=2000)
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)

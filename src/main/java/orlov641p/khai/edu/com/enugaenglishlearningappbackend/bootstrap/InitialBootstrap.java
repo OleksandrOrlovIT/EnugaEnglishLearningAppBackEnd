@@ -5,8 +5,10 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.*;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.enums.BookGenre;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.*;
 
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -23,21 +25,26 @@ public class InitialBootstrap implements CommandLineRunner {
     private final UkrainianWordService ukrainianWordService;
     private final EnglishWordService englishWordService;
     private final TranslationPairService translationPairService;
+    private final BookLoaderService bookLoaderService;
+    private final BookService bookService;
 
     @Override
     public void run(String... args) throws Exception {
-        if(ruleService.getFirst() == null) {
+        if (ruleService.getFirst() == null) {
             loadRules();
         }
-        if(questionService.getFirst() == null) {
+        if (questionService.getFirst() == null) {
             loadQuestionsAndTests();
         }
-        if(translationPairService.getFirst() == null) {
+        if (translationPairService.getFirst() == null) {
             loadWordsToDB();
+        }
+        if (bookService.getFirst() == null) {
+            loadBooks();
         }
     }
 
-    private void loadRules(){
+    private void loadRules() {
         Rule presentSimple = Rule.builder()
                 .ruleName("Present Simple")
                 .description("The present simple tense is a grammatical form used to describe actions or states that" +
@@ -66,12 +73,12 @@ public class InitialBootstrap implements CommandLineRunner {
         ruleService.create(presentContinuous);
     }
 
-    private void loadQuestionsAndTests(){
+    private void loadQuestionsAndTests() {
         loadTest1WithQuestions();
         loadTest2WithQuestions();
     }
 
-    private void loadTest1WithQuestions(){
+    private void loadTest1WithQuestions() {
         Question question1Test1 = Question.builder()
                 .questionText("In present simple, what form will be a to be verb for He")
                 .answer("is")
@@ -102,7 +109,7 @@ public class InitialBootstrap implements CommandLineRunner {
         questionService.create(question3Test1);
     }
 
-    private void loadTest2WithQuestions(){
+    private void loadTest2WithQuestions() {
         Question question1Test2 = Question.builder()
                 .questionText("My name __ Sasha")
                 .answer("is")
@@ -136,7 +143,7 @@ public class InitialBootstrap implements CommandLineRunner {
         }
     }
 
-    private void addWordsFromLine(String line){
+    private void addWordsFromLine(String line) {
         String[] words = line.split(" ");
         EnglishWord englishWord = EnglishWord.builder().word(words[0]).build();
         UkrainianWord ukrainianWord = UkrainianWord.builder().word(words[1]).build();
@@ -148,5 +155,17 @@ public class InitialBootstrap implements CommandLineRunner {
         englishWordService.create(englishWord);
         ukrainianWordService.create(ukrainianWord);
         translationPairService.create(translationPair);
+    }
+
+    private void loadBooks() throws Exception {
+        File romeoAndJulietFile = new File("src/main/resources/static/RomeoAndJuliet.txt");
+
+        Book romeoAndJuliet = Book.builder()
+                .title("Romeo and Juliet")
+                .author("William Shakespeare")
+                .bookGenre(BookGenre.DRAMA)
+                .build();
+
+        bookLoaderService.loadBookFromFile(romeoAndJulietFile, romeoAndJuliet);
     }
 }
