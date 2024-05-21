@@ -13,6 +13,7 @@ public class PageMapper {
 
     public static PageResponse pageToPageResponse(Page page){
         PageResponse pageResponse = new PageResponse();
+        pageResponse.setId(page.getId());
         pageResponse.setPageNumber(page.getPageNumber());
         pageResponse.setContent(page.getContent());
 

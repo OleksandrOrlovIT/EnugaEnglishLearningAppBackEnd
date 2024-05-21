@@ -9,7 +9,8 @@ import lombok.Setter;
 @Getter
 public class PageResponse {
 
-    private int pageNumber;
+    private Long id;
+    private Integer pageNumber;
     private String content;
     private BookResponse bookResponse;
 

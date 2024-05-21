@@ -7,12 +7,16 @@ import java.util.List;
 
 public class BookMapper {
     public static BookResponse fromBookToBookResponse(Book book) {
+        if(book == null){
+            return null;
+        }
+
         return new BookResponse(
                 book.getId(),
                 book.getTitle(),
                 book.getAuthor(),
                 book.getBookGenre(),
-                book.getPages().size()
+                book.getPages() != null ? book.getPages().size() : 0
         );
     }
 

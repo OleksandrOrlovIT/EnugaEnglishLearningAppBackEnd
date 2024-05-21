@@ -12,7 +12,7 @@ import java.util.Objects;
 @Entity
 public class Page extends BaseEntity{
 
-    private int pageNumber;
+    private Integer pageNumber;
 
     @Lob
     @Column(length=2000)
