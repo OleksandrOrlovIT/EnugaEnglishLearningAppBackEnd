@@ -11,6 +11,7 @@ import orlov641p.khai.edu.com.enugaenglishlearningappbackend.repositories.Englis
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.EnglishWordService;
 
 import java.util.List;
+import java.util.Optional;
 
 @AllArgsConstructor
 @Service
@@ -38,7 +39,7 @@ public class EnglishWordServiceImpl implements EnglishWordService {
     }
 
     @Override
-    public synchronized EnglishWord create(EnglishWord englishWord) {
+    public EnglishWord create(EnglishWord englishWord) {
         checkEnglishWordNull(englishWord);
 
         return englishWordRepository.save(englishWord);
@@ -81,6 +82,16 @@ public class EnglishWordServiceImpl implements EnglishWordService {
     @Override
     public Page<EnglishWord> findPageEnglishWords(Pageable pageable) {
         return englishWordRepository.findAll(pageable);
+    }
+
+    @Override
+    public EnglishWord findByWord(String word) {
+        return englishWordRepository.findByWord(word).orElse(null);
+    }
+
+    @Override
+    public boolean existsByWord(String name) {
+        return englishWordRepository.existsByWord(name);
     }
 
     private void checkEnglishWordNull(EnglishWord englishWord){

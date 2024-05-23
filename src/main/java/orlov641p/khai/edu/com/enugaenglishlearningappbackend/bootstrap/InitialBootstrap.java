@@ -13,6 +13,9 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 @AllArgsConstructor
@@ -146,7 +149,21 @@ public class InitialBootstrap implements CommandLineRunner {
         Path path = Paths.get("src/main/resources/static/english-ukraine.txt");
 
         try (Stream<String> lines = Files.lines(path)) {
-            lines.parallel().forEach(this::addWordsFromLine);
+            AtomicInteger counter = new AtomicInteger(0);
+            Instant start = Instant.now();
+
+            lines.forEach(line -> {
+                        try {
+                            counter.incrementAndGet();
+                            addWordsFromLine(line);
+                            if (counter.get() % 5000 == 0) {
+                                Duration elapsed = Duration.between(start, Instant.now());
+                                System.out.println("Processed " + counter.get() + " lines. Time elapsed: " + elapsed.toMillis() + " ms");
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    });
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -156,13 +173,26 @@ public class InitialBootstrap implements CommandLineRunner {
         String[] words = line.split(" ");
         EnglishWord englishWord = EnglishWord.builder().word(words[0]).build();
         UkrainianWord ukrainianWord = UkrainianWord.builder().word(words[1]).build();
+
+        EnglishWord foundEnglishWord = englishWordService.findByWord(englishWord.getWord());
+        if(foundEnglishWord != null){
+            englishWord = foundEnglishWord;
+        } else {
+            englishWord = englishWordService.create(englishWord);
+        }
+
+        UkrainianWord foundUkrainianWord = ukrainianWordService.findByWord(ukrainianWord.getWord());
+        if(foundUkrainianWord != null){
+            ukrainianWord = foundUkrainianWord;
+        } else {
+            ukrainianWord = ukrainianWordService.create(ukrainianWord);
+        }
+
         TranslationPair translationPair = TranslationPair.builder()
                 .englishWord(englishWord)
                 .ukrainianWord(ukrainianWord)
                 .build();
 
-        englishWordService.create(englishWord);
-        ukrainianWordService.create(ukrainianWord);
         translationPairService.create(translationPair);
     }
 

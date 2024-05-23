@@ -8,7 +8,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.dto.request.CustomPageRequest;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.EnglishWord;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.TranslationPair;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.UkrainianWord;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.TranslationPairService;
 
 import java.net.URI;
@@ -37,6 +39,16 @@ public class TranslationPairController {
     @GetMapping("/translation-pair/{id}")
     public TranslationPair retrieveTranslationPairById(@PathVariable Long id){
         return translationPairService.findById(id);
+    }
+
+    @PostMapping("/translation-pair/translate/eng-to-ukr-word")
+    public List<UkrainianWord> translateEnglishToUkrainianWord(@RequestBody EnglishWord englishWord){
+        return translationPairService.translateEnglishWordToUkrainian(englishWord);
+    }
+
+    @PostMapping("/translation-pair/translateBulk/eng-to-ukr-word")
+    public List<List<UkrainianWord>> translateEnglishBulkToUkrainianWord(@RequestBody List<EnglishWord> englishWords){
+        return translationPairService.translateBulkEnglishWordsToUkrainian(englishWords);
     }
 
     @PostMapping("/translation-pair")

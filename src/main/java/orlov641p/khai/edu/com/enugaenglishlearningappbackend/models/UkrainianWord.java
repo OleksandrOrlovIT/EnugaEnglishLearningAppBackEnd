@@ -1,5 +1,6 @@
 package orlov641p.khai.edu.com.enugaenglishlearningappbackend.models;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,6 +16,7 @@ import java.util.Objects;
 @Entity
 public class UkrainianWord extends BaseEntity{
 
+    @Column(unique = true)
     private String word;
 
     @Builder

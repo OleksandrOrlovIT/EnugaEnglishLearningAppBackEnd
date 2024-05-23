@@ -12,6 +12,7 @@ import orlov641p.khai.edu.com.enugaenglishlearningappbackend.repositories.Ukrain
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.UkrainianWordService;
 
 import java.util.List;
+import java.util.Optional;
 
 @AllArgsConstructor
 @Service
@@ -39,7 +40,7 @@ public class UkrainianWordServiceImpl implements UkrainianWordService {
     }
 
     @Override
-    public synchronized UkrainianWord create(UkrainianWord ukrainianWord) {
+    public UkrainianWord create(UkrainianWord ukrainianWord) {
         checkUkrainianWordNull(ukrainianWord);
 
         return ukrainianWordRepository.save(ukrainianWord);
@@ -82,6 +83,16 @@ public class UkrainianWordServiceImpl implements UkrainianWordService {
         Page<UkrainianWord> ukrainianWords = findPageUkrainianWords(pageable);
 
         return ukrainianWords.hasContent() ? ukrainianWords.getContent().get(0) : null;
+    }
+
+    @Override
+    public UkrainianWord findByWord(String word) {
+        return ukrainianWordRepository.findByWord(word).orElse(null);
+    }
+
+    @Override
+    public boolean existsByWord(String word) {
+        return ukrainianWordRepository.existsByWord(word);
     }
 
     private void checkUkrainianWordNull(UkrainianWord ukrainianWord){
