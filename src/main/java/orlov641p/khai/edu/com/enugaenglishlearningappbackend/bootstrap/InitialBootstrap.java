@@ -146,7 +146,7 @@ public class InitialBootstrap implements CommandLineRunner {
     }
 
     private void loadWordsToDB() {
-        Path path = Paths.get("src/main/resources/static/english-ukraine.txt");
+        Path path = Paths.get("src/main/resources/static/Vocabulary.txt");
 
         try (Stream<String> lines = Files.lines(path)) {
             AtomicInteger counter = new AtomicInteger(0);

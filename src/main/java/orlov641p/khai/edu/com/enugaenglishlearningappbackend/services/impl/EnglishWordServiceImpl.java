@@ -11,7 +11,6 @@ import orlov641p.khai.edu.com.enugaenglishlearningappbackend.repositories.Englis
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.EnglishWordService;
 
 import java.util.List;
-import java.util.Optional;
 
 @AllArgsConstructor
 @Service
@@ -90,8 +89,13 @@ public class EnglishWordServiceImpl implements EnglishWordService {
     }
 
     @Override
-    public boolean existsByWord(String name) {
-        return englishWordRepository.existsByWord(name);
+    public boolean existsByWord(String word) {
+        return englishWordRepository.existsByWord(word);
+    }
+
+    @Override
+    public List<EnglishWord> findAllByWordIgnoreCase(String word) {
+        return englishWordRepository.findAllByWordIgnoreCase(word);
     }
 
     private void checkEnglishWordNull(EnglishWord englishWord){

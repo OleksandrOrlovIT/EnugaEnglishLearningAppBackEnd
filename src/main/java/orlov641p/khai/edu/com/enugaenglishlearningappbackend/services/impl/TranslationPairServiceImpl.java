@@ -90,11 +90,14 @@ public class TranslationPairServiceImpl implements TranslationPairService {
 
     @Override
     public List<UkrainianWord> translateEnglishWordToUkrainian(EnglishWord englishWord) {
-        EnglishWord foundEngWord = englishWordService.findByWord(englishWord.getWord());
+        List<EnglishWord> foundEngWords = englishWordService.findAllByWordIgnoreCase(englishWord.getWord());
+        System.out.println("FoundEngWords = " + foundEngWords);
 
-        if(foundEngWord == null){
+        if(foundEngWords == null || foundEngWords.isEmpty()){
             throw new EntityNotFoundException("EnglishWord doesn't exist with word = " + englishWord);
         }
+
+        EnglishWord foundEngWord = foundEngWords.get(0);
 
         List<TranslationPair> translationPairs = translationPairRepository.findAllByEnglishWord(foundEngWord);
 
