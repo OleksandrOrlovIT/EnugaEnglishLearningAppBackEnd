@@ -13,4 +13,6 @@ public interface TranslationPairService extends CrudService<TranslationPair, Lon
     List<UkrainianWord> translateEnglishWordToUkrainian(EnglishWord englishWord);
 
     List<List<UkrainianWord>> translateBulkEnglishWordsToUkrainian(List<EnglishWord> englishWords);
+
+    List<TranslationPair> createAll(List<TranslationPair> translationPairs);
 }

@@ -1,5 +1,7 @@
 package orlov641p.khai.edu.com.enugaenglishlearningappbackend.bootstrap;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -15,6 +17,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
@@ -148,44 +152,56 @@ public class InitialBootstrap implements CommandLineRunner {
     private void loadWordsToDB() {
         Path path = Paths.get("src/main/resources/static/Vocabulary.txt");
 
-        try (Stream<String> lines = Files.lines(path)) {
+        try (Stream<String> lines = Files.lines(path).parallel()) {
             AtomicInteger counter = new AtomicInteger(0);
             Instant start = Instant.now();
 
+            Cache<String, EnglishWord> englishWordCache = CacheBuilder.newBuilder()
+                    .maximumSize(80000)
+                    .build();
+
+            Cache<String, UkrainianWord> ukrainianWordCache = CacheBuilder.newBuilder()
+                    .maximumSize(80000)
+                    .build();
+
+            List<TranslationPair> translationPairs = new ArrayList<>();
+
             lines.forEach(line -> {
-                        try {
-                            counter.incrementAndGet();
-                            addWordsFromLine(line);
-                            if (counter.get() % 5000 == 0) {
-                                Duration elapsed = Duration.between(start, Instant.now());
-                                System.out.println("Processed " + counter.get() + " lines. Time elapsed: " + elapsed.toMillis() + " ms");
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    });
+                try {
+                    counter.incrementAndGet();
+                    addWordsFromLine(line, englishWordCache, ukrainianWordCache, translationPairs);
+                    if (counter.get() % 5000 == 0) {
+                        Duration elapsed = Duration.between(start, Instant.now());
+                        System.out.println("Processed " + counter.get() + " lines. Time elapsed: " + elapsed.toMillis() + " ms");
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+
+            batchInsertTranslationPairs(translationPairs);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void addWordsFromLine(String line) {
+    private void addWordsFromLine(String line, Cache<String, EnglishWord> englishWordCache, Cache<String, UkrainianWord> ukrainianWordCache, List<TranslationPair> translationPairs) {
         String[] words = line.split(" ");
-        EnglishWord englishWord = EnglishWord.builder().word(words[0]).build();
-        UkrainianWord ukrainianWord = UkrainianWord.builder().word(words[1]).build();
+        String englishWordStr = words[0];
+        String ukrainianWordStr = words[1];
 
-        EnglishWord foundEnglishWord = englishWordService.findByWord(englishWord.getWord());
-        if(foundEnglishWord != null){
-            englishWord = foundEnglishWord;
-        } else {
-            englishWord = englishWordService.create(englishWord);
+        EnglishWord englishWord = englishWordCache.getIfPresent(englishWordStr);
+        if (englishWord == null) {
+            EnglishWord foundEnglishWord = englishWordService.findByWord(englishWordStr);
+            englishWord = foundEnglishWord != null ? foundEnglishWord : englishWordService.create(EnglishWord.builder().word(englishWordStr).build());
+            englishWordCache.put(englishWordStr, englishWord);
         }
 
-        UkrainianWord foundUkrainianWord = ukrainianWordService.findByWord(ukrainianWord.getWord());
-        if(foundUkrainianWord != null){
-            ukrainianWord = foundUkrainianWord;
-        } else {
-            ukrainianWord = ukrainianWordService.create(ukrainianWord);
+        UkrainianWord ukrainianWord = ukrainianWordCache.getIfPresent(ukrainianWordStr);
+        if (ukrainianWord == null) {
+            UkrainianWord foundUkrainianWord = ukrainianWordService.findByWord(ukrainianWordStr);
+            ukrainianWord = foundUkrainianWord != null ? foundUkrainianWord : ukrainianWordService.create(UkrainianWord.builder().word(ukrainianWordStr).build());
+            ukrainianWordCache.put(ukrainianWordStr, ukrainianWord);
         }
 
         TranslationPair translationPair = TranslationPair.builder()
@@ -193,7 +209,17 @@ public class InitialBootstrap implements CommandLineRunner {
                 .ukrainianWord(ukrainianWord)
                 .build();
 
-        translationPairService.create(translationPair);
+        synchronized (translationPairs) {
+            translationPairs.add(translationPair);
+            if (translationPairs.size() >= 1000) {
+                batchInsertTranslationPairs(new ArrayList<>(translationPairs));
+                translationPairs.clear();
+            }
+        }
+    }
+
+    private void batchInsertTranslationPairs(List<TranslationPair> translationPairs) {
+        translationPairService.createAll(translationPairs);
     }
 
     private void loadBooks() throws Exception {

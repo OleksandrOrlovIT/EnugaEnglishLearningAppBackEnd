@@ -12,6 +12,7 @@ import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.UkrainianWor
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.repositories.TranslationPairRepository;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.EnglishWordService;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.TranslationPairService;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.UkrainianWordService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +24,7 @@ public class TranslationPairServiceImpl implements TranslationPairService {
 
     private final TranslationPairRepository translationPairRepository;
     private final EnglishWordService englishWordService;
+    private final UkrainianWordService ukrainianWordService;
 
     @Override
     public List<TranslationPair> findAll() {
@@ -45,6 +47,22 @@ public class TranslationPairServiceImpl implements TranslationPairService {
     @Override
     public TranslationPair create(TranslationPair translationPair) {
         checkTranslationPairNull(translationPair);
+
+        EnglishWord englishWord = englishWordService.findByWord(translationPair.getEnglishWord().getWord());
+
+        if(englishWord == null){
+            englishWord = englishWordService.create(translationPair.getEnglishWord());
+        }
+
+        translationPair.setEnglishWord(englishWord);
+
+        UkrainianWord ukrainianWord = ukrainianWordService.findByWord(translationPair.getUkrainianWord().getWord());
+
+        if(ukrainianWord == null){
+            ukrainianWord = ukrainianWordService.create(translationPair.getUkrainianWord());
+        }
+
+        translationPair.setUkrainianWord(ukrainianWord);
 
         return translationPairRepository.save(translationPair);
     }
@@ -91,7 +109,6 @@ public class TranslationPairServiceImpl implements TranslationPairService {
     @Override
     public List<UkrainianWord> translateEnglishWordToUkrainian(EnglishWord englishWord) {
         List<EnglishWord> foundEngWords = englishWordService.findAllByWordIgnoreCase(englishWord.getWord());
-        System.out.println("FoundEngWords = " + foundEngWords);
 
         if(foundEngWords == null || foundEngWords.isEmpty()){
             throw new EntityNotFoundException("EnglishWord doesn't exist with word = " + englishWord);
@@ -119,6 +136,11 @@ public class TranslationPairServiceImpl implements TranslationPairService {
         }
 
         return list;
+    }
+
+    @Override
+    public List<TranslationPair> createAll(List<TranslationPair> translationPairs) {
+        return translationPairRepository.saveAll(translationPairs);
     }
 
     private void checkTranslationPairNull(TranslationPair translationPair){
