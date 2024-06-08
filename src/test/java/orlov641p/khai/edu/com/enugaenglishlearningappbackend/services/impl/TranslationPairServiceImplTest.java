@@ -11,6 +11,8 @@ import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.EnglishWord;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.TranslationPair;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.UkrainianWord;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.repositories.TranslationPairRepository;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.EnglishWordService;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.UkrainianWordService;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,6 +26,12 @@ import static org.mockito.Mockito.*;
 class TranslationPairServiceImplTest {
     @Mock
     private TranslationPairRepository translationPairRepository;
+
+    @Mock
+    private EnglishWordService englishWordService;
+
+    @Mock
+    private UkrainianWordService ukrainianWordService;
 
     @InjectMocks
     private TranslationPairServiceImpl translationPairService;
@@ -83,6 +91,9 @@ class TranslationPairServiceImplTest {
 
     @Test
     void givenValid_whenCreate_thenCorrect() {
+        when(englishWordService.findByWord(any())).thenReturn(englishWord);
+        when(ukrainianWordService.findByWord(any())).thenReturn(ukrainianWord);
+
         assertDoesNotThrow(() -> translationPairService.create(translationPair));
     }
 
