@@ -5,8 +5,10 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.Book;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.Page;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.repositories.PageRepository;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.BookService;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.PageService;
 
 import java.util.List;
@@ -17,6 +19,7 @@ import java.util.List;
 public class PageServiceImpl implements PageService {
 
     private final PageRepository pageRepository;
+    private final BookService bookService;
 
     @Override
     public List<Page> findAll() {
@@ -75,6 +78,13 @@ public class PageServiceImpl implements PageService {
         org.springframework.data.domain.Page<Page> pages = pageRepository.findAll(pageable);
 
         return pages.hasContent() ? pages.getContent().get(0) : null;
+    }
+
+    @Override
+    public Page getPageByBookAndNumber(Long bookId, Integer pageNumber) {
+        Book book = bookService.findById(bookId);
+
+        return pageRepository.findByBookAndPageNumber(book, pageNumber);
     }
 
     private void checkPageNull(Page page){

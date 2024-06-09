@@ -32,6 +32,13 @@ public class PageController {
         return pageToPageResponse(page);
     }
 
+    @GetMapping("book/{bookId}/page/{pageNumber}")
+    public PageResponse retrievePageByBookIdAndPageNumber(@PathVariable Long bookId, @PathVariable Integer pageNumber){
+        Page page = pageService.getPageByBookAndNumber(bookId, pageNumber);
+
+        return pageToPageResponse(page);
+    }
+
     @PostMapping("/page")
     public ResponseEntity<PageResponse> createPage(@RequestBody Page page){
         Page savedPage = pageService.create(page);
