@@ -143,6 +143,27 @@ public class TranslationPairServiceImpl implements TranslationPairService {
         return translationPairRepository.saveAll(translationPairs);
     }
 
+    @Override
+    public List<EnglishWord> translateUkrainianWordToEnglish(UkrainianWord ukrainianWord) {
+        List<UkrainianWord> foundUkrWords = ukrainianWordService.findAllByWordIgnoreCase(ukrainianWord.getWord());
+
+        if(foundUkrWords == null || foundUkrWords.isEmpty()){
+            throw new EntityNotFoundException("UkrainianWord doesn't exist with word = " + ukrainianWord);
+        }
+
+        UkrainianWord foundUkrWord = foundUkrWords.get(0);
+
+        List<TranslationPair> translationPairs = translationPairRepository.findAllByUkrainianWord(foundUkrWord);
+
+        List<EnglishWord> translations = new ArrayList<>();
+
+        for(TranslationPair translationPair : translationPairs){
+            translations.add(translationPair.getEnglishWord());
+        }
+
+        return translations;
+    }
+
     private void checkTranslationPairNull(TranslationPair translationPair){
         if (translationPair == null) {
             throw new IllegalArgumentException("TranslationPair can`t be null");

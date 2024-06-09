@@ -4,7 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.UkrainianWord;
 
-import java.util.Optional;
+import java.util.List;
 
 public interface UkrainianWordService extends CrudService<UkrainianWord, Long>{
     Page<UkrainianWord> findPageUkrainianWords(Pageable pageable);
@@ -12,4 +12,6 @@ public interface UkrainianWordService extends CrudService<UkrainianWord, Long>{
     UkrainianWord findByWord(String word);
 
     boolean existsByWord(String word);
+
+    List<UkrainianWord> findAllByWordIgnoreCase(String word);
 }

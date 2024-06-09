@@ -91,6 +91,11 @@ public class UkrainianWordServiceImpl implements UkrainianWordService {
     }
 
     @Override
+    public List<UkrainianWord> findAllByWordIgnoreCase(String word) {
+        return ukrainianWordRepository.findAllByWordIgnoreCase(word);
+    }
+
+    @Override
     public boolean existsByWord(String word) {
         return ukrainianWordRepository.existsByWord(word);
     }

@@ -41,6 +41,11 @@ public class TranslationPairController {
         return translationPairService.findById(id);
     }
 
+    @PostMapping("/translation-pair/translate/ukr-to-eng-word")
+    public List<EnglishWord> translateUkrainianToEnglishWord(@RequestBody UkrainianWord ukrainianWord){
+        return translationPairService.translateUkrainianWordToEnglish(ukrainianWord);
+    }
+
     @PostMapping("/translation-pair/translate/eng-to-ukr-word")
     public List<UkrainianWord> translateEnglishToUkrainianWord(@RequestBody EnglishWord englishWord){
         return translationPairService.translateEnglishWordToUkrainian(englishWord);
