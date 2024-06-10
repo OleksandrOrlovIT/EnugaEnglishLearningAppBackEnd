@@ -2,6 +2,8 @@ package orlov641p.khai.edu.com.enugaenglishlearningappbackend.models;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.engtest.Question;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.rule.Rule;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
