@@ -9,7 +9,7 @@ import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.rule.RuleS
 import java.util.List;
 import java.net.URI;
 
-@RestController()
+@RestController
 @RequestMapping("/v1")
 public class RuleController {
     private final RuleService ruleService;

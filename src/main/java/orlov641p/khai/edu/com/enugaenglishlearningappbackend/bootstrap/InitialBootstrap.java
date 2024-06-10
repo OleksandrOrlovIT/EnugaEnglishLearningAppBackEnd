@@ -12,6 +12,8 @@ import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.engtest.Engl
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.engtest.Question;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.enums.BookGenre;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.rule.Rule;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.Role;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.User;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.vocabulary.EnglishWord;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.vocabulary.TranslationPair;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.vocabulary.UkrainianWord;
@@ -20,6 +22,7 @@ import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.book.BookS
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.engtest.EnglishTestService;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.engtest.QuestionService;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.rule.RuleService;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.user.UserService;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.vocabulary.EnglishWordService;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.vocabulary.TranslationPairService;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.vocabulary.UkrainianWordService;
@@ -32,6 +35,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
@@ -49,28 +53,44 @@ public class InitialBootstrap implements CommandLineRunner {
     private final TranslationPairService translationPairService;
     private final BookLoaderService bookLoaderService;
     private final BookService bookService;
+    private final UserService userService;
 
     @Override
     public void run(String... args) throws Exception {
         if (ruleService.getFirst() == null) {
             loadRules();
+            log.info("Rules were loaded");
+        } else {
+            log.info("Rules loading were skipped");
         }
-        log.info("Rules were loaded or skipped");
 
         if (questionService.getFirst() == null) {
             loadQuestionsAndTests();
+            log.info("Questions were loaded");
+        } else {
+            log.info("Questions loading were skipped");
         }
-        log.info("Questions were loaded or skipped");
 
         if (bookService.getFirst() == null) {
             loadBooks();
+            log.info("Books were loaded");
+        } else {
+            log.info("Books loading were skipped");
         }
-        log.info("Books were loaded or skipped");
 
         if (translationPairService.getFirst() == null) {
             loadWordsToDB();
+            log.info("Translation pairs were loaded");
+        } else {
+            log.info("Translation pairs loading were skipped");
         }
-        log.info("Translation pairs were loaded or skipped");
+
+        if(userService.getFirst() == null){
+            loadUsers();
+            log.info("Users were loaded ");
+        } else {
+            log.info("Users loading were skipped");
+        }
     }
 
     private void loadRules() {
@@ -245,5 +265,55 @@ public class InitialBootstrap implements CommandLineRunner {
                 .build();
 
         bookLoaderService.loadBookFromFile(romeoAndJulietFile, romeoAndJuliet);
+    }
+
+    private void loadUsers() {
+        User withoutSubUser = User.builder()
+                .email("test1@email.com")
+                .firstName("TestName1")
+                .lastName("TestName1")
+                .password("123")
+                .roles(Set.of(Role.USER_WITHOUT_SUBSCRIPTION))
+                .build();
+
+        User withSubUser = User.builder()
+                .email("test2@email.com")
+                .firstName("TestName2")
+                .lastName("TestName2")
+                .password("123")
+                .roles(Set.of(Role.USER_WITHOUT_SUBSCRIPTION, Role.USER_WITH_SUBSCRIPTION))
+                .build();
+
+        User englishStudent = User.builder()
+                .email("test3@email.com")
+                .firstName("TestName3")
+                .lastName("TestName3")
+                .password("123")
+                .roles(Set.of(Role.USER_WITHOUT_SUBSCRIPTION, Role.USER_WITH_SUBSCRIPTION, Role.ENGLISH_STUDENT_USER))
+                .build();
+
+        User englishTeacher = User.builder()
+                .email("test4@email.com")
+                .firstName("TestName4")
+                .lastName("TestName4")
+                .password("123")
+                .roles(Set.of(Role.USER_WITHOUT_SUBSCRIPTION, Role.USER_WITH_SUBSCRIPTION, Role.ENGLISH_STUDENT_USER,
+                        Role.ENGLISH_TEACHER_USER))
+                .build();
+
+        User admin = User.builder()
+                .email("test5@email.com")
+                .firstName("TestName5")
+                .lastName("TestName5")
+                .password("123")
+                .roles(Set.of(Role.USER_WITHOUT_SUBSCRIPTION, Role.USER_WITH_SUBSCRIPTION, Role.ENGLISH_STUDENT_USER,
+                        Role.ENGLISH_TEACHER_USER, Role.ADMIN))
+                .build();
+
+        userService.create(withoutSubUser);
+        userService.create(withSubUser);
+        userService.create(englishStudent);
+        userService.create(englishTeacher);
+        userService.create(admin);
     }
 }
