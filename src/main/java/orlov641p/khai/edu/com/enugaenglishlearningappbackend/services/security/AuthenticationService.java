@@ -7,6 +7,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.stereotype.Service;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.auth.dto.request.UserLogin;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.auth.dto.response.JwtAuthenticationResponse;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.auth.dto.response.UserWithoutPassResponse;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.User;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.user.UserService;
 
@@ -35,6 +36,9 @@ public class AuthenticationService {
 
         var jwt = jwtService.generateToken(foundUser);
 
-        return new JwtAuthenticationResponse(jwt);
+        UserWithoutPassResponse userResponse = new UserWithoutPassResponse(foundUser.getEmail(),
+                foundUser.getFirstName(), foundUser.getLastName(), foundUser.getRoles());
+
+        return new JwtAuthenticationResponse(jwt, userResponse);
     }
 }
