@@ -10,6 +10,7 @@ import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.vocabulary.U
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.repositories.vocabulary.UkrainianWordRepository;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.vocabulary.UkrainianWordService;
 
+import java.util.Collection;
 import java.util.List;
 
 @AllArgsConstructor
@@ -81,6 +82,11 @@ public class UkrainianWordServiceImpl implements UkrainianWordService {
         Page<UkrainianWord> ukrainianWords = findPageUkrainianWords(pageable);
 
         return ukrainianWords.hasContent() ? ukrainianWords.getContent().get(0) : null;
+    }
+
+    @Override
+    public List<UkrainianWord> createAll(Collection<UkrainianWord> ukrainianWords) {
+        return ukrainianWordRepository.saveAll(ukrainianWords);
     }
 
     @Override

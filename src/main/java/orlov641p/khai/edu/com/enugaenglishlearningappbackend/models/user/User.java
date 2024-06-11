@@ -6,17 +6,19 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.proxy.HibernateProxy;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.BaseEntity;
 
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Setter
 @Getter
 @NoArgsConstructor
 @Entity
 @Table(name = "app_users")
-public class User extends BaseEntity {
+public class User extends BaseEntity implements UserDetails {
 
     @Column(name = "email", nullable = false, unique = true)
     private String email;
@@ -69,5 +71,41 @@ public class User extends BaseEntity {
                 "lastName = " + getLastName() + ", " +
                 "password = " + getPassword() + ", " +
                 "roles = " + getRoles() + ")";
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+
+        for(Role role : roles){
+            authorities.add(new SimpleGrantedAuthority(role.name()));
+        }
+
+        return authorities;
+    }
+
+    @Override
+    public String getUsername() {
+        return getEmail();
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }

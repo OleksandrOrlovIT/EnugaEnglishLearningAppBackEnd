@@ -22,17 +22,16 @@ public class BookLoaderImpl implements BookLoader {
     private final BookService bookService;
 
     @Override
-    public void run(String... args) throws Exception {
+    public void loadBooks() {
         if (bookService.getFirst() == null) {
-            loadBooks();
+            saveBooks();
             log.info("Books were loaded");
         } else {
             log.info("Books loading were skipped");
         }
     }
 
-    @Override
-    public void loadBooks() {
+    public void saveBooks() {
         File romeoAndJulietFile = new File("src/main/resources/static/RomeoAndJuliet.txt");
 
         Book romeoAndJuliet = Book.builder()

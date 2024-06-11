@@ -6,4 +6,5 @@ import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
+    User findByEmail(String email);
 }

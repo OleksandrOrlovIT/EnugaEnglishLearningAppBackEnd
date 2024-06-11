@@ -4,6 +4,8 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.rule.Rule;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.User;
@@ -70,6 +72,22 @@ public class UserServiceImpl implements UserService {
         Page<User> users = userRepository.findAll(pageable);
 
         return users.hasContent() ? users.getContent().get(0) : null;
+    }
+
+    @Override
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    @Override
+    public UserDetailsService userDetailsService() {
+        return this::getUserByEmail;
+    }
+
+    @Override
+    public User getCurrentUser() {
+        var email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return getUserByEmail(email);
     }
 
     private void checkUserNull(User user){

@@ -12324,10 +12324,7 @@ applicator аплікатор
 applicators аплікатори
 applied застосовується
 applies застосовується
-appliqué appliqu é
-appliquéd appliqu é d
-appliquéing аплікація​​
-appliqués appliqu é s
+appliquéing аплікація
 apply застосувати
 applying застосування
 appoint призначити
@@ -13061,7 +13058,7 @@ asynchronously асинхронно
 at в
 atavism атавізм
 atavistic атавістичний
-ate їв
+ate з'їв
 atelier ательє
 ateliers ательє
 atheism атеїзм
@@ -13112,8 +13109,8 @@ attached додається
 attaching прикріплення
 attachment вкладення
 attachments вкладення
-attaché приєднати é
-attachés прикріпити é s
+attaché приєднати
+attachés прикріпити
 attack напад
 attacked напали
 attacker нападник
@@ -27313,12 +27310,8 @@ dyslexics дислексики
 dyspepsia диспепсія
 dyspeptic диспептичний
 dyspeptics диспепсиками
-débutante d é butante
-débutantes d é butantes
-décolleté d é цанга é
-dérailleur d é railleur
-dérailleurs d é railleurs
-détente d é tente
+décolleté цанга
+détente tente
 e д
 e'er e'er
 eBay eBay
@@ -73013,7 +73006,6 @@ zucchinis цукіні
 zwieback zwieback
 zygote зигота
 zygotes зиготи
-Ångström Å ngstr ö m
 éclair é clair
 éclairs é clairs
 éclat é clat

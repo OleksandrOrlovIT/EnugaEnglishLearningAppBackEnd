@@ -10,7 +10,10 @@ import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.vocabulary.E
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.repositories.vocabulary.EnglishWordRepository;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.vocabulary.EnglishWordService;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 @AllArgsConstructor
 @Service
@@ -76,6 +79,11 @@ public class EnglishWordServiceImpl implements EnglishWordService {
         Page<EnglishWord> englishWords = englishWordRepository.findAll(pageable);
 
         return englishWords.hasContent() ? englishWords.getContent().get(0) : null;
+    }
+
+    @Override
+    public List<EnglishWord> createAll(Collection<EnglishWord> englishWords) {
+        return englishWordRepository.saveAll(englishWords);
     }
 
     @Override

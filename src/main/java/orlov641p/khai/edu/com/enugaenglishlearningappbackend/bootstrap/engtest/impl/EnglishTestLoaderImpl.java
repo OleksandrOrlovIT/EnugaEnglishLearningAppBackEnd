@@ -20,19 +20,14 @@ public class EnglishTestLoaderImpl implements EnglishTestLoader {
     private final EnglishTestService englishTestService;
 
     @Override
-    public void run(String... args) throws Exception {
+    public void loadEnglishTests() {
         if (questionService.getFirst() == null) {
-            loadEnglishTests();
+            loadTest1WithQuestions();
+            loadTest2WithQuestions();
             log.info("Questions were loaded");
         } else {
             log.info("Questions loading were skipped");
         }
-    }
-
-    @Override
-    public void loadEnglishTests() {
-        loadTest1WithQuestions();
-        loadTest2WithQuestions();
     }
 
     private void loadTest1WithQuestions() {

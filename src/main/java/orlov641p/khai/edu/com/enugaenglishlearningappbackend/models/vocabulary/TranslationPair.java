@@ -1,5 +1,6 @@
 package orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.vocabulary;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import lombok.Builder;
@@ -26,6 +27,12 @@ public class TranslationPair extends BaseEntity {
     @Builder
     public TranslationPair(Long id, EnglishWord englishWord, UkrainianWord ukrainianWord) {
         super(id);
+        this.englishWord = englishWord;
+        this.ukrainianWord = ukrainianWord;
+    }
+
+    public TranslationPair(EnglishWord englishWord, UkrainianWord ukrainianWord) {
+        super();
         this.englishWord = englishWord;
         this.ukrainianWord = ukrainianWord;
     }

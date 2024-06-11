@@ -17,17 +17,16 @@ public class RuleLoaderImpl implements RuleLoader {
     private final RuleService ruleService;
 
     @Override
-    public void run(String... args) throws Exception {
+    public void loadRules() {
         if (ruleService.getFirst() == null) {
-            loadRules();
+            saveRules();
             log.info("Rules were loaded");
         } else {
             log.info("Rules loading were skipped");
         }
     }
 
-    @Override
-    public void loadRules() {
+    public void saveRules() {
         Rule presentSimple = Rule.builder()
                 .ruleName("Present Simple")
                 .description("The present simple tense is a grammatical form used to describe actions or states that" +

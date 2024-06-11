@@ -1,7 +1,5 @@
 package orlov641p.khai.edu.com.enugaenglishlearningappbackend.bootstrap.engtest;
 
-import org.springframework.boot.CommandLineRunner;
-
-public interface EnglishTestLoader extends CommandLineRunner {
+public interface EnglishTestLoader {
     void loadEnglishTests();
 }
