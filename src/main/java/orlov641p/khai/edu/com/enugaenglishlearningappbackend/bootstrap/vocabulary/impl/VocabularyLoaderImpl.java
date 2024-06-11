@@ -93,8 +93,8 @@ public class VocabularyLoaderImpl implements VocabularyLoader {
 
     private void addWordsFromLine(String line, Set<String> englishWords, Set<String> ukrainianWords) {
         int firstSpace = line.indexOf(" ");
-        String englishWordStr = line.substring(0, firstSpace).toLowerCase();
-        String ukrainianWordStr = line.substring(firstSpace + 1).toLowerCase();
+        String englishWordStr = line.substring(0, firstSpace);
+        String ukrainianWordStr = line.substring(firstSpace + 1);
 
         englishWords.add(englishWordStr);
         ukrainianWords.add(ukrainianWordStr);
@@ -159,8 +159,8 @@ public class VocabularyLoaderImpl implements VocabularyLoader {
                 try {
                     counter.incrementAndGet();
                     int firstSpace = line.indexOf(" ");
-                    String englishWordStr = line.substring(0, firstSpace).toLowerCase();
-                    String ukrainianWordStr = line.substring(firstSpace + 1).toLowerCase();
+                    String englishWordStr = line.substring(0, firstSpace);
+                    String ukrainianWordStr = line.substring(firstSpace + 1);
                     translationPairs.add(
                             new TranslationPair(
                                     englishWordCache.getIfPresent(englishWordStr),

@@ -17,7 +17,7 @@ import java.util.Objects;
 @Entity
 public class UkrainianWord extends BaseEntity {
 
-    @Column(unique = true)
+    @Column(unique = true, columnDefinition = "VARCHAR(255) COLLATE utf8_bin")
     private String word;
 
     @Builder
