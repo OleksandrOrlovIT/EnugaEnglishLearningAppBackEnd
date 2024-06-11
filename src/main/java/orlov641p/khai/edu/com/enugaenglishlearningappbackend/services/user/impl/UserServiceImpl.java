@@ -8,11 +8,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.rule.Rule;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.Role;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.User;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.repositories.user.UserRepository;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.user.UserService;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @AllArgsConstructor
 @Service
@@ -36,6 +39,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public User create(User user) {
         checkUserNull(user);
+
+        if(user.getRoles() == null || user.getRoles().isEmpty()){
+            user.setRoles(Set.of(Role.ROLE_USER_WITHOUT_SUBSCRIPTION));
+        }
 
         return userRepository.save(user);
     }

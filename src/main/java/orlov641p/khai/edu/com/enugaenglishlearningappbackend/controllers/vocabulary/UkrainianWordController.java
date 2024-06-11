@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -39,6 +40,7 @@ public class UkrainianWordController {
         return ukrainianWordService.findById(id);
     }
 
+    @PreAuthorize("hasRole('ROLE_ENGLISH_TEACHER_USER')")
     @PostMapping("/ukr-word")
     public ResponseEntity<UkrainianWord> createUkrainianWord(@RequestBody UkrainianWord ukrainianWord){
         UkrainianWord savedUkrainianWord = ukrainianWordService.create(ukrainianWord);
@@ -51,6 +53,7 @@ public class UkrainianWordController {
         return ResponseEntity.created(location).body(savedUkrainianWord);
     }
 
+    @PreAuthorize("hasRole('ROLE_ENGLISH_TEACHER_USER')")
     @PutMapping("/ukr-word/{id}")
     public UkrainianWord updateUkrainianWord(@PathVariable Long id, @RequestBody UkrainianWord ukrainianWord){
         if(ukrainianWordService.findById(id) == null) {
@@ -60,6 +63,7 @@ public class UkrainianWordController {
         return ukrainianWordService.update(ukrainianWord);
     }
 
+    @PreAuthorize("hasRole('ROLE_ENGLISH_TEACHER_USER')")
     @DeleteMapping("/ukr-word/{id}")
     public ResponseEntity<Void> deleteUkrainianWord(@PathVariable Long id){
         ukrainianWordService.deleteById(id);

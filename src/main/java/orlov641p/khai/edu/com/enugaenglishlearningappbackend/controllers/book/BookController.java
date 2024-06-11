@@ -2,6 +2,8 @@ package orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.book;
 
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.book.dto.response.BookResponse;
@@ -15,6 +17,7 @@ import static orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.
 import static orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.book.dto.mapper.BookMapper.fromBookToBookResponse;
 
 @AllArgsConstructor
+@PreAuthorize("hasRole('ROLE_USER_WITH_SUBSCRIPTION')")
 @RestController
 @RequestMapping("/v1")
 public class BookController {
@@ -32,6 +35,7 @@ public class BookController {
         return fromBookToBookResponse(book);
     }
 
+    @PreAuthorize("hasRole('ROLE_ENGLISH_TEACHER_USER')")
     @PostMapping("/book")
     public ResponseEntity<BookResponse> createBook(@RequestBody Book book){
         Book savedBook = bookService.create(book);
@@ -46,6 +50,7 @@ public class BookController {
         return ResponseEntity.created(location).body(bookResponse);
     }
 
+    @PreAuthorize("hasRole('ROLE_ENGLISH_TEACHER_USER')")
     @PutMapping("/book/{id}")
     public BookResponse updateBook(@PathVariable Long id, @RequestBody Book book){
         if(bookService.findById(id) == null) {
@@ -56,6 +61,7 @@ public class BookController {
         return fromBookToBookResponse(updatedBook);
     }
 
+    @PreAuthorize("hasRole('ROLE_ENGLISH_TEACHER_USER')")
     @DeleteMapping("/book/{id}")
     public ResponseEntity<Void> deleteBook(@PathVariable Long id){
         bookService.deleteById(id);

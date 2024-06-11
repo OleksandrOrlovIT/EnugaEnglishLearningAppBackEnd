@@ -1,6 +1,7 @@
 package orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.engtest;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.engtest.EnglishTest;
@@ -24,6 +25,7 @@ public class EnglishTestController {
     @GetMapping("/english-test/{id}")
     public EnglishTest retrieveEnglishTestById(@PathVariable Long id){return englishTestService.findById(id);}
 
+    @PreAuthorize("hasRole('ROLE_ENGLISH_TEACHER_USER')")
     @PostMapping("/english-test")
     public ResponseEntity<EnglishTest> createEnglishTest(@RequestBody EnglishTest englishTest){
         EnglishTest savedEnglishTest = englishTestService.create(englishTest);
@@ -36,6 +38,7 @@ public class EnglishTestController {
         return ResponseEntity.created(location).body(savedEnglishTest);
     }
 
+    @PreAuthorize("hasRole('ROLE_ENGLISH_TEACHER_USER')")
     @PutMapping("/english-test/{id}")
     public EnglishTest updateEnglishTest(@PathVariable Long id, @RequestBody EnglishTest englishTest){
         if(englishTestService.findById(id) == null){
@@ -45,6 +48,7 @@ public class EnglishTestController {
         return englishTestService.update(englishTest);
     }
 
+    @PreAuthorize("hasRole('ROLE_ENGLISH_TEACHER_USER')")
     @DeleteMapping("/english-test/{id}")
     public ResponseEntity<Void> deleteEnglishTest(@PathVariable Long id){
         englishTestService.deleteById(id);

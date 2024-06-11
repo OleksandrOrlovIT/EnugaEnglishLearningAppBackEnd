@@ -2,6 +2,7 @@ package orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.book;
 
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.book.dto.response.PageResponse;
@@ -39,6 +40,7 @@ public class PageController {
         return pageToPageResponse(page);
     }
 
+    @PreAuthorize("hasRole('ROLE_ENGLISH_TEACHER_USER')")
     @PostMapping("/page")
     public ResponseEntity<PageResponse> createPage(@RequestBody Page page){
         Page savedPage = pageService.create(page);
@@ -53,6 +55,7 @@ public class PageController {
         return ResponseEntity.created(location).body(pageResponse);
     }
 
+    @PreAuthorize("hasRole('ROLE_ENGLISH_TEACHER_USER')")
     @PutMapping("/page/{id}")
     public PageResponse updatePage(@PathVariable Long id, @RequestBody Page page){
         if(pageService.findById(id) == null) {
@@ -63,6 +66,7 @@ public class PageController {
         return pageToPageResponse(updatedPage);
     }
 
+    @PreAuthorize("hasRole('ROLE_ENGLISH_TEACHER_USER')")
     @DeleteMapping("/page/{id}")
     public ResponseEntity<Void> deletePage(@PathVariable Long id){
         pageService.deleteById(id);

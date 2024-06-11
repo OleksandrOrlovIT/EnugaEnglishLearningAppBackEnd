@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -39,6 +40,7 @@ public class EnglishWordController {
         return englishWordService.findById(id);
     }
 
+    @PreAuthorize("hasRole('ROLE_ENGLISH_TEACHER_USER')")
     @PostMapping("/eng-word")
     public ResponseEntity<EnglishWord> createEnglishWord(@RequestBody EnglishWord englishWord){
         EnglishWord savedEnglishWord = englishWordService.create(englishWord);
@@ -51,6 +53,7 @@ public class EnglishWordController {
         return ResponseEntity.created(location).body(savedEnglishWord);
     }
 
+    @PreAuthorize("hasRole('ROLE_ENGLISH_TEACHER_USER')")
     @PutMapping("/eng-word/{id}")
     public EnglishWord updateEnglishWord(@PathVariable Long id, @RequestBody EnglishWord englishWord){
         if(englishWordService.findById(id) == null) {
@@ -60,6 +63,7 @@ public class EnglishWordController {
         return englishWordService.update(englishWord);
     }
 
+    @PreAuthorize("hasRole('ROLE_ENGLISH_TEACHER_USER')")
     @DeleteMapping("/eng-word/{id}")
     public ResponseEntity<Void> deleteEnglishWord(@PathVariable Long id){
         englishWordService.deleteById(id);

@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -56,6 +57,7 @@ public class TranslationPairController {
         return translationPairService.translateBulkEnglishWordsToUkrainian(englishWords);
     }
 
+    @PreAuthorize("hasRole('ROLE_ENGLISH_TEACHER_USER')")
     @PostMapping("/translation-pair")
     public ResponseEntity<TranslationPair> createTranslationPair(@RequestBody TranslationPair translationPair){
         TranslationPair savedTranslationPair = translationPairService.create(translationPair);
@@ -68,6 +70,7 @@ public class TranslationPairController {
         return ResponseEntity.created(location).body(savedTranslationPair);
     }
 
+    @PreAuthorize("hasRole('ROLE_ENGLISH_TEACHER_USER')")
     @PutMapping("/translation-pair/{id}")
     public TranslationPair updateTranslationPair(@PathVariable Long id, @RequestBody TranslationPair translationPair){
         if(translationPairService.findById(id) == null) {
@@ -77,6 +80,7 @@ public class TranslationPairController {
         return translationPairService.update(translationPair);
     }
 
+    @PreAuthorize("hasRole('ROLE_ENGLISH_TEACHER_USER')")
     @DeleteMapping("/translation-pair/{id}")
     public ResponseEntity<Void> deleteTranslationPair(@PathVariable Long id){
         translationPairService.deleteById(id);

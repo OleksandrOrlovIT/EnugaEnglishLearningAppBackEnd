@@ -1,6 +1,7 @@
 package orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.engtest;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.engtest.Question;
@@ -31,6 +32,7 @@ public class QuestionController {
         return questionService.getQuestionsByEnglishTestId(englishTestId);
     }
 
+    @PreAuthorize("hasRole('ROLE_ENGLISH_TEACHER_USER')")
     @PostMapping("/question")
     public ResponseEntity<Question> createQuestion(@RequestBody Question question){
         Question savedQuestion = questionService.create(question);
@@ -43,6 +45,7 @@ public class QuestionController {
         return ResponseEntity.created(location).body(savedQuestion);
     }
 
+    @PreAuthorize("hasRole('ROLE_ENGLISH_TEACHER_USER')")
     @PutMapping("/question/{id}")
     public Question updateQuestion(@PathVariable Long id, @RequestBody Question question){
         if(questionService.findById(id) == null){
@@ -52,6 +55,7 @@ public class QuestionController {
         return questionService.update(question);
     }
 
+    @PreAuthorize("hasRole('ROLE_ENGLISH_TEACHER_USER')")
     @DeleteMapping("/question/{id}")
     public ResponseEntity<Void> deleteRule(@PathVariable Long id){
         questionService.deleteById(id);
