@@ -32,23 +32,21 @@ public class UserLoaderImpl implements UserLoader {
     }
 
     public void saveUsers() {
-        String password = passwordEncoder.encode("123");
-
-        createUserIfNotExists("test1@email.com", "TestName1", "TestName1", password,
+        createUserIfNotExists("test1@email.com", "TestName1", "TestName1", "123",
                 Set.of(Role.ROLE_USER_WITHOUT_SUBSCRIPTION));
 
-        createUserIfNotExists("test2@email.com", "TestName2", "TestName2", password,
+        createUserIfNotExists("test2@email.com", "TestName2", "TestName2", "123",
                 Set.of(Role.ROLE_USER_WITHOUT_SUBSCRIPTION, Role.ROLE_USER_WITH_SUBSCRIPTION));
 
-        createUserIfNotExists("test3@email.com", "TestName3", "TestName3", password,
+        createUserIfNotExists("test3@email.com", "TestName3", "TestName3", "123",
                 Set.of(Role.ROLE_USER_WITHOUT_SUBSCRIPTION, Role.ROLE_USER_WITH_SUBSCRIPTION,
                         Role.ROLE_ENGLISH_STUDENT_USER));
 
-        createUserIfNotExists("test4@email.com", "TestName4", "TestName4", password,
+        createUserIfNotExists("test4@email.com", "TestName4", "TestName4", "123",
                 Set.of(Role.ROLE_USER_WITHOUT_SUBSCRIPTION, Role.ROLE_USER_WITH_SUBSCRIPTION,
                         Role.ROLE_ENGLISH_STUDENT_USER, Role.ROLE_ENGLISH_TEACHER_USER));
 
-        createUserIfNotExists("test5@email.com", "TestName5", "TestName5", password,
+        createUserIfNotExists("test5@email.com", "TestName5", "TestName5", "123",
                 Set.of(Role.ROLE_USER_WITHOUT_SUBSCRIPTION, Role.ROLE_USER_WITH_SUBSCRIPTION,
                         Role.ROLE_ENGLISH_STUDENT_USER, Role.ROLE_ENGLISH_TEACHER_USER, Role.ROLE_ADMIN));
     }

@@ -1,5 +1,6 @@
 package orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.security;
 
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,7 +15,7 @@ import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.user.UserS
 import java.util.Objects;
 
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 @Slf4j
 public class AuthenticationService {
     private final UserService userService;
@@ -25,20 +26,25 @@ public class AuthenticationService {
     public JwtAuthenticationResponse signIn(UserLogin userLogin) {
         Objects.requireNonNull(userLogin, "Request user must not be null");
 
-        User foundUser = userService.getUserByEmail(userLogin.getEmail());
+        try {
+            User foundUser = userService.getUserByEmail(userLogin.getEmail());
 
-        Objects.requireNonNull(foundUser, "User with email = " + userLogin.getEmail() + " not found");
+            Objects.requireNonNull(foundUser, "User with email = " + userLogin.getEmail() + " not found");
 
-        UsernamePasswordAuthenticationToken authenticationToken
-                = new UsernamePasswordAuthenticationToken(userLogin.getEmail(), userLogin.getPassword());
+            UsernamePasswordAuthenticationToken authenticationToken
+                    = new UsernamePasswordAuthenticationToken(userLogin.getEmail(), userLogin.getPassword());
 
-        authenticationManager.authenticate(authenticationToken);
+            authenticationManager.authenticate(authenticationToken);
 
-        var jwt = jwtService.generateToken(foundUser);
+            var jwt = jwtService.generateToken(foundUser);
 
-        UserWithoutPassResponse userResponse = new UserWithoutPassResponse(foundUser.getEmail(),
-                foundUser.getFirstName(), foundUser.getLastName(), foundUser.getRoles());
+            UserWithoutPassResponse userResponse = new UserWithoutPassResponse(foundUser.getEmail(),
+                    foundUser.getFirstName(), foundUser.getLastName(), foundUser.getRoles());
 
-        return new JwtAuthenticationResponse(jwt, userResponse);
+            return new JwtAuthenticationResponse(jwt, userResponse);
+        } catch (Exception ex) {
+            log.error("Authentication failed: {}", ex.getMessage());
+            throw ex;
+        }
     }
 }

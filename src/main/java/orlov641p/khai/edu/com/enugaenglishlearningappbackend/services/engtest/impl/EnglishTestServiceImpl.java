@@ -11,6 +11,7 @@ import orlov641p.khai.edu.com.enugaenglishlearningappbackend.repositories.engtes
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.engtest.EnglishTestService;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.engtest.QuestionService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -43,15 +44,74 @@ public class EnglishTestServiceImpl implements EnglishTestService {
     }
 
     @Override
+    @Transactional
     public EnglishTest create(EnglishTest englishTest) {
         validateEnglishTestForCreation(englishTest);
-        return englishTestRepository.save(englishTest);
+
+        englishTest = englishTestRepository.save(englishTest);
+
+        if(englishTest.getQuestions() != null) {
+            for (Question question : englishTest.getQuestions()) {
+                question.setEnglishTest(englishTest);
+            }
+
+            List<Question> savedQuestions = questionService.createAll(englishTest.getQuestions());
+
+            englishTest.setQuestions(savedQuestions);
+        }
+
+        return englishTest;
     }
 
     @Override
+    @Transactional
     public EnglishTest update(EnglishTest englishTest) {
         validateEnglishTestForUpdate(englishTest);
+
+        EnglishTest oldEnglishTest = findById(englishTest.getId());
+
+        if(oldEnglishTest.getQuestions() != null && !oldEnglishTest.getQuestions().isEmpty()) {
+            removeDeletedQuestions(englishTest, oldEnglishTest);
+        }
+
+        if(englishTest.getQuestions() != null && !englishTest.getQuestions().isEmpty()) {
+            updateOrAddQuestions(englishTest);
+        }
+
         return englishTestRepository.save(englishTest);
+    }
+
+    private void removeDeletedQuestions(EnglishTest updatedEnglishTest, EnglishTest oldEnglishTest) {
+        List<Question> oldQuestions = oldEnglishTest.getQuestions();
+        oldQuestions.removeAll(updatedEnglishTest.getQuestions());
+
+        for (Question question : oldQuestions) {
+            questionService.deleteById(question.getId());
+        }
+    }
+
+    private void updateOrAddQuestions(EnglishTest englishTest) {
+        List<Question> savedQuestions = new ArrayList<>();
+        for (Question question : englishTest.getQuestions()) {
+            ensureQuestionBelongsToEnglishTest(question, englishTest);
+
+            question.setEnglishTest(englishTest);
+
+            if (question.getId() != null && question.equals(questionService.findById(question.getId()))) {
+                question = questionService.update(question);
+            } else {
+                question.setId(null);
+                question = questionService.create(question);
+            }
+            savedQuestions.add(question);
+        }
+        englishTest.setQuestions(savedQuestions);
+    }
+
+    private void ensureQuestionBelongsToEnglishTest(Question question, EnglishTest englishTest) {
+        if (question.getEnglishTest() != null && !question.getEnglishTest().getId().equals(englishTest.getId())) {
+            throw new IllegalArgumentException("EnglishTest questions do not match");
+        }
     }
 
     @Override
@@ -66,7 +126,6 @@ public class EnglishTestServiceImpl implements EnglishTestService {
         englishTestRepository.deleteById(id);
     }
 
-    //TODO add more tests with nulls for add and delete
     @Override
     public void addQuestion(Question question) {
         questionService.create(question);

@@ -35,7 +35,8 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public JwtAuthenticationResponse loginUser(@RequestBody @Validated UserLogin UserLogin) {
-        return authenticationService.signIn(UserLogin);
+    public JwtAuthenticationResponse loginUser(@RequestBody @Validated UserLogin userLogin) {
+        log.info("received user login request {} ", userLogin);
+        return authenticationService.signIn(userLogin);
     }
 }

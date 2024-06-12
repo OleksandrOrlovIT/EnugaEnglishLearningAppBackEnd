@@ -81,6 +81,16 @@ public class QuestionServiceImpl implements QuestionService {
         return questions.hasContent() ? questions.getContent().get(0) : null;
     }
 
+    @Override
+    public List<Question> createAll(List<Question> questions) {
+        return questionRepository.saveAll(questions);
+    }
+
+    @Override
+    public boolean existsById(Long id) {
+        return questionRepository.existsById(id);
+    }
+
     private void validateQuestionForCreation(Question question) {
         Objects.requireNonNull(question, "Question cannot be null");
         if (question.getId() != null) {
