@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.rule.Rule;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.Role;
@@ -22,6 +23,7 @@ import java.util.Set;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public List<User> findAll() {
@@ -44,6 +46,8 @@ public class UserServiceImpl implements UserService {
             user.setRoles(Set.of(Role.ROLE_USER_WITHOUT_SUBSCRIPTION));
         }
 
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
         return userRepository.save(user);
     }
 
@@ -51,7 +55,11 @@ public class UserServiceImpl implements UserService {
     public User update(User user) {
         checkUserNull(user);
 
-        findById(user.getId());
+        User foundUser = findById(user.getId());
+
+        if(!passwordEncoder.matches(user.getPassword(), foundUser.getPassword())){
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
 
         return userRepository.save(user);
     }
