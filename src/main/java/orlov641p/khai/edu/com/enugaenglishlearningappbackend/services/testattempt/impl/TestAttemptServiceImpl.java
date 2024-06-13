@@ -3,6 +3,7 @@ package orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.testattem
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.dto.request.TestAttemptPage;
@@ -131,6 +132,20 @@ public class TestAttemptServiceImpl implements TestAttemptService {
         if (testAttempts != null && !testAttempts.isEmpty()) {
             return testAttempts.get(0);
         }
+        return null;
+    }
+
+    @Override
+    public TestAttempt findLastAttemptScore(TestAttemptWithoutAnswers testAttempt) {
+        User user = userService.findById(testAttempt.getUserId());
+
+        List<TestAttempt> testAttempts = testAttemptRepository
+                .findNewestByUserAndEnglishTestOrderByAttemptDateDesc(user, testAttempt.getEnglishTestId());
+
+        if(testAttempts != null && !testAttempts.isEmpty()) {
+            return testAttempts.get(0);
+        }
+
         return null;
     }
 

@@ -51,6 +51,11 @@ public class TestAttemptController {
         return new TestAttemptResponse(testAttemptService.findMaximumScoreAttempt(testAttemptWithoutAnswers));
     }
 
+    @PostMapping("/test-attempts/user/stats-last")
+    public TestAttemptResponse getLastTestAttemptByUserId(@RequestBody TestAttemptWithoutAnswers testAttemptWithoutAnswers){
+       return new TestAttemptResponse(testAttemptService.findLastAttemptScore(testAttemptWithoutAnswers));
+    }
+
     @GetMapping("/test-attempt/{id}")
     public TestAttemptResponse retrieveTestAttemptById(@PathVariable Long id){
         return new TestAttemptResponse(testAttemptService.findById(id));

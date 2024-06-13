@@ -38,7 +38,7 @@ public class AuthenticationService {
 
             var jwt = jwtService.generateToken(foundUser);
 
-            UserWithoutPassResponse userResponse = new UserWithoutPassResponse(foundUser.getEmail(),
+            UserWithoutPassResponse userResponse = new UserWithoutPassResponse(foundUser.getId(), foundUser.getEmail(),
                     foundUser.getFirstName(), foundUser.getLastName(), foundUser.getRoles());
 
             return new JwtAuthenticationResponse(jwt, userResponse);

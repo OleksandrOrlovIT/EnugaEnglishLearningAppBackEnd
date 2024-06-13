@@ -11,6 +11,9 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserWithoutPassResponse {
+
+    private Long id;
+
     private String email;
 
     private String firstName;

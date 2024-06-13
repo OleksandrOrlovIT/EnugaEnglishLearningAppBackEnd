@@ -9,6 +9,7 @@ import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.testattempt.
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.User;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface TestAttemptRepository extends JpaRepository<TestAttempt, Long> {
     List<TestAttempt> findByUser(User user);
@@ -16,5 +17,9 @@ public interface TestAttemptRepository extends JpaRepository<TestAttempt, Long> 
     Page<TestAttempt> findByUser(User user, Pageable pageable);
 
     @Query("SELECT ta FROM TestAttempt ta WHERE ta.user = :user AND ta.englishTest.id = :testId ORDER BY ta.successPercentage DESC")
-    List<TestAttempt> findTopByUserAndEnglishTestOrderBySuccessPercentageDesc(@Param("user") User user, @Param("testId") Long testId);
+    List<TestAttempt> findTopByUserAndEnglishTestOrderBySuccessPercentageDesc(@Param("user") User user,
+                                                                              @Param("testId") Long testId);
+
+    @Query("SELECT ta FROM TestAttempt ta WHERE ta.user = :user AND ta.englishTest.id = :testId ORDER BY ta.attemptDate DESC")
+    List<TestAttempt> findNewestByUserAndEnglishTestOrderByAttemptDateDesc(@Param("user") User user, @Param("testId") Long testId);
 }

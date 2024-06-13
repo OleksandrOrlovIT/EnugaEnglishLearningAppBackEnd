@@ -1,10 +1,8 @@
 package orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.testattempt;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.dto.request.TestAttemptPage;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.dto.request.TestAttemptWithoutAnswers;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.engtest.EnglishTest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.testattempt.TestAttempt;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.User;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.CrudService;
@@ -17,4 +15,6 @@ public interface TestAttemptService extends CrudService<TestAttempt, Long> {
     Page<TestAttempt> findTestAttemptsPageByUser(TestAttemptPage testAttemptPage);
 
     TestAttempt findMaximumScoreAttempt(TestAttemptWithoutAnswers testAttempt);
+
+    TestAttempt findLastAttemptScore(TestAttemptWithoutAnswers testAttempt);
 }
