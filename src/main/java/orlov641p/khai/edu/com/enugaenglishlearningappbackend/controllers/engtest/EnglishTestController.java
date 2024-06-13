@@ -6,6 +6,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.engtest.dto.response.EnglishTestResponse;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.dto.request.TestAttemptRequest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.dto.response.TestAttemptResponse;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.engtest.EnglishTest;
@@ -15,6 +16,7 @@ import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.engtest.En
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.user.UserService;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -25,14 +27,24 @@ public class EnglishTestController {
     private final EnglishTestService englishTestService;
 
     @GetMapping("/english-tests")
-    public List<EnglishTest> retrieveEnglishTests(){return  englishTestService.findAll();}
+    public List<EnglishTestResponse> retrieveEnglishTests(){
+        List<EnglishTestResponse> englishTestResponses = new ArrayList<>();
+
+        for(EnglishTest englishTest : englishTestService.findAll()){
+            englishTestResponses.add(new EnglishTestResponse(englishTest));
+        }
+
+        return englishTestResponses;
+    }
 
     @GetMapping("/english-test/{id}")
-    public EnglishTest retrieveEnglishTestById(@PathVariable Long id){return englishTestService.findById(id);}
+    public EnglishTestResponse retrieveEnglishTestById(@PathVariable Long id){
+        return new EnglishTestResponse(englishTestService.findById(id));
+    }
 
     @PreAuthorize("hasRole('ROLE_ENGLISH_TEACHER_USER')")
     @PostMapping("/english-test")
-    public ResponseEntity<EnglishTest> createEnglishTest(@RequestBody EnglishTest englishTest){
+    public ResponseEntity<EnglishTestResponse> createEnglishTest(@RequestBody EnglishTest englishTest){
         EnglishTest savedEnglishTest = englishTestService.create(englishTest);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -40,19 +52,19 @@ public class EnglishTestController {
                 .buildAndExpand(savedEnglishTest.getId())
                 .toUri();
 
-        return ResponseEntity.created(location).body(savedEnglishTest);
+        return ResponseEntity.created(location).body(new EnglishTestResponse(savedEnglishTest));
     }
 
     @PreAuthorize("hasRole('ROLE_ENGLISH_TEACHER_USER')")
     @PutMapping("/english-test/{id}")
-    public EnglishTest updateEnglishTest(@PathVariable Long id, @RequestBody EnglishTest englishTest){
+    public EnglishTestResponse updateEnglishTest(@PathVariable Long id, @RequestBody EnglishTest englishTest){
         if(englishTestService.findById(id) == null){
             return null;
         }
 
         englishTest.setId(id);
 
-        return englishTestService.update(englishTest);
+        return new EnglishTestResponse(englishTestService.update(englishTest));
     }
 
     @PreAuthorize("hasRole('ROLE_ENGLISH_TEACHER_USER')")
