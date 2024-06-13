@@ -5,13 +5,17 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.dto.request.TestAttemptPage;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.dto.request.TestAttemptWithoutAnswers;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.engtest.EnglishTest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.engtest.Question;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.testattempt.TestAttempt;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.repositories.engtest.QuestionRepository;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.User;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.repositories.testattempt.TestAttemptRepository;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.engtest.EnglishTestService;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.engtest.QuestionService;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.testattempt.TestAttemptService;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.user.UserService;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -23,6 +27,7 @@ public class TestAttemptServiceImpl implements TestAttemptService {
 
     private final TestAttemptRepository testAttemptRepository;
     private final QuestionService questionService;
+    private final UserService userService;
 
     @Override
     public List<TestAttempt> findAll() {
@@ -98,6 +103,35 @@ public class TestAttemptServiceImpl implements TestAttemptService {
         Page<TestAttempt> testAttempts = testAttemptRepository.findAll(pageable);
 
         return testAttempts.hasContent() ? testAttempts.getContent().get(0) : null;
+    }
+
+    @Override
+    public List<TestAttempt> findTestAttemptsByUser(User user) {
+        return testAttemptRepository.findByUser(user);
+    }
+
+    @Override
+    public Page<TestAttempt> findTestAttemptsPageByUser(TestAttemptPage testAttemptPage) {
+        User user = userService.findById(testAttemptPage.getUserId());
+
+        Pageable pageable = Pageable
+                .ofSize(testAttemptPage.getPageSize())
+                .withPage(testAttemptPage.getPageNumber());
+
+        return testAttemptRepository.findByUser(user, pageable);
+    }
+
+    @Override
+    public TestAttempt findMaximumScoreAttempt(TestAttemptWithoutAnswers testAttempt) {
+        User user = userService.findById(testAttempt.getUserId());
+
+        List<TestAttempt> testAttempts = testAttemptRepository
+                .findTopByUserAndEnglishTestOrderBySuccessPercentageDesc(user, testAttempt.getEnglishTestId());
+
+        if (testAttempts != null && !testAttempts.isEmpty()) {
+            return testAttempts.get(0);
+        }
+        return null;
     }
 
     private void checkTestAttemptNull(TestAttempt testAttempt){
