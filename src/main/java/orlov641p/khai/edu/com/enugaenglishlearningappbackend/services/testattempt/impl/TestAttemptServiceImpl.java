@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.dto.request.TestAttemptPage;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.dto.request.TestAttemptWithoutAnswers;
@@ -118,6 +119,21 @@ public class TestAttemptServiceImpl implements TestAttemptService {
         Pageable pageable = Pageable
                 .ofSize(testAttemptPage.getPageSize())
                 .withPage(testAttemptPage.getPageNumber());
+
+        return testAttemptRepository.findByUser(user, pageable);
+    }
+
+    @Override
+    public Page<TestAttempt> findLastTestAttemptsPageByUserSortedByDate(TestAttemptPage testAttemptPage) {
+        User user = userService.findById(testAttemptPage.getUserId());
+
+        Sort sort = Sort.by(Sort.Direction.DESC, "attemptDate");
+
+        Pageable pageable = PageRequest.of(
+                testAttemptPage.getPageNumber(),
+                testAttemptPage.getPageSize(),
+                sort
+        );
 
         return testAttemptRepository.findByUser(user, pageable);
     }

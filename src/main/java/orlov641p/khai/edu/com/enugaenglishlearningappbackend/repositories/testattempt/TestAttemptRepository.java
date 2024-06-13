@@ -9,7 +9,6 @@ import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.testattempt.
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.User;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface TestAttemptRepository extends JpaRepository<TestAttempt, Long> {
     List<TestAttempt> findByUser(User user);

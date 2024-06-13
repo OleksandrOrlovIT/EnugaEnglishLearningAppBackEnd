@@ -14,6 +14,8 @@ public interface TestAttemptService extends CrudService<TestAttempt, Long> {
 
     Page<TestAttempt> findTestAttemptsPageByUser(TestAttemptPage testAttemptPage);
 
+    Page<TestAttempt> findLastTestAttemptsPageByUserSortedByDate(TestAttemptPage testAttemptPage);
+
     TestAttempt findMaximumScoreAttempt(TestAttemptWithoutAnswers testAttempt);
 
     TestAttempt findLastAttemptScore(TestAttemptWithoutAnswers testAttempt);

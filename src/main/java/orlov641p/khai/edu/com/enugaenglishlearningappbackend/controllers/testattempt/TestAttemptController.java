@@ -46,6 +46,13 @@ public class TestAttemptController {
         return TestAttemptMapper.convertPageTestAttemptToResponse(testAttempts);
     }
 
+    @PostMapping("/test-attempts/user/stats-list-last")
+    public Page<TestAttemptResponse> getPageByUserSortedByDate(@RequestBody @Validated TestAttemptPage testAttemptPage){
+        Page<TestAttempt> testAttempts = testAttemptService.findLastTestAttemptsPageByUserSortedByDate(testAttemptPage);
+
+        return TestAttemptMapper.convertPageTestAttemptToResponse(testAttempts);
+    }
+
     @PostMapping("/test-attempts/user/stats-best")
     public TestAttemptResponse getBestTestAttemptByUserId(@RequestBody TestAttemptWithoutAnswers testAttemptWithoutAnswers){
         return new TestAttemptResponse(testAttemptService.findMaximumScoreAttempt(testAttemptWithoutAnswers));
