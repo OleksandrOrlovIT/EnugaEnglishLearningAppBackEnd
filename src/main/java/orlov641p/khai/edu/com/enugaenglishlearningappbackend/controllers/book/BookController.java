@@ -1,6 +1,7 @@
 package orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.book;
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -40,7 +41,7 @@ public class BookController {
     }
 
     @PreAuthorize("hasRole('ROLE_ENGLISH_TEACHER_USER')")
-    @PostMapping("/book")
+    @PostMapping(path = "/book")
     public ResponseEntity<BookResponse> createBook(@RequestPart("book") Book book,
                                                    @RequestParam("file") MultipartFile file) throws Exception {
         Book savedBook = bookLoaderService.loadBookFromMultipartFile(file, book);
@@ -61,6 +62,8 @@ public class BookController {
         if(bookService.findById(id) == null) {
             return null;
         }
+
+        book.setId(id);
 
         Book updatedBook = bookService.update(book);
         return fromBookToBookResponse(updatedBook);

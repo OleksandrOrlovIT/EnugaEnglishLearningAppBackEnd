@@ -10,6 +10,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.BaseEntity;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.testattempt.TestAttempt;
 
 import java.util.*;
 
@@ -36,14 +37,19 @@ public class User extends BaseEntity implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Set<Role> roles;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<TestAttempt> testAttempts;
+
     @Builder
-    public User(Long id, String email, String firstName, String lastName, String password, Set<Role> roles) {
+    public User(Long id, String email, String firstName, String lastName, String password, Set<Role> roles,
+                List<TestAttempt> testAttempts) {
         super(id);
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
         this.password = password;
         this.roles = roles;
+        this.testAttempts = testAttempts;
     }
 
     @Override

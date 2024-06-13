@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.BaseEntity;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.testattempt.TestAttempt;
 
 import java.util.List;
 import java.util.Objects;
@@ -23,11 +24,15 @@ public class EnglishTest extends BaseEntity {
     @OneToMany(mappedBy = "englishTest", cascade = CascadeType.REMOVE)
     private List<Question> questions;
 
+    @OneToMany(mappedBy = "englishTest", cascade = CascadeType.REMOVE)
+    private List<TestAttempt> testAttempts;
+
     @Builder
-    public EnglishTest(Long id, String testName, List<Question> questions) {
+    public EnglishTest(Long id, String testName, List<Question> questions, List<TestAttempt> testAttempts) {
         super(id);
         this.testName = testName;
         this.questions = questions;
+        this.testAttempts = testAttempts;
     }
 
     @Override

@@ -46,7 +46,7 @@ public class UserLoaderImpl implements UserLoader {
                 Set.of(Role.ROLE_USER_WITHOUT_SUBSCRIPTION, Role.ROLE_USER_WITH_SUBSCRIPTION,
                         Role.ROLE_ENGLISH_STUDENT_USER, Role.ROLE_ENGLISH_TEACHER_USER));
 
-        createUserIfNotExists("test5@email.com", "TestName5", "TestName5", "123",
+        createUserIfNotExists("admin@admin.com", "admin", "admin", "123",
                 Set.of(Role.ROLE_USER_WITHOUT_SUBSCRIPTION, Role.ROLE_USER_WITH_SUBSCRIPTION,
                         Role.ROLE_ENGLISH_STUDENT_USER, Role.ROLE_ENGLISH_TEACHER_USER, Role.ROLE_ADMIN));
     }
