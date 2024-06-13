@@ -1,23 +1,28 @@
 package orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.engtest;
 
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.dto.request.TestAttemptRequest;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.dto.response.TestAttemptResponse;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.engtest.EnglishTest;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.testattempt.TestAttempt;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.User;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.engtest.EnglishTestService;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.user.UserService;
 
 import java.net.URI;
 import java.util.List;
 
-@RestController()
+@AllArgsConstructor
+@RestController
 @RequestMapping("/v1")
 public class EnglishTestController {
-    private final EnglishTestService englishTestService;
 
-    public EnglishTestController(EnglishTestService englishTestService) {
-        this.englishTestService = englishTestService;
-    }
+    private final EnglishTestService englishTestService;
 
     @GetMapping("/english-tests")
     public List<EnglishTest> retrieveEnglishTests(){return  englishTestService.findAll();}
@@ -55,5 +60,10 @@ public class EnglishTestController {
     public ResponseEntity<Void> deleteEnglishTest(@PathVariable Long id){
         englishTestService.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/english-test/take")
+    public TestAttemptResponse takeEnglishTest(@RequestBody TestAttemptRequest testAttemptRequest){
+        return new TestAttemptResponse(englishTestService.takeTheTest(testAttemptRequest));
     }
 }

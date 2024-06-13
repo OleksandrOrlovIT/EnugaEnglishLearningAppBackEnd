@@ -1,31 +1,33 @@
 package orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.engtest.impl;
 
 import jakarta.persistence.EntityNotFoundException;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.dto.request.TestAttemptRequest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.engtest.EnglishTest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.engtest.Question;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.testattempt.TestAttempt;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.User;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.repositories.engtest.EnglishTestRepository;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.engtest.EnglishTestService;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.engtest.QuestionService;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.testattempt.TestAttemptService;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.user.UserService;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
+@AllArgsConstructor
 @Service
 @Transactional
 public class EnglishTestServiceImpl implements EnglishTestService {
 
     private final EnglishTestRepository englishTestRepository;
     private final QuestionService questionService;
-
-    public EnglishTestServiceImpl(EnglishTestRepository englishTestRepository, QuestionService questionService) {
-        this.englishTestRepository = Objects.requireNonNull(englishTestRepository, "EnglishTestRepository cannot be null");
-        this.questionService = Objects.requireNonNull(questionService, "QuestionService cannot be null");
-    }
+    private final TestAttemptService testAttemptService;
+    private final UserService userService;
 
     @Override
     public List<EnglishTest> findAll() {
@@ -151,16 +153,62 @@ public class EnglishTestServiceImpl implements EnglishTestService {
         return englishTests.hasContent() ? englishTests.getContent().get(0) : null;
     }
 
-    private void validateEnglishTestForCreation(EnglishTest englishTest) {
+    @Override
+    public TestAttempt takeTheTest(TestAttemptRequest testAttemptRequest) {
+        EnglishTest englishTest = findById(testAttemptRequest.getEnglishTestId());
+        User user = userService.findById(testAttemptRequest.getUserId());
+
+        Map<Long, String> answers = testAttemptRequest.getAnswers();
+
+        validateEnglishTestNotNull(englishTest);
+        validateEnglishTestIdNotNull(englishTest.getId());
+
+        List<Question> questions = questionService.getQuestionsByEnglishTestId(englishTest.getId());
+
+        Map<Long, String> wrongAnswers = new HashMap<>();
+        int rightAnswersCount = 0;
+
+        for(Question question : questions){
+            Long questionId = question.getId();
+            if(!answers.containsKey(questionId)){
+                throw new IllegalArgumentException("Answers don't have an answer for question");
+            }
+
+            if(answers.get(questionId).equals(question.getAnswer())){
+                rightAnswersCount++;
+            } else {
+                wrongAnswers.put(questionId, answers.get(questionId));
+            }
+        }
+
+        TestAttempt testAttempt = TestAttempt.builder()
+                .englishTest(englishTest)
+                .user(user)
+                .rightAnswers(rightAnswersCount)
+                .wrongAnswers(wrongAnswers)
+                .build();
+
+        return testAttemptService.create(testAttempt);
+    }
+
+    private void validateEnglishTestNotNull(EnglishTest englishTest) {
         Objects.requireNonNull(englishTest, "EnglishTest cannot be null");
+    }
+
+    private void validateEnglishTestIdNotNull(Long id){
+        Objects.requireNonNull(id, "EnglishTest ID must be provided for update");
+    }
+
+    private void validateEnglishTestForCreation(EnglishTest englishTest) {
+        validateEnglishTestNotNull(englishTest);
         if (englishTest.getId() != null) {
             throw new IllegalArgumentException("EnglishTest ID should not be provided for creation");
         }
     }
 
     private void validateEnglishTestForUpdate(EnglishTest englishTest) {
-        Objects.requireNonNull(englishTest, "EnglishTest cannot be null");
-        Objects.requireNonNull(englishTest.getId(), "EnglishTest ID must be provided for update");
+        validateEnglishTestNotNull(englishTest);
+        validateEnglishTestIdNotNull(englishTest.getId());
         if (!englishTestRepository.existsById(englishTest.getId())) {
             throw new IllegalArgumentException("EnglishTest with id = " + englishTest.getId() + " does not exist");
         }

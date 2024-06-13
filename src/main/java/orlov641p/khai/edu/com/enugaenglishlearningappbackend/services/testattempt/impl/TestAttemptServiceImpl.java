@@ -104,6 +104,12 @@ public class TestAttemptServiceImpl implements TestAttemptService {
         if(testAttempt == null){
             throw new IllegalArgumentException("TestAttempt can't be null");
         }
+        if(testAttempt.getUser() == null){
+            throw new IllegalArgumentException("TestAttempt user can't be null");
+        }
+        if(testAttempt.getEnglishTest() == null){
+            throw new IllegalArgumentException("TestAttempt english test can't be null");
+        }
     }
 
     private void checkTestAttemptIdNull(Long id){
