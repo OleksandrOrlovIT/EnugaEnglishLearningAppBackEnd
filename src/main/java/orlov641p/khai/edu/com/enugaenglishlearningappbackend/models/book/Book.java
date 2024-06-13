@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.BaseEntity;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.enums.BookGenre;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.book.enums.BookGenre;
 
 import java.util.List;
 import java.util.Objects;

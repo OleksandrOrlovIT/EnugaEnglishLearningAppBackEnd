@@ -23,17 +23,18 @@ public class BookLoaderServiceImpl implements BookLoaderService {
     private final PageService pageService;
 
     @Override
-    public void loadBookFromMultipartFile(MultipartFile file, Book book) throws Exception {
-        loadBook(file.getInputStream(), book);
+    public Book loadBookFromMultipartFile(MultipartFile file, Book book) throws Exception {
+        return loadBook(file.getInputStream(), book);
     }
 
     @Override
-    public void loadBookFromFile(File file, Book book) throws Exception {
-        loadBook(new FileInputStream(file), book);
+    public Book loadBookFromFile(File file, Book book) throws Exception {
+        return loadBook(new FileInputStream(file), book);
     }
 
-    private void loadBook(InputStream inputStream, Book book) throws Exception {
-        bookService.create(book);
+    @Transactional
+    protected Book loadBook(InputStream inputStream, Book book) throws Exception {
+        book = bookService.create(book);
         List<Page> pages = new ArrayList<>();
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
@@ -66,6 +67,7 @@ public class BookLoaderServiceImpl implements BookLoaderService {
                 pageService.create(page);
                 pages.add(page);
             }
+
         } catch (Exception e) {
             bookService.delete(book);
             for (Page page : pages) {
@@ -73,5 +75,7 @@ public class BookLoaderServiceImpl implements BookLoaderService {
             }
             throw e;
         }
+
+        return book;
     }
 }

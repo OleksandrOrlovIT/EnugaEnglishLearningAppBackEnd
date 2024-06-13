@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.bootstrap.book.BookLoader;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.book.Book;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.enums.BookGenre;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.book.enums.BookGenre;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.book.BookLoaderService;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.book.BookService;
 

@@ -5,9 +5,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.book.dto.response.BookResponse;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.book.Book;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.book.BookLoaderService;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.book.BookService;
 
 import java.net.URI;
@@ -21,7 +23,9 @@ import static orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.
 @RestController
 @RequestMapping("/v1")
 public class BookController {
+
     private final BookService bookService;
+    private final BookLoaderService bookLoaderService;
 
     @GetMapping("/books")
     public List<BookResponse> retrieveBooks(){
@@ -37,8 +41,9 @@ public class BookController {
 
     @PreAuthorize("hasRole('ROLE_ENGLISH_TEACHER_USER')")
     @PostMapping("/book")
-    public ResponseEntity<BookResponse> createBook(@RequestBody Book book){
-        Book savedBook = bookService.create(book);
+    public ResponseEntity<BookResponse> createBook(@RequestPart("book") Book book,
+                                                   @RequestParam("file") MultipartFile file) throws Exception {
+        Book savedBook = bookLoaderService.loadBookFromMultipartFile(file, book);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
