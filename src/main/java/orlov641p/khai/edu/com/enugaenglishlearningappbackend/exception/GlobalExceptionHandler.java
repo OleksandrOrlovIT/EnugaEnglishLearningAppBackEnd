@@ -6,8 +6,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.nio.file.AccessDeniedException;
+import java.rmi.AccessException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,125 +25,61 @@ import java.util.Map;
 @Slf4j
 public class GlobalExceptionHandler {
 
-    /**
-     * Handles NullPointerException and returns a ResponseEntity with status code 400 (BAD_REQUEST)
-     * and a message indicating the error.
-     *
-     * @param ex The NullPointerException object
-     * @return ResponseEntity with status code 400 and error details
-     */
-    @ExceptionHandler(NullPointerException.class)
-    public ResponseEntity<?> handleNullPointerException(NullPointerException ex) {
-        logException("NullPointer Exception occurred", ex);
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("status", "BAD_REQUEST");
-        response.put("message", ex.getMessage());
-
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-    }
-
-    /**
-     * Handles MethodArgumentNotValidException and returns a ResponseEntity with status code 400 (BAD_REQUEST)
-     * and a list of validation errors.
-     *
-     * @param ex The MethodArgumentNotValidException object
-     * @return ResponseEntity with status code 400 and validation errors
-     */
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<?> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
-        logException(ex.getMessage(), ex);
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("status", "BAD_REQUEST");
-
-        List<String> errors = new ArrayList<>();
-        for(var error : ex.getBindingResult().getAllErrors()) {
-            errors.add(error.getDefaultMessage());
-        }
-
-        response.put("errors", errors);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-    }
-
-    /**
-     * Handles EntityNotFoundException and returns a ResponseEntity with status code 404 (NOT_FOUND)
-     * and a message indicating the error.
-     *
-     * @param ex The EntityNotFoundException object
-     * @return ResponseEntity with status code 404 and error details
-     */
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<?> handleEntityNotFoundException(EntityNotFoundException ex) {
-        logException("EntityNotFoundException occurred", ex);
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("status", "NOT_FOUND");
-        response.put("message", ex.getMessage());
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-    }
-
-    /**
-     * Handles IllegalArgumentException and returns a ResponseEntity with status code 400 (BAD_REQUEST)
-     * and a message indicating the error.
-     *
-     * @param ex The IllegalArgumentException object
-     * @return ResponseEntity with status code 400 and error details
-     */
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<?> handleIllegalArgumentException(IllegalArgumentException ex) {
-        logException("IllegalArgumentException occurred", ex);
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("status", "BAD_REQUEST");
-        response.put("errorMessage", ex.getMessage());
-
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-    }
-
-    /**
-     * Handles generic Exception and returns a ResponseEntity with status code 500 (INTERNAL_SERVER_ERROR)
-     * and a message indicating the error.
-     *
-     * @param ex The Exception object
-     * @return ResponseEntity with status code 500 and error details
-     */
     @ExceptionHandler(Exception.class)
+    @ResponseBody
     public ResponseEntity<?> handleException(Exception ex) {
         logException("Exception occurred", ex);
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("status", "INTERNAL_SERVER_ERROR");
-        response.put("message", ex.getMessage());
-
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", ex.getMessage());
     }
 
-    /**
-     * Handles RuntimeException and returns a ResponseEntity with status code 500 (INTERNAL_SERVER_ERROR)
-     * and a message indicating the error.
-     *
-     * @param ex The RuntimeException object
-     * @return ResponseEntity with status code 500 and error details
-     */
     @ExceptionHandler(RuntimeException.class)
+    @ResponseBody
     public ResponseEntity<?> handleRuntimeException(RuntimeException ex) {
-        logException("RuntimeException occurred", ex);
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("status", "INTERNAL_SERVER_ERROR");
-        response.put("message", ex.getMessage());
-
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        if(ex.getMessage().contains("Access Denied")){
+            return handleAccessDeniedException(new AccessDeniedException(ex.getMessage()));
+        } else {
+            logException("RuntimeException occurred", ex);
+            return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", ex.getMessage());
+        }
     }
 
-    /**
-     * Logs the exception with appropriate message.
-     *
-     * @param message The log message
-     * @param ex      The Exception object
-     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseBody
+    public ResponseEntity<?> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
+        logException("MethodArgumentNotValidException occurred", ex);
+        List<String> errors = new ArrayList<>();
+        ex.getBindingResult().getAllErrors().forEach(error -> errors.add(error.getDefaultMessage()));
+        return buildValidationErrorResponse(HttpStatus.BAD_REQUEST, "BAD_REQUEST", errors);
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    @ResponseBody
+    public ResponseEntity<?> handleEntityNotFoundException(EntityNotFoundException ex) {
+        logException("EntityNotFoundException occurred", ex);
+        return buildErrorResponse(HttpStatus.NOT_FOUND, "NOT_FOUND", ex.getMessage());
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseBody
+    public ResponseEntity<?> handleAccessDeniedException(AccessDeniedException ex) {
+        logException("AccessDeniedException occurred", ex);
+        return buildErrorResponse(HttpStatus.FORBIDDEN, "FORBIDDEN", ex.getMessage());
+    }
+
+    private ResponseEntity<?> buildErrorResponse(HttpStatus status, String error, String message) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", error);
+        response.put("message", message);
+        return ResponseEntity.status(status).body(response);
+    }
+
+    private ResponseEntity<?> buildValidationErrorResponse(HttpStatus status, String error, List<String> errors) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", error);
+        response.put("errors", errors);
+        return ResponseEntity.status(status).body(response);
+    }
+
     private void logException(String message, Exception ex) {
         log.error(message, ex);
     }

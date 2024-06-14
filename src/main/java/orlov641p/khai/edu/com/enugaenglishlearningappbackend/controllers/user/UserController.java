@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.dto.response.UserResponse;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.User;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.security.annotations.IsAdminOrSelf;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.user.UserService;
 
 import java.net.URI;
@@ -14,14 +15,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
-@PreAuthorize("hasRole('ROLE_ADMIN')")
 @RestController
 @RequestMapping("/v1")
 public class UserController {
 
     private final UserService userService;
 
+
     @GetMapping("/users")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<UserResponse> retrieveUsers(){
         List<User> users = userService.findAll();
 
@@ -35,11 +37,13 @@ public class UserController {
     }
 
     @GetMapping("/user/{id}")
+    @IsAdminOrSelf
     public UserResponse retrieveUserById(@PathVariable Long id){
         return new UserResponse(userService.findById(id));
     }
 
     @PostMapping("/user")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or #user.username == authentication.name")
     public ResponseEntity<UserResponse> createUser(@RequestBody User user){
         User savedUser = userService.create(user);
 
@@ -52,6 +56,7 @@ public class UserController {
     }
 
     @PutMapping("/user/{id}")
+    @IsAdminOrSelf
     public UserResponse updateUser(@PathVariable Long id, @RequestBody User user){
         if(userService.findById(id) == null) {
             return null;
@@ -61,6 +66,7 @@ public class UserController {
     }
 
     @DeleteMapping("/user/{id}")
+    @IsAdminOrSelf
     public ResponseEntity<Void> deleteUser(@PathVariable Long id){
         userService.deleteById(id);
         return ResponseEntity.noContent().build();
