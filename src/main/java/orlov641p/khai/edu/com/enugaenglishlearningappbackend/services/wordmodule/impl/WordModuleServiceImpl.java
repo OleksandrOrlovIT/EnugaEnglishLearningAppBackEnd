@@ -1,4 +1,4 @@
-package orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.wordmodule;
+package orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.wordmodule.impl;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
@@ -6,13 +6,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.wordmodule.dto.request.WordModuleAttemptRequest;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.testattempt.wordmodule.WordModuleAttempt;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.User;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.wordmodule.CustomPair;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.wordmodule.WordModule;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.repositories.wordmodule.WordModuleRepository;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.testattempt.wordmodule.WordModuleAttemptService;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.user.UserService;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.wordmodule.CustomPairService;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.wordmodule.WordModuleService;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @AllArgsConstructor
 @Service
@@ -21,6 +26,8 @@ public class WordModuleServiceImpl implements WordModuleService {
 
     private final WordModuleRepository wordModuleRepository;
     private final CustomPairService customPairService;
+    private final UserService userService;
+    private final WordModuleAttemptService wordModuleAttemptService;
 
     @Override
     public List<WordModule> findAll() {
@@ -128,6 +135,44 @@ public class WordModuleServiceImpl implements WordModuleService {
         Page<WordModule> wordModules = wordModuleRepository.findAll(pageable);
 
         return wordModules.hasContent() ? wordModules.getContent().get(0) : null;
+    }
+
+    @Override
+    public WordModuleAttempt takeTheTest(WordModuleAttemptRequest wordModuleAttemptRequest) {
+        WordModule wordModule = findById(wordModuleAttemptRequest.getWordModuleId());
+        User user = userService.findById(wordModuleAttemptRequest.getUserId());
+
+        Map<Long, String> answers = wordModuleAttemptRequest.getAnswers();
+
+        validateWordModuleNotNull(wordModule);
+        validateWordModuleIdNotNull(wordModule.getId());
+
+        List<CustomPair> customPairs = customPairService.getCustomPairsByWordModuleId(wordModule.getId());
+
+        Map<Long, String> wrongAnswers = new HashMap<>();
+        int rightAnswersCount = 0;
+
+        for(CustomPair customPair : customPairs){
+            Long customPairId = customPair.getId();
+            if(!answers.containsKey(customPairId)){
+                throw new IllegalArgumentException("Answers don't have an answer for custom pair question");
+            }
+
+            if(answers.get(customPairId).equals(customPair.getTranslation())){
+                rightAnswersCount++;
+            } else {
+                wrongAnswers.put(customPairId, answers.get(customPairId));
+            }
+        }
+
+        WordModuleAttempt wordModuleAttempt = WordModuleAttempt.builder()
+                .wordModule(wordModule)
+                .user(user)
+                .rightAnswers(rightAnswersCount)
+                .wrongAnswers(wrongAnswers)
+                .build();
+
+        return wordModuleAttemptService.create(wordModuleAttempt);
     }
 
     private void validateWordModuleNotNull(WordModule wordModule) {

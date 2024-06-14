@@ -25,11 +25,34 @@ import java.util.Map;
 @Slf4j
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(Exception.class)
+    @ExceptionHandler(AccessDeniedException.class)
     @ResponseBody
-    public ResponseEntity<?> handleException(Exception ex) {
-        logException("Exception occurred", ex);
-        return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", ex.getMessage());
+    public ResponseEntity<?> handleAccessDeniedException(AccessDeniedException ex) {
+        logException("AccessDeniedException occurred", ex);
+        return buildErrorResponse(HttpStatus.FORBIDDEN, "FORBIDDEN", ex.getMessage());
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    @ResponseBody
+    public ResponseEntity<?> handleEntityNotFoundException(EntityNotFoundException ex) {
+        logException("EntityNotFoundException occurred", ex);
+        return buildErrorResponse(HttpStatus.NOT_FOUND, "NOT_FOUND", ex.getMessage());
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseBody
+    public ResponseEntity<?> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
+        logException("MethodArgumentNotValidException occurred", ex);
+        List<String> errors = new ArrayList<>();
+        ex.getBindingResult().getAllErrors().forEach(error -> errors.add(error.getDefaultMessage()));
+        return buildValidationErrorResponse(HttpStatus.BAD_REQUEST, "BAD_REQUEST", errors);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseBody
+    public ResponseEntity<?> handleIllegalArgumentException(IllegalArgumentException ex) {
+        logException("IllegalArgumentException occurred", ex);
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, "BAD_REQUEST", ex.getMessage());
     }
 
     @ExceptionHandler(RuntimeException.class)
@@ -43,27 +66,11 @@ public class GlobalExceptionHandler {
         }
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ExceptionHandler(Exception.class)
     @ResponseBody
-    public ResponseEntity<?> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
-        logException("MethodArgumentNotValidException occurred", ex);
-        List<String> errors = new ArrayList<>();
-        ex.getBindingResult().getAllErrors().forEach(error -> errors.add(error.getDefaultMessage()));
-        return buildValidationErrorResponse(HttpStatus.BAD_REQUEST, "BAD_REQUEST", errors);
-    }
-
-    @ExceptionHandler(EntityNotFoundException.class)
-    @ResponseBody
-    public ResponseEntity<?> handleEntityNotFoundException(EntityNotFoundException ex) {
-        logException("EntityNotFoundException occurred", ex);
-        return buildErrorResponse(HttpStatus.NOT_FOUND, "NOT_FOUND", ex.getMessage());
-    }
-
-    @ExceptionHandler(AccessDeniedException.class)
-    @ResponseBody
-    public ResponseEntity<?> handleAccessDeniedException(AccessDeniedException ex) {
-        logException("AccessDeniedException occurred", ex);
-        return buildErrorResponse(HttpStatus.FORBIDDEN, "FORBIDDEN", ex.getMessage());
+    public ResponseEntity<?> handleException(Exception ex) {
+        logException("Exception occurred", ex);
+        return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", ex.getMessage());
     }
 
     private ResponseEntity<?> buildErrorResponse(HttpStatus status, String error, String message) {
