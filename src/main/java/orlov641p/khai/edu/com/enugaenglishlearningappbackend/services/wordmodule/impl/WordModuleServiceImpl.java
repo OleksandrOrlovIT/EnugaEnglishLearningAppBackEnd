@@ -185,6 +185,16 @@ public class WordModuleServiceImpl implements WordModuleService {
         return wordModuleRepository.findByVisibilityPublicAndUserIdNot(userId);
     }
 
+    @Override
+    public Page<WordModule> findPageByUserOrderByIdDesc(Long userId, Pageable pageable) {
+        return wordModuleRepository.findByUserIdOrderByIdDesc(userId, pageable);
+    }
+
+    @Override
+    public Page<WordModule> findPageByVisibilityPublicAndUserNot(Long userId, Pageable pageable) {
+        return wordModuleRepository.findPageByVisibilityPublicAndUserIdNot(userId, pageable);
+    }
+
     private void validateWordModuleNotNull(WordModule wordModule) {
         Objects.requireNonNull(wordModule, "WordModule cannot be null");
     }

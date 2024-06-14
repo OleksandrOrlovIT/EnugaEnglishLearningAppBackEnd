@@ -1,13 +1,20 @@
 package orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.wordmodule;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.wordmodule.dto.request.WordModuleAttemptRequest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.wordmodule.dto.response.WordModuleAttemptResponse;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.wordmodule.dto.mapper.WordModuleMapper;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.wordmodule.dto.request.PageWithUserIdRequest;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.wordmodule.dto.request.SimplePageRequest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.wordmodule.dto.response.WordModuleResponse;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.wordmodule.WordModule;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.security.annotations.IsAdminOrSelf;
@@ -104,12 +111,24 @@ public class WordModuleController {
         }
     }
 
+    @PostMapping("/word-module/user")
+    public Page<WordModuleResponse> getWordModulesPageByUser(@RequestBody @Validated PageWithUserIdRequest page) {
+        if (userSecurity.hasRoleAdminOrIsSelf(page.getUserId())) {
+            Pageable pageable = PageRequest.of(page.getPageNumber(), page.getPageSize());
+            Page<WordModule> wordModules =
+                    wordModuleService.findPageByUserOrderByIdDesc(page.getUserId(), pageable);
+            return WordModuleMapper.convertPageTestAttemptToResponse(wordModules);
+        } else {
+            throw new AccessDeniedException("Access Denied");
+        }
+    }
+
     @IsAdminOrSelf
     @GetMapping("/word-module/user/{id}")
-    public List<WordModuleResponse> getWordModulesByUserId(@PathVariable Long id){
+    public List<WordModuleResponse> getWordModulesByUserId(@PathVariable Long id) {
         List<WordModuleResponse> wordModuleResponses = new ArrayList<>();
 
-        for(WordModule wordModule : wordModuleService.findByUserOrderByIdDesc(id)){
+        for (WordModule wordModule : wordModuleService.findByUserOrderByIdDesc(id)) {
             wordModuleResponses.add(new WordModuleResponse(wordModule));
         }
 
@@ -117,15 +136,27 @@ public class WordModuleController {
     }
 
     @GetMapping("/word-module/public-without-logged-user")
-    public List<WordModuleResponse> getPublicWordModulesWithoutUser(){
+    public List<WordModuleResponse> getPublicWordModulesWithoutUser() {
         List<WordModuleResponse> wordModuleResponses = new ArrayList<>();
 
         Long userId = userSecurity.getLoggedUser().getId();
 
-        for(WordModule wordModule : wordModuleService.findByVisibilityPublicAndUserNot(userId)){
+        for (WordModule wordModule : wordModuleService.findByVisibilityPublicAndUserNot(userId)) {
             wordModuleResponses.add(new WordModuleResponse(wordModule));
         }
 
         return wordModuleResponses;
+    }
+
+    @PostMapping("/word-module/public-without-logged-user")
+    public Page<WordModuleResponse> getPublicWordModulesPageWithoutUser(@RequestBody @Validated SimplePageRequest page) {
+        Long userId = userSecurity.getLoggedUser().getId();
+
+        Pageable pageable = PageRequest.of(page.getPageNumber(), page.getPageSize());
+
+        Page<WordModule> wordModules =
+                wordModuleService.findPageByVisibilityPublicAndUserNot(userId, pageable);
+
+        return WordModuleMapper.convertPageTestAttemptToResponse(wordModules);
     }
 }
