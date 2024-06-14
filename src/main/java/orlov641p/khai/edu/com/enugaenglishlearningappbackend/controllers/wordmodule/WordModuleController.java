@@ -15,10 +15,13 @@ import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testatt
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.wordmodule.dto.mapper.WordModuleMapper;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.wordmodule.dto.request.PageWithUserIdRequest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.wordmodule.dto.request.SimplePageRequest;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.wordmodule.dto.request.WordModuleRequest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.wordmodule.dto.response.WordModuleResponse;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.User;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.wordmodule.WordModule;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.security.annotations.IsAdminOrSelf;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.security.user.UserSecurity;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.user.UserService;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.wordmodule.WordModuleService;
 
 import java.net.URI;
@@ -32,6 +35,7 @@ public class WordModuleController {
 
     private final WordModuleService wordModuleService;
     private final UserSecurity userSecurity;
+    private final UserService userService;
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/word-modules")
@@ -57,8 +61,12 @@ public class WordModuleController {
     }
 
     @PostMapping("/word-module")
-    public ResponseEntity<WordModuleResponse> createWordModule(@RequestBody WordModule wordModule) {
-        if (userSecurity.hasRoleAdminOrIsSelf(wordModule.getUser().getId())) {
+    public ResponseEntity<WordModuleResponse> createWordModule(@RequestBody WordModuleRequest wordModuleRequest) {
+        if (userSecurity.hasRoleAdminOrIsSelf(wordModuleRequest.getUserId())) {
+            User user = userService.findById(wordModuleRequest.getUserId());
+
+            WordModule wordModule = WordModuleMapper.convertWordModuleRequestToWordModule(wordModuleRequest, user);
+
             WordModule savedWordModule = wordModuleService.create(wordModule);
 
             URI location = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -73,11 +81,15 @@ public class WordModuleController {
     }
 
     @PutMapping("/word-module/{id}")
-    public WordModuleResponse updateWordModule(@PathVariable Long id, @RequestBody WordModule wordModule) {
-        if (userSecurity.hasRoleAdminOrIsSelf(wordModule.getUser().getId())) {
+    public WordModuleResponse updateWordModule(@PathVariable Long id, @RequestBody WordModuleRequest wordModuleRequest) {
+        if (userSecurity.hasRoleAdminOrIsSelf(wordModuleRequest.getUserId())) {
             if (wordModuleService.findById(id) == null) {
                 return null;
             }
+
+            User user = userService.findById(wordModuleRequest.getUserId());
+
+            WordModule wordModule = WordModuleMapper.convertWordModuleRequestToWordModule(wordModuleRequest, user);
 
             wordModule.setId(id);
 

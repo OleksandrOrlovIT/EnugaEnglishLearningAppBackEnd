@@ -3,7 +3,9 @@ package orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.wordmo
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.wordmodule.dto.request.WordModuleRequest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.wordmodule.dto.response.WordModuleResponse;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.User;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.wordmodule.WordModule;
 
 import java.util.List;
@@ -22,5 +24,14 @@ public class WordModuleMapper {
 
     public static WordModuleResponse convertWordModuleToResponse(WordModule wordModule){
         return new WordModuleResponse(wordModule);
+    }
+
+    public static WordModule convertWordModuleRequestToWordModule(WordModuleRequest wordModuleRequest, User user){
+        return WordModule.builder()
+                .moduleName(wordModuleRequest.getModuleName())
+                .visibility(wordModuleRequest.getVisibility())
+                .user(user)
+                .customPairs(wordModuleRequest.getCustomPairs())
+                .build();
     }
 }
