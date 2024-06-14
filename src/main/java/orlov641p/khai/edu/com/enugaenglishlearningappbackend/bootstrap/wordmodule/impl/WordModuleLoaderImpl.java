@@ -36,7 +36,6 @@ public class WordModuleLoaderImpl implements WordModuleLoader {
     }
 
     public void loadPublicWordModule(User user){
-
         CustomPair customPair1 = new CustomPair("sister", "сестра");
         CustomPair customPair2 = new CustomPair("brother", "брат");
         CustomPair customPair3 = new CustomPair("home", "дім");

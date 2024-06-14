@@ -2,6 +2,7 @@ package orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.engtes
 
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -9,6 +10,7 @@ import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.engtest
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.engtest.dto.request.TestAttemptRequest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.engtest.dto.response.TestAttemptResponse;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.engtest.EnglishTest;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.security.user.UserSecurity;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.engtest.EnglishTestService;
 
 import java.net.URI;
@@ -21,6 +23,7 @@ import java.util.List;
 public class EnglishTestController {
 
     private final EnglishTestService englishTestService;
+    private final UserSecurity userSecurity;
 
     @GetMapping("/english-tests")
     public List<EnglishTestResponse> retrieveEnglishTests(){
@@ -72,6 +75,10 @@ public class EnglishTestController {
 
     @PostMapping("/english-test/take")
     public TestAttemptResponse takeEnglishTest(@RequestBody TestAttemptRequest testAttemptRequest){
-        return new TestAttemptResponse(englishTestService.takeTheTest(testAttemptRequest));
+        if(userSecurity.hasRoleAdminOrIsSelf(testAttemptRequest.getUserId())) {
+            return new TestAttemptResponse(englishTestService.takeTheTest(testAttemptRequest));
+        } else {
+            throw new AccessDeniedException("Access Denied");
+        }
     }
 }
