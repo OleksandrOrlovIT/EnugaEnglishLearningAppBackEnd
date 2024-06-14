@@ -6,14 +6,11 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.engtest.dto.request.TestAttemptRequest;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.engtest.dto.response.TestAttemptResponse;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.wordmodule.dto.request.WordModuleAttemptRequest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.wordmodule.dto.response.WordModuleAttemptResponse;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.wordmodule.dto.response.WordModuleResponse;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.testattempt.wordmodule.WordModuleAttempt;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.User;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.wordmodule.WordModule;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.security.annotations.IsAdminOrSelf;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.security.user.UserSecurity;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.wordmodule.WordModuleService;
 
@@ -105,5 +102,30 @@ public class WordModuleController {
         } else {
             throw new AccessDeniedException("Access Denied");
         }
+    }
+
+    @IsAdminOrSelf
+    @GetMapping("/word-module/user/{id}")
+    public List<WordModuleResponse> getWordModulesByUserId(@PathVariable Long id){
+        List<WordModuleResponse> wordModuleResponses = new ArrayList<>();
+
+        for(WordModule wordModule : wordModuleService.findByUserOrderByIdDesc(id)){
+            wordModuleResponses.add(new WordModuleResponse(wordModule));
+        }
+
+        return wordModuleResponses;
+    }
+
+    @GetMapping("/word-module/public-without-logged-user")
+    public List<WordModuleResponse> getPublicWordModulesWithoutUser(){
+        List<WordModuleResponse> wordModuleResponses = new ArrayList<>();
+
+        Long userId = userSecurity.getLoggedUser().getId();
+
+        for(WordModule wordModule : wordModuleService.findByVisibilityPublicAndUserNot(userId)){
+            wordModuleResponses.add(new WordModuleResponse(wordModule));
+        }
+
+        return wordModuleResponses;
     }
 }

@@ -175,6 +175,16 @@ public class WordModuleServiceImpl implements WordModuleService {
         return wordModuleAttemptService.create(wordModuleAttempt);
     }
 
+    @Override
+    public List<WordModule> findByUserOrderByIdDesc(Long userId) {
+        return wordModuleRepository.findByUserIdOrderByIdDesc(userId);
+    }
+
+    @Override
+    public List<WordModule> findByVisibilityPublicAndUserNot(Long userId) {
+        return wordModuleRepository.findByVisibilityPublicAndUserIdNot(userId);
+    }
+
     private void validateWordModuleNotNull(WordModule wordModule) {
         Objects.requireNonNull(wordModule, "WordModule cannot be null");
     }

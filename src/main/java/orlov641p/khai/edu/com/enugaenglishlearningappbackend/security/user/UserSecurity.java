@@ -15,6 +15,12 @@ public class UserSecurity {
 
     private final UserService userService;
 
+    public User getLoggedUser(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        return userService.getUserByEmail(authentication.getName());
+    }
+
     public boolean hasRoleAdminOrIsSelf(Long id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUsername = authentication.getName();
