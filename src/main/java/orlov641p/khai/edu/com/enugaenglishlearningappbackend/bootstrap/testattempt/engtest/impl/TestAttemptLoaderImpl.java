@@ -1,17 +1,17 @@
-package orlov641p.khai.edu.com.enugaenglishlearningappbackend.bootstrap.testattempt.impl;
+package orlov641p.khai.edu.com.enugaenglishlearningappbackend.bootstrap.testattempt.engtest.impl;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.bootstrap.testattempt.TestAttemptLoader;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.bootstrap.testattempt.engtest.TestAttemptLoader;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.engtest.EnglishTest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.engtest.Question;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.testattempt.TestAttempt;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.testattempt.engtest.TestAttempt;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.User;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.engtest.EnglishTestService;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.engtest.QuestionService;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.testattempt.TestAttemptService;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.testattempt.engtest.TestAttemptService;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.user.UserService;
 
 import java.util.HashMap;

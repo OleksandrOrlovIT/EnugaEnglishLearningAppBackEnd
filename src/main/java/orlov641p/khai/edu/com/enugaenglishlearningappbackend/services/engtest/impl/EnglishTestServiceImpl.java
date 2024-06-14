@@ -6,15 +6,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.dto.request.TestAttemptRequest;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.engtest.dto.request.TestAttemptRequest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.engtest.EnglishTest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.engtest.Question;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.testattempt.TestAttempt;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.testattempt.engtest.TestAttempt;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.User;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.repositories.engtest.EnglishTestRepository;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.engtest.EnglishTestService;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.engtest.QuestionService;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.testattempt.TestAttemptService;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.testattempt.engtest.TestAttemptService;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.user.UserService;
 
 import java.util.*;

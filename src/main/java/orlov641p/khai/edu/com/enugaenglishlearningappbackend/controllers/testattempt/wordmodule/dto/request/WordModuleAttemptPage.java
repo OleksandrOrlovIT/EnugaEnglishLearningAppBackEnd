@@ -1,4 +1,4 @@
-package orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.dto.request;
+package orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.wordmodule.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,8 +9,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @AllArgsConstructor
-public class TestAttemptPage {
-
+public class WordModuleAttemptPage {
     public Long userId;
 
     public Integer pageSize;

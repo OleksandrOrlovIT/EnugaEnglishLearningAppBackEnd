@@ -1,4 +1,4 @@
-package orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.testattempt.impl;
+package orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.testattempt.engtest.impl;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
@@ -7,16 +7,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.dto.request.TestAttemptPage;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.dto.request.TestAttemptWithoutAnswers;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.engtest.dto.request.TestAttemptPage;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.engtest.dto.request.TestAttemptWithoutAnswers;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.engtest.EnglishTest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.engtest.Question;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.testattempt.TestAttempt;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.testattempt.engtest.TestAttempt;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.User;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.repositories.testattempt.TestAttemptRepository;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.engtest.EnglishTestService;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.repositories.testattempt.engtest.TestAttemptRepository;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.engtest.QuestionService;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.testattempt.TestAttemptService;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.testattempt.engtest.TestAttemptService;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.user.UserService;
 
 import java.time.ZoneId;

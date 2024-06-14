@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.BaseEntity;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.testattempt.TestAttempt;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.testattempt.engtest.TestAttempt;
 
 import java.util.List;
 import java.util.Objects;

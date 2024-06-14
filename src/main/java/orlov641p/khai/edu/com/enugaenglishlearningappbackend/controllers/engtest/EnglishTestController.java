@@ -3,17 +3,13 @@ package orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.engtes
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.engtest.dto.response.EnglishTestResponse;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.dto.request.TestAttemptRequest;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.dto.response.TestAttemptResponse;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.engtest.dto.request.TestAttemptRequest;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.engtest.dto.response.TestAttemptResponse;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.engtest.EnglishTest;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.testattempt.TestAttempt;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.User;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.engtest.EnglishTestService;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.user.UserService;
 
 import java.net.URI;
 import java.util.ArrayList;

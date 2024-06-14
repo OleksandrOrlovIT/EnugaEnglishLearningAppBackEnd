@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.proxy.HibernateProxy;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.BaseEntity;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.testattempt.wordmodule.WordModuleAttempt;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.User;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.wordmodule.enums.Visibility;
 
@@ -31,13 +32,18 @@ public class WordModule extends BaseEntity {
     @OneToMany(mappedBy = "wordModule", cascade = CascadeType.REMOVE)
     private List<CustomPair> customPairs;
 
+    @OneToMany(mappedBy = "wordModule", cascade = CascadeType.REMOVE)
+    private List<WordModuleAttempt> wordModuleAttempts;
+
     @Builder
-    public WordModule(Long id, String moduleName, Visibility visibility, User user, List<CustomPair> customPairs) {
+    public WordModule(Long id, String moduleName, Visibility visibility, User user, List<CustomPair> customPairs,
+                      List<WordModuleAttempt> wordModuleAttempts) {
         super(id);
         this.moduleName = moduleName;
         this.visibility = visibility;
         this.user = user;
         this.customPairs = customPairs;
+        this.wordModuleAttempts = wordModuleAttempts;
     }
 
     @Override

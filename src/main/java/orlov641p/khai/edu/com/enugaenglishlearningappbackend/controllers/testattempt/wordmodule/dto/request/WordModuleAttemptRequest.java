@@ -1,4 +1,4 @@
-package orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.dto.request;
+package orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.wordmodule.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,11 +11,10 @@ import java.util.Map;
 @Setter
 @Getter
 @AllArgsConstructor
-public class TestAttemptRequest {
-
+public class WordModuleAttemptRequest {
     private Long userId;
 
-    private Long englishTestId;
+    private Long wordModuleId;
 
     private Map<Long, String> answers;
 }

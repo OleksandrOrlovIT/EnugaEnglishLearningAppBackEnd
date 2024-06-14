@@ -1,4 +1,4 @@
-package orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt;
+package orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.engtest;
 
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -7,13 +7,12 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.dto.mapper.TestAttemptMapper;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.dto.request.TestAttemptPage;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.dto.request.TestAttemptWithoutAnswers;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.dto.response.TestAttemptResponse;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.testattempt.TestAttempt;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.User;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.testattempt.TestAttemptService;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.engtest.dto.mapper.TestAttemptMapper;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.engtest.dto.request.TestAttemptPage;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.engtest.dto.request.TestAttemptWithoutAnswers;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.engtest.dto.response.TestAttemptResponse;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.testattempt.engtest.TestAttempt;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.testattempt.engtest.TestAttemptService;
 
 import java.net.URI;
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.testattempt;
+package orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.testattempt.wordmodule;
 
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.proxy.HibernateProxy;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.BaseEntity;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.engtest.EnglishTest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.User;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.wordmodule.WordModule;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -18,15 +18,15 @@ import java.util.Objects;
 @Getter
 @NoArgsConstructor
 @Entity
-public class TestAttempt extends BaseEntity {
+public class WordModuleAttempt extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "test_id", nullable = false)
-    private EnglishTest englishTest;
+    @JoinColumn(name = "wordModule_id", nullable = false)
+    private WordModule wordModule;
 
     @Column(columnDefinition = "TIMESTAMP")
     private LocalDateTime attemptDate;
@@ -34,20 +34,20 @@ public class TestAttempt extends BaseEntity {
     private Integer rightAnswers;
 
     @ElementCollection
-    @CollectionTable(name = "test_attempt_wrong_answers",
-                     joinColumns = @JoinColumn(name = "test_attempt_id"))
-    @MapKeyColumn(name = "question_id")
+    @CollectionTable(name = "word_module_attempt_wrong_answers",
+            joinColumns = @JoinColumn(name = "word_module_attempt_id"))
+    @MapKeyColumn(name = "custom_pair_id")
     @Column(name = "wrong_answer")
     private Map<Long, String> wrongAnswers;
 
     private Double successPercentage;
 
     @Builder
-    public TestAttempt(Long id, User user, EnglishTest englishTest, LocalDateTime attemptDate, int rightAnswers,
-                       Map<Long, String> wrongAnswers, double successPercentage) {
+    public WordModuleAttempt(Long id, User user, WordModule wordModule, LocalDateTime attemptDate, Integer rightAnswers,
+                             Map<Long, String> wrongAnswers, Double successPercentage) {
         super(id);
         this.user = user;
-        this.englishTest = englishTest;
+        this.wordModule = wordModule;
         this.attemptDate = attemptDate;
         this.rightAnswers = rightAnswers;
         this.wrongAnswers = wrongAnswers;
@@ -61,7 +61,7 @@ public class TestAttempt extends BaseEntity {
         Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
         Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
         if (thisEffectiveClass != oEffectiveClass) return false;
-        TestAttempt that = (TestAttempt) o;
+        WordModuleAttempt that = (WordModuleAttempt) o;
         return getId() != null && Objects.equals(getId(), that.getId());
     }
 
@@ -74,9 +74,9 @@ public class TestAttempt extends BaseEntity {
     public String toString() {
         return getClass().getSimpleName() + "(" +
                 "id = " + getId() + ", " +
-                "attemptDate = " + getAttemptDate() + ", " +
-                "rightAnswers = " + getRightAnswers() + ", " +
+                "successPercentage = " + getSuccessPercentage() + ", " +
                 "wrongAnswers = " + getWrongAnswers() + ", " +
-                "successPercentage = " + getSuccessPercentage() + ")";
+                "rightAnswers = " + getRightAnswers() + ", " +
+                "attemptDate = " + getAttemptDate() + ")";
     }
 }
