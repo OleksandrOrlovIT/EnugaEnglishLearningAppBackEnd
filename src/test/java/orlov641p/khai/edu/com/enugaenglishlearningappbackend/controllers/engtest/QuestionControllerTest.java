@@ -129,7 +129,7 @@ class QuestionControllerTest {
         List<Question> questions = List.of(new Question(), new Question());
         when(questionService.getQuestionsByEnglishTestId(anyLong())).thenReturn(questions);
 
-        mockMvc.perform(get("/v1/questions/1")
+        mockMvc.perform(get("/v1/questions/english-test/1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)));

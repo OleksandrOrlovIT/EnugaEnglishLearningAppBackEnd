@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
 @Transactional
-class EnglishTestServiceImplTest {
+class WordModule {
     private static final String TEST_NAME = "Test Name";
 
     private static Long ID = 1L;

@@ -85,9 +85,9 @@ class EnglishTestTest {
                 .testName(TEST_NAME)
                 .questions(List.of(new Question(), new Question()));
 
-        String expected = "EnglishTest.EnglishTestBuilder(id=1, testName=testName," +
-                " questions=[Question{id=null, questionText='null', answer='null'}," +
-                " Question{id=null, questionText='null', answer='null'}])";
+        String expected = "EnglishTest.EnglishTestBuilder(id=1, testName=testName, questions=[Question{id=null," +
+                " questionText='null', answer='null'}, Question{id=null, questionText='null', answer='null'}]," +
+                " testAttempts=null)";
 
         assertEquals(expected, englishTestBuilder.toString());
     }

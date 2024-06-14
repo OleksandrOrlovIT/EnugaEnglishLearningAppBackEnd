@@ -11,6 +11,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.BaseEntity;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.testattempt.TestAttempt;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.wordmodule.WordModule;
 
 import java.util.*;
 
@@ -40,9 +41,12 @@ public class User extends BaseEntity implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<TestAttempt> testAttempts;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<WordModule> wordModules;
+
     @Builder
     public User(Long id, String email, String firstName, String lastName, String password, Set<Role> roles,
-                List<TestAttempt> testAttempts) {
+                List<TestAttempt> testAttempts, List<WordModule> wordModules) {
         super(id);
         this.email = email;
         this.firstName = firstName;
@@ -50,6 +54,7 @@ public class User extends BaseEntity implements UserDetails {
         this.password = password;
         this.roles = roles;
         this.testAttempts = testAttempts;
+        this.wordModules = wordModules;
     }
 
     @Override

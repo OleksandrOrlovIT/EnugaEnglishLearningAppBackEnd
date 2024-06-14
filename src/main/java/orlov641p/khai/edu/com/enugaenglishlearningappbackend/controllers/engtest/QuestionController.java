@@ -10,7 +10,7 @@ import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.engtest.Qu
 import java.net.URI;
 import java.util.List;
 
-@RestController()
+@RestController
 @RequestMapping("/v1")
 public class QuestionController {
     private final QuestionService questionService;
@@ -27,7 +27,7 @@ public class QuestionController {
         return questionService.findById(id);
     }
 
-    @GetMapping("/questions/{englishTestId}")
+    @GetMapping("/questions/english-test/{englishTestId}")
     public List<Question> retrieveQuestionsByEnglishTestId(@PathVariable Long englishTestId){
         return questionService.getQuestionsByEnglishTestId(englishTestId);
     }
@@ -57,7 +57,7 @@ public class QuestionController {
 
     @PreAuthorize("hasRole('ROLE_ENGLISH_TEACHER_USER')")
     @DeleteMapping("/question/{id}")
-    public ResponseEntity<Void> deleteRule(@PathVariable Long id){
+    public ResponseEntity<Void> deleteQuestion(@PathVariable Long id){
         questionService.deleteById(id);
         return ResponseEntity.noContent().build();
     }

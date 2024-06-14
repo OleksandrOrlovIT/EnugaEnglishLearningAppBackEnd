@@ -10,11 +10,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.book.dto.response.BookResponse;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.book.Book;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.book.BookLoaderService;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.book.BookService;
 
 import java.util.Arrays;
@@ -25,7 +27,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -35,6 +36,9 @@ class BookControllerTest {
 
     @Mock
     BookService bookService;
+
+    @Mock
+    BookLoaderService bookLoaderService;
 
     @InjectMocks
     BookController bookController;
@@ -107,12 +111,14 @@ class BookControllerTest {
     @Test
     void createBook() throws Exception {
         Book book = Book.builder().id(BOOK_ID).build();
+        MockMultipartFile file = new MockMultipartFile("file", "test.txt", MediaType.TEXT_PLAIN_VALUE, "Test content".getBytes());
+        MockMultipartFile bookJson = new MockMultipartFile("book", "book.json", MediaType.APPLICATION_JSON_VALUE, new ObjectMapper().writeValueAsString(book).getBytes());
 
-        when(bookService.create(any())).thenReturn(book);
+        when(bookLoaderService.loadBookFromMultipartFile(any(), any())).thenReturn(book);
 
-        MvcResult result = mockMvc.perform(post("/v1/book")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(book)))
+        MvcResult result = mockMvc.perform(multipart("/v1/book")
+                        .file(file)
+                        .file(bookJson))
                 .andExpect(status().isCreated())
                 .andReturn();
 
