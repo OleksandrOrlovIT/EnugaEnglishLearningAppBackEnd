@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.teacher.dto.EnglishTeacherResponse;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.teacher.EnglishTeacher;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.security.annotations.teacher.IsAdminOrSelfTeacherRequest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.user.teacher.EnglishTeacherService;
 
 import java.net.URI;
@@ -34,13 +35,13 @@ public class EnglishTeacherController {
     }
 
     @GetMapping("/english-teacher/{id}")
-    @PreAuthorize("hasRole('ROLE_ENGLISH_TEACHER_USER')")
+    @IsAdminOrSelfTeacherRequest
     public EnglishTeacherResponse retrieveEnglishTeacherById(@PathVariable Long id){
         return new EnglishTeacherResponse(englishTeacherService.findById(id));
     }
 
     @PostMapping("/english-teacher")
-    @PreAuthorize("hasRole('ROLE_ENGLISH_TEACHER_USER')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<EnglishTeacherResponse> createEnglishTeacher(@RequestBody EnglishTeacher englishTeacher){
         EnglishTeacher savedEnglishTeacher = englishTeacherService.create(englishTeacher);
 
@@ -53,7 +54,7 @@ public class EnglishTeacherController {
     }
 
     @PutMapping("/english-teacher/{id}")
-    @PreAuthorize("hasRole('ROLE_ENGLISH_TEACHER_USER')")
+    @IsAdminOrSelfTeacherRequest
     public EnglishTeacherResponse updateEnglishTeacher(@PathVariable Long id, @RequestBody EnglishTeacher englishTeacher){
         if(englishTeacherService.findById(id) == null) {
             return null;
@@ -63,7 +64,7 @@ public class EnglishTeacherController {
     }
 
     @DeleteMapping("/english-teacher/{id}")
-    @PreAuthorize("hasRole('ROLE_ENGLISH_TEACHER_USER')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteEnglishTeacher(@PathVariable Long id){
         englishTeacherService.deleteById(id);
         return ResponseEntity.noContent().build();

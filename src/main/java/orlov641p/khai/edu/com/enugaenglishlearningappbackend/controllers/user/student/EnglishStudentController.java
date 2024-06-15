@@ -14,6 +14,7 @@ import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.st
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.student.dto.response.EnglishStudentResponse;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.student.EnglishStudent;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.teacher.EnglishTeacher;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.security.annotations.teacher.IsAdminOrSelfTeacherRequest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.security.engteacher.EnglishTeacherSecurity;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.user.student.EnglishStudentService;
 
@@ -31,12 +32,12 @@ public class EnglishStudentController {
 
     @GetMapping("/english-students")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public List<EnglishStudentResponse> retrieveEnglishStudents(){
+    public List<EnglishStudentResponse> retrieveEnglishStudents() {
         List<EnglishStudent> englishStudents = englishStudentService.findAll();
 
         List<EnglishStudentResponse> responses = new ArrayList<>();
 
-        for(EnglishStudent englishStudent : englishStudents){
+        for (EnglishStudent englishStudent : englishStudents) {
             responses.add(new EnglishStudentResponse(englishStudent));
         }
 
@@ -45,13 +46,13 @@ public class EnglishStudentController {
 
     @GetMapping("/english-student/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public EnglishStudentResponse retrieveEnglishStudentById(@PathVariable Long id){
+    public EnglishStudentResponse retrieveEnglishStudentById(@PathVariable Long id) {
         return new EnglishStudentResponse(englishStudentService.findById(id));
     }
 
     @PostMapping("/english-student")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<EnglishStudentResponse> createEnglishStudent(@RequestBody EnglishStudent englishStudent){
+    public ResponseEntity<EnglishStudentResponse> createEnglishStudent(@RequestBody EnglishStudent englishStudent) {
         EnglishStudent savedEnglishStudent = englishStudentService.create(englishStudent);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -64,8 +65,8 @@ public class EnglishStudentController {
 
     @PutMapping("/english-student/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public EnglishStudentResponse updateEnglishStudent(@PathVariable Long id, @RequestBody EnglishStudent englishStudent){
-        if(englishStudentService.findById(id) == null) {
+    public EnglishStudentResponse updateEnglishStudent(@PathVariable Long id, @RequestBody EnglishStudent englishStudent) {
+        if (englishStudentService.findById(id) == null) {
             return null;
         }
 
@@ -74,23 +75,19 @@ public class EnglishStudentController {
 
     @DeleteMapping("/english-student/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<Void> deleteEnglishStudent(@PathVariable Long id){
+    public ResponseEntity<Void> deleteEnglishStudent(@PathVariable Long id) {
         englishStudentService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/english-student/by-teacher")
-    @PreAuthorize("hasRole('ROLE_ENGLISH_TEACHER_USER')")
-    public Page<EnglishStudentResponse> getStudentsPageByTeacher(@RequestBody EnglishTeacherIdPageRequest request){
-        if(englishTeacherSecurity.checkIfLoggedUserIsRequestedTeacher(request.getEnglishTeacherId())) {
-            Page<EnglishStudent> englishStudents = englishStudentService.findEnglishStudentsByEnglishTeacher(
-                    request.getEnglishTeacherId(),
-                    PageRequest.of(request.getPageNumber(), request.getPageSize())
-            );
+    @IsAdminOrSelfTeacherRequest
+    public Page<EnglishStudentResponse> getStudentsPageByTeacher(@RequestBody EnglishTeacherIdPageRequest request) {
+        Page<EnglishStudent> englishStudents = englishStudentService.findEnglishStudentsByEnglishTeacher(
+                request.getEnglishTeacherId(),
+                PageRequest.of(request.getPageNumber(), request.getPageSize())
+        );
 
-            return EnglishStudentMapper.convertEnglishStudentPageToResponse(englishStudents);
-        } else {
-            throw new AccessDeniedException("Access Denied");
-        }
+        return EnglishStudentMapper.convertEnglishStudentPageToResponse(englishStudents);
     }
 }
