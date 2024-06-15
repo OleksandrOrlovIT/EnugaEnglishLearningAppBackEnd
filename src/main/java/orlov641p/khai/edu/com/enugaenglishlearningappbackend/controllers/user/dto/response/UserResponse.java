@@ -21,8 +21,6 @@ public class UserResponse {
 
     private String lastName;
 
-    private String password;
-
     private Set<Role> roles;
 
     public UserResponse(User user) {
@@ -30,7 +28,6 @@ public class UserResponse {
         this.email = user.getEmail();
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
-        this.password = user.getPassword();
         this.roles = user.getRoles();
     }
 }

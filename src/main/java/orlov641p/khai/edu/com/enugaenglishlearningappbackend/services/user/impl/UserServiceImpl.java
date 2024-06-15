@@ -67,7 +67,10 @@ public class UserServiceImpl implements UserService {
         User foundUser = findById(user.getId());
 
         if (!passwordEncoder.matches(user.getPassword(), foundUser.getPassword())) {
+            System.out.println("doesn't match" + user.getPassword() + " " + foundUser.getPassword());
             user.setPassword(passwordEncoder.encode(user.getPassword()));
+        } else {
+            user.setPassword(foundUser.getPassword());
         }
 
         return userRepository.save(user);
@@ -121,6 +124,11 @@ public class UserServiceImpl implements UserService {
     public User getCurrentUser() {
         var email = SecurityContextHolder.getContext().getAuthentication().getName();
         return getUserByEmail(email);
+    }
+
+    @Override
+    public Page<User> getUserPage(Pageable pageable) {
+        return userRepository.findAll(pageable);
     }
 
     @Override

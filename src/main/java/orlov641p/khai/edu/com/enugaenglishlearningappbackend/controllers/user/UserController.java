@@ -1,11 +1,15 @@
 package orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.dto.mapper.UserMapper;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.dto.request.UserPageRequest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.dto.request.UserWithoutRolesRequest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.dto.response.UserResponse;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.User;
@@ -35,6 +39,16 @@ public class UserController {
         }
 
         return responses;
+    }
+
+    @PostMapping("/users/page")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public Page<UserResponse> retrieveUsersPage(@RequestBody UserPageRequest userPageRequest){
+        Pageable pageable = PageRequest.of(userPageRequest.getPageNumber(), userPageRequest.getPageSize());
+
+        Page<User> users = userService.getUserPage(pageable);
+
+        return UserMapper.userPageToUserResponsePage(users);
     }
 
     @GetMapping("/user/{id}")
@@ -73,9 +87,11 @@ public class UserController {
             return null;
         }
 
+        System.out.println("request: " + request);
         User user = UserMapper.convertUserWithoutRolesRequestToUser(request);
+        System.out.println("user: " + user);
 
-        return new UserResponse(userService.update(user));
+        return new UserResponse(userService.updateUserWithoutRoles(user));
     }
 
     @PutMapping("/user/{id}/upgrade-account")
