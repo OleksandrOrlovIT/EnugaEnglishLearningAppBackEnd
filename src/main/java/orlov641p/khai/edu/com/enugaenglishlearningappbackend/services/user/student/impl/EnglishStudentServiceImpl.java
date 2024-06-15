@@ -13,6 +13,7 @@ import orlov641p.khai.edu.com.enugaenglishlearningappbackend.repositories.user.s
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.repositories.user.teacher.EnglishTeacherRepository;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.user.UserService;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.user.student.EnglishStudentService;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.user.teacher.EnglishTeacherService;
 
 import java.util.List;
 
@@ -21,7 +22,7 @@ import java.util.List;
 public class EnglishStudentServiceImpl implements EnglishStudentService {
 
     private final EnglishStudentRepository englishStudentRepository;
-    private final EnglishTeacherRepository englishTeacherRepository;
+    private final EnglishTeacherService englishTeacherService;
     private final UserService userService;
 
     @Override
@@ -91,6 +92,13 @@ public class EnglishStudentServiceImpl implements EnglishStudentService {
         return englishStudents.hasContent() ? englishStudents.getContent().get(0) : null;
     }
 
+    @Override
+    public Page<EnglishStudent> findEnglishStudentsByEnglishTeacher(Long englishTeacherId, Pageable pageable) {
+        EnglishTeacher englishTeacher = englishTeacherService.findById(englishTeacherId);
+
+        return englishStudentRepository.findByTeacher(englishTeacher, pageable);
+    }
+
     private void checkEnglishStudentNull(EnglishStudent englishStudent){
         if(englishStudent == null){
             throw new IllegalArgumentException("EnglishStudent can't be null");
@@ -104,7 +112,7 @@ public class EnglishStudentServiceImpl implements EnglishStudentService {
     }
 
     private void checkEnglishTeacherExists(EnglishTeacher englishTeacher){
-        if(!englishTeacherRepository.existsById(englishTeacher.getId())){
+        if(englishTeacherService.findById(englishTeacher.getId()) == null){
             throw new IllegalArgumentException("English teacher = " + englishTeacher + " doesn't exist");
         }
     }

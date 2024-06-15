@@ -1,11 +1,16 @@
 package orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.student;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.student.dto.EnglishStudentResponse;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.student.dto.mapper.EnglishStudentMapper;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.student.dto.request.EnglishTeacherIdPageRequest;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.student.dto.response.EnglishStudentResponse;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.student.EnglishStudent;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.user.student.EnglishStudentService;
 
@@ -68,5 +73,16 @@ public class EnglishStudentController {
     public ResponseEntity<Void> deleteEnglishStudent(@PathVariable Long id){
         englishStudentService.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/english-student/by-teacher")
+    @PreAuthorize("hasRole('ROLE_ENGLISH_TEACHER_USER')")
+    public Page<EnglishStudentResponse> getStudentsPageByTeacher(@RequestBody EnglishTeacherIdPageRequest request){
+        Page<EnglishStudent> englishStudents = englishStudentService.findEnglishStudentsByEnglishTeacher(
+                        request.getEnglishTeacherId(),
+                        PageRequest.of(request.getPageNumber(), request.getPageSize())
+        );
+
+        return EnglishStudentMapper.convertEnglishStudentPageToResponse(englishStudents);
     }
 }

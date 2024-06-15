@@ -1,4 +1,4 @@
-package orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.student.dto;
+package orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.student.dto.response;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
