@@ -79,7 +79,7 @@ public class UserController {
     }
 
     @PutMapping("/user/{id}/upgrade-account")
-    @IsAdminOrSelf
+    @PreAuthorize("!hasRole('ROLE_USER_WITH_SUBSCRIPTION')")
     public UserResponse upgradeUserSubscription(@PathVariable Long id){
         User user = userService.findById(id);
 
