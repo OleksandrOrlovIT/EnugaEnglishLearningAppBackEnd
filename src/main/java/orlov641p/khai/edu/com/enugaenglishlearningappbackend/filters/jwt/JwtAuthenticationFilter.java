@@ -40,7 +40,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             try {
                 filterChain.doFilter(request, response);
             } catch (Exception e){
-                log.info("Worked here");
                 globalExceptionHandler.handleException(e);
             }
             return;
@@ -69,7 +68,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             filterChain.doFilter(request, response);
         } catch (Exception e){
-            log.info("Worked here");
             globalExceptionHandler.handleException(e);
         }
     }
