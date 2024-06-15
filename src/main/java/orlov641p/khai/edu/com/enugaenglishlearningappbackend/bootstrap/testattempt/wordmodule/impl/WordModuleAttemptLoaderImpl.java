@@ -32,55 +32,89 @@ public class WordModuleAttemptLoaderImpl implements WordModuleAttemptLoader {
     @Override
     public void loadWordModuleAttempts() {
         if (wordModuleAttemptService.getFirst() == null) {
-            saveTestAttempts();
+            saveWordModuleAttempts();
             log.info("WordModuleAttempts were loaded");
         } else {
             log.info("WordModuleAttempts loading were skipped");
         }
     }
 
-    private void saveTestAttempts() {
-        User firstUser = userService.getUserByEmail("test1@email.com");
-        WordModule wordModule = wordModuleService.getFirst();
+    private void saveWordModuleAttempts() {
+        User admin = userService.getUserByEmail("admin@admin.com");
 
-        List<CustomPair> customPairs = customPairService.getCustomPairsByWordModuleId(wordModule.getId());
+        List<WordModule> wordModules = wordModuleService.findByVisibilityPublicAndUserNot(admin.getId());
+
+        WordModule wordModule1 = wordModules.get(0);
+        List<CustomPair> customPairs1 = customPairService.getCustomPairsByWordModuleId(wordModule1.getId());
+        Map<Integer, Map<Long, String>> cache1 = cacheWrongAnswers(customPairs1);
+
+        WordModule wordModule2 = wordModules.get(1);
+        List<CustomPair> customPairs2 = customPairService.getCustomPairsByWordModuleId(wordModule2.getId());
+        Map<Integer, Map<Long, String>> cache2 = cacheWrongAnswers(customPairs2);
+
+        int times1 = 1, times2 = 3;
+
+        for (User user : userService.findAll()) {
+            if (times1 == 4) {
+                times1 = 1;
+            }
+            if (times2 == 4) {
+                times2 = 1;
+            }
+
+            loadWordModuleAttempt(wordModule1, user, times1, customPairs1, cache1);
+            loadWordModuleAttempt(wordModule2, user, times2, customPairs2, cache2);
+            times1++;
+            times2++;
+        }
+    }
+
+    private void loadWordModuleAttempt(WordModule wordModule, User user, int makeAttempts, List<CustomPair> customPairs,
+                                       Map<Integer, Map<Long, String>> cache) {
+
+        saveWordModuleAttempt(wordModule, user, customPairs.size() - cache.get(1).size(), cache.get(1));
+
+        if(makeAttempts >= 2){
+            saveWordModuleAttempt(wordModule, user, customPairs.size() - cache.get(2).size(), cache.get(2));
+
+            if(makeAttempts == 3){
+                saveWordModuleAttempt(wordModule, user, customPairs.size() - cache.get(3).size(), cache.get(3));
+            }
+        }
+    }
+
+    private void saveWordModuleAttempt(WordModule wordModule, User user, int rightAnswers, Map<Long, String> wrongAnswers) {
+        WordModuleAttempt wordModuleAttempt = WordModuleAttempt.builder()
+                .wordModule(wordModule)
+                .user(user)
+                .rightAnswers(rightAnswers)
+                .wrongAnswers(wrongAnswers)
+                .build();
+
+        wordModuleAttemptService.create(wordModuleAttempt);
+    }
+
+    private Map<Integer, Map<Long, String>> cacheWrongAnswers(List<CustomPair> customPairs) {
+        Map<Integer, Map<Long, String>> res = new HashMap<>();
 
         Map<Long, String> wrongAnswers1 = new HashMap<>();
-        for(CustomPair customPair : customPairs) {
+
+        for (CustomPair customPair : customPairs) {
             wrongAnswers1.put(customPair.getId(), customPair.getTranslation() + "asd");
         }
 
-        Map<Long, String> wrongAnswers2 = new HashMap<>(wrongAnswers1);
+        res.put(1, wrongAnswers1);
+        res.put(2, new HashMap<>());
+
         Map<Long, String> wrongAnswers3 = new HashMap<>(wrongAnswers1);
 
-        WordModuleAttempt wordModuleAttempt1 = WordModuleAttempt.builder()
-                .wordModule(wordModule)
-                .user(firstUser)
-                .rightAnswers(customPairs.size())
-                .build();
-
-        WordModuleAttempt wordModuleAttempt2 = WordModuleAttempt.builder()
-                .wordModule(wordModule)
-                .user(firstUser)
-                .wrongAnswers(wrongAnswers2)
-                .build();
-
-        int rightAnswers = 0;
         for (int i = 0; i < customPairs.size() / 2; i++) {
             wrongAnswers3.remove(customPairs.get(i).getId());
-            rightAnswers++;
         }
 
-        WordModuleAttempt wordModuleAttempt3 = WordModuleAttempt.builder()
-                .wordModule(wordModule)
-                .user(firstUser)
-                .rightAnswers(rightAnswers)
-                .wrongAnswers(wrongAnswers3)
-                .build();
+        res.put(3, wrongAnswers3);
 
-        wordModuleAttemptService.create(wordModuleAttempt1);
-        wordModuleAttemptService.create(wordModuleAttempt2);
-        wordModuleAttemptService.create(wordModuleAttempt3);
+        return res;
     }
 
 }

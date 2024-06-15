@@ -54,14 +54,6 @@ public class UserLoaderImpl implements UserLoader {
         createUser("test2@email.com", "TestName2", "TestName2",
                 Set.of(Role.ROLE_USER_WITHOUT_SUBSCRIPTION, Role.ROLE_USER_WITH_SUBSCRIPTION));
 
-        createUser("test3@email.com", "TestName3", "TestName3",
-                Set.of(Role.ROLE_USER_WITHOUT_SUBSCRIPTION, Role.ROLE_USER_WITH_SUBSCRIPTION,
-                        Role.ROLE_ENGLISH_STUDENT_USER));
-
-        createUser("test4@email.com", "TestName4", "TestName4",
-                Set.of(Role.ROLE_USER_WITHOUT_SUBSCRIPTION, Role.ROLE_USER_WITH_SUBSCRIPTION,
-                        Role.ROLE_ENGLISH_STUDENT_USER, Role.ROLE_ENGLISH_TEACHER_USER));
-
         createUser("admin@admin.com", "admin", "admin",
                 Set.of(Role.ROLE_USER_WITHOUT_SUBSCRIPTION, Role.ROLE_USER_WITH_SUBSCRIPTION,
                         Role.ROLE_ENGLISH_STUDENT_USER, Role.ROLE_ENGLISH_TEACHER_USER, Role.ROLE_ADMIN));
@@ -83,11 +75,16 @@ public class UserLoaderImpl implements UserLoader {
                 .user(constructUser("englishTeacher3@email.com", "english3", "Teacher3", teachersRoles ))
                 .build();
 
+        EnglishTeacher test4englishTeacher = EnglishTeacher.builder().
+                user(constructUser("test4@email.com", "TestName4", "TestName4", teachersRoles))
+                .build();
+
         englishTeacher1 = englishTeacherService.create(englishTeacher1);
         englishTeacher2 = englishTeacherService.create(englishTeacher2);
         englishTeacher3 = englishTeacherService.create(englishTeacher3);
+        test4englishTeacher = englishTeacherService.create(test4englishTeacher);
 
-        return List.of(englishTeacher1, englishTeacher2, englishTeacher3);
+        return List.of(englishTeacher1, englishTeacher2, englishTeacher3, test4englishTeacher);
     }
 
     private void saveStudents(List<EnglishTeacher> englishTeachers) {
@@ -95,6 +92,13 @@ public class UserLoaderImpl implements UserLoader {
                 Role.ROLE_ENGLISH_STUDENT_USER);
 
         List<EnglishStudent> englishStudents = new ArrayList<>();
+
+        EnglishStudent englishStudentTest3 = EnglishStudent.builder()
+                .teacher(englishTeachers.get(3))
+                .user(constructUser("test3@email.com", "test3", "test3", studentRoles))
+                .build();
+
+        englishStudents.add(englishStudentTest3);
 
         EnglishStudent student1Teacher1 = EnglishStudent.builder()
                 .teacher(englishTeachers.get(0))

@@ -60,7 +60,7 @@ public class WordModuleAttemptServiceImpl implements WordModuleAttemptService {
         }
 
         double successPercentage = !customPairs.isEmpty() ?
-                ((double) rightAnswers / questionsSize) * 100 : 0.0;
+                Math.abs((double) rightAnswers / questionsSize) * 100 : 0.0;
 
         wordModuleAttempt.setSuccessPercentage(successPercentage);
 

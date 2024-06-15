@@ -60,7 +60,7 @@ public class TestAttemptServiceImpl implements TestAttemptService {
         }
 
         double successPercentage = !questions.isEmpty() ?
-                ((double) rightAnswers / questionsSize) * 100 : 0.0;
+                Math.abs((double) rightAnswers / questionsSize) * 100 : 0.0;
 
         testAttempt.setSuccessPercentage(successPercentage);
 

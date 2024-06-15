@@ -9,6 +9,7 @@ import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.engtest.Engl
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.engtest.Question;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.testattempt.engtest.TestAttempt;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.User;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.wordmodule.CustomPair;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.engtest.EnglishTestService;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.engtest.QuestionService;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.testattempt.engtest.TestAttemptService;
@@ -40,47 +41,77 @@ public class TestAttemptLoaderImpl implements TestAttemptLoader {
     }
 
     private void saveTestAttempts() {
-        User admin = userService.getUserByEmail("admin@admin.com");
-        EnglishTest test = englishTestService.getFirst();
+        List<EnglishTest> englishTests = englishTestService.findAll();
 
-        List<Question> questions = questionService.getQuestionsByEnglishTestId(test.getId());
+        EnglishTest test1 = englishTests.get(0);
+        List<Question> questions1 = questionService.getQuestionsByEnglishTestId(test1.getId());
+        Map<Integer, Map<Long, String>> cache1 = cacheWrongAnswers(questions1);
+
+        EnglishTest test2 = englishTests.get(1);
+        List<Question> questions2 = questionService.getQuestionsByEnglishTestId(test2.getId());
+        Map<Integer, Map<Long, String>> cache2 = cacheWrongAnswers(questions1);
+
+        int times1 = 1, times2 = 3;
+
+        for (User user : userService.findAll()) {
+            if (times1 == 4) {
+                times1 = 1;
+            }
+            if (times2 == 4) {
+                times2 = 1;
+            }
+
+            loadTestAttempt(test1, user, times1, questions1, cache1);
+            loadTestAttempt(test2, user, times2, questions2, cache2);
+            times1++;
+            times2++;
+        }
+    }
+
+    private void loadTestAttempt(EnglishTest englishTest, User user, int makeAttempts, List<Question> questions,
+                                 Map<Integer, Map<Long, String>> cache) {
+        saveTestAttempt(englishTest, user, questions.size() - cache.get(1).size(), cache.get(1));
+
+        if(makeAttempts >= 2){
+            saveTestAttempt(englishTest, user, questions.size() - cache.get(2).size(), cache.get(2));
+
+            if(makeAttempts == 3){
+                saveTestAttempt(englishTest, user, questions.size() - cache.get(3).size(), cache.get(3));
+            }
+        }
+    }
+
+    private void saveTestAttempt(EnglishTest englishTest, User user, int rightAnswers, Map<Long, String> wrongAnswers) {
+        TestAttempt testAttempt = TestAttempt.builder()
+                .englishTest(englishTest)
+                .user(user)
+                .rightAnswers(rightAnswers)
+                .wrongAnswers(wrongAnswers)
+                .build();
+
+        testAttemptService.create(testAttempt);
+    }
+
+    private Map<Integer, Map<Long, String>> cacheWrongAnswers(List<Question> questions) {
+        Map<Integer, Map<Long, String>> res = new HashMap<>();
 
         Map<Long, String> wrongAnswers1 = new HashMap<>();
+
         for (Question question : questions) {
             wrongAnswers1.put(question.getId(), question.getAnswer() + "asd");
         }
 
-        Map<Long, String> wrongAnswers2 = new HashMap<>(wrongAnswers1);
+        res.put(1, wrongAnswers1);
+        res.put(2, new HashMap<>());
+
         Map<Long, String> wrongAnswers3 = new HashMap<>(wrongAnswers1);
 
-        TestAttempt testAttempt1 = TestAttempt.builder()
-                .englishTest(test)
-                .user(admin)
-                .rightAnswers(questions.size())
-                .build();
-
-        TestAttempt testAttempt2 = TestAttempt.builder()
-                .englishTest(test)
-                .user(admin)
-                .wrongAnswers(wrongAnswers2)
-                .build();
-
-        int rightAnswers = 0;
         for (int i = 0; i < questions.size() / 2; i++) {
             wrongAnswers3.remove(questions.get(i).getId());
-            rightAnswers++;
         }
 
-        TestAttempt testAttempt3 = TestAttempt.builder()
-                .englishTest(test)
-                .user(admin)
-                .rightAnswers(rightAnswers)
-                .wrongAnswers(wrongAnswers3)
-                .build();
+        res.put(3, wrongAnswers3);
 
-        testAttemptService.create(testAttempt1);
-        testAttemptService.create(testAttempt2);
-        testAttemptService.create(testAttempt3);
+        return res;
     }
-
 }
