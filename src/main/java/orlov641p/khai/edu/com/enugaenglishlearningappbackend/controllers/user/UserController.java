@@ -78,6 +78,18 @@ public class UserController {
         return new UserResponse(userService.update(user));
     }
 
+    @PutMapping("/user/{id}/upgrade-account")
+    @IsAdminOrSelf
+    public UserResponse upgradeUserSubscription(@PathVariable Long id){
+        User user = userService.findById(id);
+
+        if(user == null) {
+            return null;
+        }
+
+        return new UserResponse(userService.upgradeUserSubscription(user));
+    }
+
     @DeleteMapping("/user/{id}")
     @IsAdminOrSelf
     public ResponseEntity<Void> deleteUser(@PathVariable Long id){

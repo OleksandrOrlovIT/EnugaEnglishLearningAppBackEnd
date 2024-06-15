@@ -2,12 +2,16 @@ package orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.user.impl
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.rule.Rule;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.Role;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.User;
@@ -16,14 +20,19 @@ import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.user.UserS
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 @AllArgsConstructor
 @Service
 public class UserServiceImpl implements UserService {
 
+    private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+
+    private final Map<Long, Long> roleRevertMap = new ConcurrentHashMap<>();
 
     @Override
     public List<User> findAll() {
@@ -42,7 +51,7 @@ public class UserServiceImpl implements UserService {
     public User create(User user) {
         checkUserNull(user);
 
-        if(user.getRoles() == null || user.getRoles().isEmpty()){
+        if (user.getRoles() == null || user.getRoles().isEmpty()) {
             user.setRoles(Set.of(Role.ROLE_USER_WITHOUT_SUBSCRIPTION));
         }
 
@@ -57,7 +66,7 @@ public class UserServiceImpl implements UserService {
 
         User foundUser = findById(user.getId());
 
-        if(!passwordEncoder.matches(user.getPassword(), foundUser.getPassword())){
+        if (!passwordEncoder.matches(user.getPassword(), foundUser.getPassword())) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
 
@@ -114,14 +123,47 @@ public class UserServiceImpl implements UserService {
         return getUserByEmail(email);
     }
 
-    private void checkUserNull(User user){
-        if(user == null){
+    @Override
+    public User upgradeUserSubscription(User user) {
+        checkUserNull(user);
+        checkUserIdNull(user.getId());
+        User foundUser = findById(user.getId());
+
+        foundUser.getRoles().add(Role.ROLE_USER_WITH_SUBSCRIPTION);
+        userRepository.save(user);
+
+        roleRevertMap.put(foundUser.getId(), System.currentTimeMillis() + 300000);
+        System.out.println(roleRevertMap);
+
+        return foundUser;
+    }
+
+    @Scheduled(fixedRate = 300000)
+    protected void revertUserRoles() {
+        long currentTime = System.currentTimeMillis();
+        for (Map.Entry<Long, Long> entry : roleRevertMap.entrySet()) {
+            if (currentTime >= entry.getValue()) {
+                revertUserWithSubscriptionRole(entry.getKey());
+                roleRevertMap.remove(entry.getKey());
+            }
+        }
+    }
+
+    protected void revertUserWithSubscriptionRole(Long userId) {
+        log.info("Reverting subscription from user with id = {}", userId);
+        User user = findById(userId);
+        user.getRoles().remove(Role.ROLE_USER_WITH_SUBSCRIPTION);
+        userRepository.save(user);
+    }
+
+    private void checkUserNull(User user) {
+        if (user == null) {
             throw new IllegalArgumentException("User can't be null");
         }
     }
 
-    private void checkUserIdNull(Long id){
-        if(id == null){
+    private void checkUserIdNull(Long id) {
+        if (id == null) {
             throw new IllegalArgumentException("User id can`t be null");
         }
     }
