@@ -87,9 +87,7 @@ public class UserController {
             return null;
         }
 
-        System.out.println("request: " + request);
         User user = UserMapper.convertUserWithoutRolesRequestToUser(request);
-        System.out.println("user: " + user);
 
         return new UserResponse(userService.updateUserWithoutRoles(user));
     }

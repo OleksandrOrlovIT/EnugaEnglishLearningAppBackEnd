@@ -67,7 +67,6 @@ public class UserServiceImpl implements UserService {
         User foundUser = findById(user.getId());
 
         if (!passwordEncoder.matches(user.getPassword(), foundUser.getPassword())) {
-            System.out.println("doesn't match" + user.getPassword() + " " + foundUser.getPassword());
             user.setPassword(passwordEncoder.encode(user.getPassword()));
         } else {
             user.setPassword(foundUser.getPassword());
@@ -141,7 +140,6 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
 
         roleRevertMap.put(foundUser.getId(), System.currentTimeMillis() + 300000);
-        System.out.println(roleRevertMap);
 
         return foundUser;
     }

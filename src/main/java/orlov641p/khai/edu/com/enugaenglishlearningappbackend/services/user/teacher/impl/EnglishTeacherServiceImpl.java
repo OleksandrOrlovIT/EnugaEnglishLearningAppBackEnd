@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.Role;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.User;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.teacher.EnglishTeacher;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.repositories.user.teacher.EnglishTeacherRepository;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.user.UserService;
@@ -82,6 +83,16 @@ public class EnglishTeacherServiceImpl implements EnglishTeacherService {
         Page<EnglishTeacher> englishTeachers = englishTeacherRepository.findAll(pageable);
 
         return englishTeachers.hasContent() ? englishTeachers.getContent().get(0) : null;
+    }
+
+    @Override
+    public EnglishTeacher findByUser(User user) {
+        return englishTeacherRepository.findByUser(user);
+    }
+
+    @Override
+    public EnglishTeacher findByUserId(Long userId) {
+        return findByUser(userService.findById(userId));
     }
 
     private void checkEnglishTeacherNull(EnglishTeacher englishTeacher){

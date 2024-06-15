@@ -3,18 +3,18 @@ package orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.s
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.engtest.dto.response.TestAttemptResponse;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.student.dto.mapper.EnglishStudentMapper;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.student.dto.request.EnglishStudentIdPageRequest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.student.dto.request.EnglishTeacherIdPageRequest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.student.dto.response.EnglishStudentResponse;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.student.EnglishStudent;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.teacher.EnglishTeacher;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.security.annotations.teacher.IsAdminOrSelfTeacherRequest;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.security.annotations.teacher.IsTeacherAndHasStudent;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.security.engteacher.EnglishTeacherSecurity;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.user.student.EnglishStudentService;
 
@@ -89,5 +89,12 @@ public class EnglishStudentController {
         );
 
         return EnglishStudentMapper.convertEnglishStudentPageToResponse(englishStudents);
+    }
+
+    //TODO
+    @PostMapping("/english-student/test-attempts-page/by-teacher")
+    @IsTeacherAndHasStudent
+    public Page<TestAttemptResponse> getStudentsTestAttemptPageByTeacher(@RequestBody EnglishStudentIdPageRequest request) {
+        return null;
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.teacher.dto.EnglishTeacherResponse;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.teacher.EnglishTeacher;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.security.annotations.IsAdminOrSelf;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.security.annotations.teacher.IsAdminOrSelfTeacherRequest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.user.teacher.EnglishTeacherService;
 
@@ -38,6 +39,12 @@ public class EnglishTeacherController {
     @IsAdminOrSelfTeacherRequest
     public EnglishTeacherResponse retrieveEnglishTeacherById(@PathVariable Long id){
         return new EnglishTeacherResponse(englishTeacherService.findById(id));
+    }
+
+    @GetMapping("/english-teacher/user/{id}")
+    @IsAdminOrSelf
+    public EnglishTeacherResponse retrieveEnglishTeacherByUserId(@PathVariable Long id){
+        return new EnglishTeacherResponse(englishTeacherService.findByUserId(id));
     }
 
     @PostMapping("/english-teacher")
