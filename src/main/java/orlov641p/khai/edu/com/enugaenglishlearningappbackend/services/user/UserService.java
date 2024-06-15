@@ -10,4 +10,6 @@ public interface UserService extends CrudService<User, Long> {
     User getCurrentUser();
 
     User getUserByEmail(String email);
+
+    User updateUserWithoutRoles(User user);
 }

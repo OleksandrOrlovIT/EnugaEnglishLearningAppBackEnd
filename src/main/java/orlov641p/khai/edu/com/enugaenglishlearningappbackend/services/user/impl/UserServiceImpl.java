@@ -100,6 +100,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User updateUserWithoutRoles(User user) {
+        User foundUser = findById(user.getId());
+
+        user.setRoles(foundUser.getRoles());
+
+        return update(user);
+    }
+
+    @Override
     public User getCurrentUser() {
         var email = SecurityContextHolder.getContext().getAuthentication().getName();
         return getUserByEmail(email);

@@ -5,6 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.dto.mapper.UserMapper;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.dto.request.UserWithoutRolesRequest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.dto.response.UserResponse;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.User;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.security.annotations.IsAdminOrSelf;
@@ -42,7 +44,7 @@ public class UserController {
     }
 
     @PostMapping("/user")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or #user.username == authentication.name")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<UserResponse> createUser(@RequestBody User user){
         User savedUser = userService.create(user);
 
@@ -55,11 +57,23 @@ public class UserController {
     }
 
     @PutMapping("/user/{id}")
-    @IsAdminOrSelf
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public UserResponse updateUser(@PathVariable Long id, @RequestBody User user){
         if(userService.findById(id) == null) {
             return null;
         }
+
+        return new UserResponse(userService.update(user));
+    }
+
+    @PutMapping("/user/{id}/without-roles")
+    @IsAdminOrSelf
+    public UserResponse updateUserWithoutRoles(@PathVariable Long id, @RequestBody UserWithoutRolesRequest request){
+        if(userService.findById(id) == null) {
+            return null;
+        }
+
+        User user = UserMapper.convertUserWithoutRolesRequestToUser(request);
 
         return new UserResponse(userService.update(user));
     }
