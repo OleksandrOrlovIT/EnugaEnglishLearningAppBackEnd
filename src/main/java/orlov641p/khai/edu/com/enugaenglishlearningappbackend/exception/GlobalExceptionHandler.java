@@ -1,5 +1,6 @@
 package orlov641p.khai.edu.com.enugaenglishlearningappbackend.exception;
 
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -27,6 +28,13 @@ import java.util.Map;
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(EntityExistsException.class)
+    @ResponseBody
+    public ResponseEntity<?> handleEntityExistsException(EntityExistsException ex) {
+        logException("EntityExistsException occurred", ex);
+        return buildErrorResponse(HttpStatus.CONFLICT, "CONFLICT", ex.getMessage());
+    }
 
     @ExceptionHandler(BadCredentialsException.class)
     @ResponseBody

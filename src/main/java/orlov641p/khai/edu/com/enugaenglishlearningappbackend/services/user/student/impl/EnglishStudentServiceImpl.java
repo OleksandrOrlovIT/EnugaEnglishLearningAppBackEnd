@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.student.dto.request.EnglishStudentCreateRequest;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.student.dto.request.EnglishStudentUpdateRequest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.Role;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.User;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.student.EnglishStudent;
@@ -52,6 +54,33 @@ public class EnglishStudentServiceImpl implements EnglishStudentService {
     }
 
     @Override
+    public EnglishStudent createEnglishStudentFromRequest(EnglishStudentCreateRequest englishStudentCreateRequest) {
+        User foundUser = userService.findById(englishStudentCreateRequest.getUserId());
+
+        if(findByUser(foundUser) != null){
+            throw new IllegalArgumentException("User is already a student");
+        }
+
+        if(englishTeacherService.findByUser(foundUser) != null){
+            throw new IllegalArgumentException("User is a teacher");
+        }
+
+        EnglishTeacher englishTeacher = englishTeacherService.findById(englishStudentCreateRequest.getEnglishTeacherId());
+
+        EnglishStudent englishStudent = EnglishStudent.builder()
+                .user(foundUser)
+                .teacher(englishTeacher)
+                .build();
+
+        return create(englishStudent);
+    }
+
+    @Override
+    public EnglishStudent findByUser(User user) {
+        return englishStudentRepository.findByUser(user);
+    }
+
+    @Override
     public EnglishStudent update(EnglishStudent englishStudent) {
         checkEnglishStudentNull(englishStudent);
         checkEnglishStudentIdNull(englishStudent.getId());
@@ -65,6 +94,17 @@ public class EnglishStudentServiceImpl implements EnglishStudentService {
         }
 
         return englishStudentRepository.save(englishStudent);
+    }
+
+    @Override
+    public EnglishStudent updateEnglishStudentFromRequest(EnglishStudentUpdateRequest englishStudentUpdateRequest) {
+        EnglishStudent englishStudent = findById(englishStudentUpdateRequest.getEnglishStudentId());
+
+        EnglishTeacher englishTeacher = englishTeacherService.findById(englishStudentUpdateRequest.getEnglishTeacherId());
+
+        englishStudent.setTeacher(englishTeacher);
+
+        return update(englishStudent);
     }
 
     @Override

@@ -1,13 +1,17 @@
 package orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.user.teacher.impl;
 
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.teacher.dto.request.EnglishTeacherCreateRequest;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.teacher.dto.request.EnglishTeacherUpdateRequest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.Role;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.User;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.teacher.EnglishTeacher;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.repositories.user.student.EnglishStudentRepository;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.repositories.user.teacher.EnglishTeacherRepository;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.user.UserService;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.user.teacher.EnglishTeacherService;
@@ -20,6 +24,7 @@ public class EnglishTeacherServiceImpl implements EnglishTeacherService {
 
     private final EnglishTeacherRepository englishTeacherRepository;
     private final UserService userService;
+    private final EnglishStudentRepository englishStudentRepository;
 
     @Override
     public List<EnglishTeacher> findAll() {
@@ -39,11 +44,19 @@ public class EnglishTeacherServiceImpl implements EnglishTeacherService {
         checkEnglishTeacherNull(englishTeacher);
         checkEnglishTeacherHasTeacherRole(englishTeacher);
 
-        if(englishTeacher.getUser() != null) {
-            englishTeacher.setUser(userService.create(englishTeacher.getUser()));
-        }
-
         return englishTeacherRepository.save(englishTeacher);
+    }
+
+    @Override
+    public EnglishTeacher createFromRequest(EnglishTeacherCreateRequest englishTeacherCreateRequest) {
+        User user = checkRequiredUserIsAlreadyTeacherOrStudent(englishTeacherCreateRequest.getUserId());
+
+        EnglishTeacher englishTeacher = EnglishTeacher
+                .builder()
+                .user(user)
+                .build();
+
+        return create(englishTeacher);
     }
 
     @Override
@@ -58,6 +71,31 @@ public class EnglishTeacherServiceImpl implements EnglishTeacherService {
         }
 
         return englishTeacherRepository.save(englishTeacher);
+    }
+
+    @Override
+    public EnglishTeacher updateFromRequest(EnglishTeacherUpdateRequest englishTeacherUpdateRequest) {
+        User user = checkRequiredUserIsAlreadyTeacherOrStudent(englishTeacherUpdateRequest.getUserId());
+
+        EnglishTeacher foundTeacher = findByUserId(englishTeacherUpdateRequest.getEnglishTeacherId());
+
+        foundTeacher.setUser(user);
+
+        return update(foundTeacher);
+    }
+
+    private User checkRequiredUserIsAlreadyTeacherOrStudent(Long userId){
+        User user = userService.findById(userId);
+
+        if(findByUser(user) != null){
+            throw new EntityExistsException("User already exists with id = " + user.getId());
+        }
+
+        if(englishStudentRepository.findByUser(user) != null){
+            throw new IllegalArgumentException("User already exists as a student with id = " + user.getId());
+        }
+
+        return user;
     }
 
     @Override

@@ -12,7 +12,9 @@ import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testatt
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.wordmodule.dto.mapper.WordModuleAttemptMapper;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.wordmodule.dto.response.WordModuleAttemptResponse;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.student.dto.mapper.EnglishStudentMapper;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.student.dto.request.EnglishStudentCreateRequest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.student.dto.request.EnglishStudentIdPageRequest;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.student.dto.request.EnglishStudentUpdateRequest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.student.dto.request.EnglishTeacherIdPageRequest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.student.dto.response.EnglishStudentResponse;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.testattempt.engtest.TestAttempt;
@@ -57,8 +59,9 @@ public class EnglishStudentController {
 
     @PostMapping("/english-student")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<EnglishStudentResponse> createEnglishStudent(@RequestBody EnglishStudent englishStudent) {
-        EnglishStudent savedEnglishStudent = englishStudentService.create(englishStudent);
+    public ResponseEntity<EnglishStudentResponse> createEnglishStudent
+            (@RequestBody EnglishStudentCreateRequest englishStudentRequest){
+        EnglishStudent savedEnglishStudent = englishStudentService.createEnglishStudentFromRequest(englishStudentRequest);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
@@ -70,12 +73,10 @@ public class EnglishStudentController {
 
     @PutMapping("/english-student/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public EnglishStudentResponse updateEnglishStudent(@PathVariable Long id, @RequestBody EnglishStudent englishStudent) {
-        if (englishStudentService.findById(id) == null) {
-            return null;
-        }
-
-        return new EnglishStudentResponse(englishStudentService.update(englishStudent));
+    public EnglishStudentResponse updateEnglishStudent
+            (@PathVariable Long id, @RequestBody EnglishStudentUpdateRequest englishStudentUpdateRequest) {
+        englishStudentUpdateRequest.setEnglishStudentId(id);
+        return new EnglishStudentResponse(englishStudentService.updateEnglishStudentFromRequest(englishStudentUpdateRequest));
     }
 
     @DeleteMapping("/english-student/{id}")

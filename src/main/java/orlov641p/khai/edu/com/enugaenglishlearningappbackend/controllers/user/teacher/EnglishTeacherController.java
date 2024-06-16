@@ -5,7 +5,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.teacher.dto.EnglishTeacherResponse;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.teacher.dto.request.EnglishTeacherCreateRequest;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.teacher.dto.request.EnglishTeacherUpdateRequest;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.teacher.dto.response.EnglishTeacherResponse;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.teacher.EnglishTeacher;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.security.annotations.IsAdminOrSelf;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.security.annotations.teacher.IsAdminOrSelfTeacherRequest;
@@ -49,8 +51,9 @@ public class EnglishTeacherController {
 
     @PostMapping("/english-teacher")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<EnglishTeacherResponse> createEnglishTeacher(@RequestBody EnglishTeacher englishTeacher){
-        EnglishTeacher savedEnglishTeacher = englishTeacherService.create(englishTeacher);
+    public ResponseEntity<EnglishTeacherResponse> createEnglishTeacher
+            (@RequestBody EnglishTeacherCreateRequest englishTeacherCreateRequest){
+        EnglishTeacher savedEnglishTeacher = englishTeacherService.createFromRequest(englishTeacherCreateRequest);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
@@ -62,12 +65,10 @@ public class EnglishTeacherController {
 
     @PutMapping("/english-teacher/{id}")
     @IsAdminOrSelfTeacherRequest
-    public EnglishTeacherResponse updateEnglishTeacher(@PathVariable Long id, @RequestBody EnglishTeacher englishTeacher){
-        if(englishTeacherService.findById(id) == null) {
-            return null;
-        }
-
-        return new EnglishTeacherResponse(englishTeacherService.update(englishTeacher));
+    public EnglishTeacherResponse updateEnglishTeacher(@PathVariable Long id,
+                                                       @RequestBody EnglishTeacherUpdateRequest englishTeacherUpdateRequest){
+        englishTeacherUpdateRequest.setEnglishTeacherId(id);
+        return new EnglishTeacherResponse(englishTeacherService.updateFromRequest(englishTeacherUpdateRequest));
     }
 
     @DeleteMapping("/english-teacher/{id}")
