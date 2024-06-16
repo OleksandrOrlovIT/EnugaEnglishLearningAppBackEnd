@@ -3,6 +3,7 @@ package orlov641p.khai.edu.com.enugaenglishlearningappbackend.bootstrap.testatte
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.bootstrap.testattempt.wordmodule.WordModuleAttemptLoader;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.testattempt.wordmodule.WordModuleAttempt;
@@ -42,30 +43,21 @@ public class WordModuleAttemptLoaderImpl implements WordModuleAttemptLoader {
     private void saveWordModuleAttempts() {
         User admin = userService.getUserByEmail("admin@admin.com");
 
-        List<WordModule> wordModules = wordModuleService.findByVisibilityPublicAndUserNot(admin.getId());
+        List<WordModule> wordModules = wordModuleService.findByVisibilityPublicAndUserNot(admin.getId()).subList(0, 7);
 
-        WordModule wordModule1 = wordModules.get(0);
-        List<CustomPair> customPairs1 = customPairService.getCustomPairsByWordModuleId(wordModule1.getId());
-        Map<Integer, Map<Long, String>> cache1 = cacheWrongAnswers(customPairs1);
+        for(WordModule wordModule : wordModules){
+            List<CustomPair> customPairs = customPairService.getCustomPairsByWordModuleId(wordModule.getId());
+            Map<Integer, Map<Long, String>> cache = cacheWrongAnswers(customPairs);
 
-        WordModule wordModule2 = wordModules.get(1);
-        List<CustomPair> customPairs2 = customPairService.getCustomPairsByWordModuleId(wordModule2.getId());
-        Map<Integer, Map<Long, String>> cache2 = cacheWrongAnswers(customPairs2);
+            int times = 1;
+            for (User user : userService.getUserPage(PageRequest.of(0, 10))) {
+                if (times == 4) {
+                    times = 1;
+                }
 
-        int times1 = 1, times2 = 3;
-
-        for (User user : userService.findAll()) {
-            if (times1 == 4) {
-                times1 = 1;
+                loadWordModuleAttempt(wordModule, user, times, customPairs, cache);
+                times++;
             }
-            if (times2 == 4) {
-                times2 = 1;
-            }
-
-            loadWordModuleAttempt(wordModule1, user, times1, customPairs1, cache1);
-            loadWordModuleAttempt(wordModule2, user, times2, customPairs2, cache2);
-            times1++;
-            times2++;
         }
     }
 

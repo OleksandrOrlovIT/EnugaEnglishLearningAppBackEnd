@@ -31,19 +31,37 @@ public class BookLoaderImpl implements BookLoader {
         }
     }
 
-    public void saveBooks() {
-        File romeoAndJulietFile = new File("src/main/resources/static/RomeoAndJuliet.txt");
+    private void saveBooks() {
+        Book romeoAndJuliet = createBook("Romeo and Juliet", "William Shakespeare", BookGenre.DRAMA);
+        saveBook("src/main/resources/static/RomeoAndJuliet.txt", romeoAndJuliet);
 
-        Book romeoAndJuliet = Book.builder()
-                .title("Romeo and Juliet")
-                .author("William Shakespeare")
-                .bookGenre(BookGenre.DRAMA)
-                .build();
+        Book mobyDick = createBook("Moby Dick", "Herman Melville", BookGenre.FICTION);
+        saveBook("src/main/resources/static/modydick.txt", mobyDick);
 
+        Book middlemarch = createBook("Middlemarch", "George Eliot", BookGenre.FICTION);
+        saveBook("src/main/resources/static/middlemarch.txt", middlemarch);
+
+        Book frankenstein = createBook("Frankenstein", "Mary Wollstonecraft Shelley", BookGenre.FICTION);
+        saveBook("src/main/resources/static/frankenstein.txt", frankenstein);
+
+        Book holmesSherlock = createBook("The Adventures of Sherlock Holmes", "Arthur Conan Doyle", BookGenre.FICTION);
+        saveBook("src/main/resources/static/sherlokHolmes.txt", holmesSherlock);
+    }
+
+    private void saveBook(String filePath, Book book){
         try {
-            bookLoaderService.loadBookFromFile(romeoAndJulietFile, romeoAndJuliet);
+            File file = new File(filePath);
+            bookLoaderService.loadBookFromFile(file, book);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private Book createBook(String title, String author, BookGenre bookGenre){
+        return Book.builder()
+                .title(title)
+                .author(author)
+                .bookGenre(bookGenre)
+                .build();
     }
 }

@@ -3,6 +3,7 @@ package orlov641p.khai.edu.com.enugaenglishlearningappbackend.bootstrap.testatte
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.bootstrap.testattempt.engtest.TestAttemptLoader;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.engtest.EnglishTest;
@@ -43,28 +44,20 @@ public class TestAttemptLoaderImpl implements TestAttemptLoader {
     private void saveTestAttempts() {
         List<EnglishTest> englishTests = englishTestService.findAll();
 
-        EnglishTest test1 = englishTests.get(0);
-        List<Question> questions1 = questionService.getQuestionsByEnglishTestId(test1.getId());
-        Map<Integer, Map<Long, String>> cache1 = cacheWrongAnswers(questions1);
+        for (EnglishTest test : englishTests) {
+            List<Question> questions = questionService.getQuestionsByEnglishTestId(test.getId());
+            Map<Integer, Map<Long, String>> cache = cacheWrongAnswers(questions);
 
-        EnglishTest test2 = englishTests.get(1);
-        List<Question> questions2 = questionService.getQuestionsByEnglishTestId(test2.getId());
-        Map<Integer, Map<Long, String>> cache2 = cacheWrongAnswers(questions1);
+            int times = 1;
 
-        int times1 = 1, times2 = 3;
+            for (User user : userService.getUserPage(PageRequest.of(0, 10))) {
+                if (times == 4) {
+                    times = 1;
+                }
 
-        for (User user : userService.findAll()) {
-            if (times1 == 4) {
-                times1 = 1;
+                loadTestAttempt(test, user, times, questions, cache);
+                times++;
             }
-            if (times2 == 4) {
-                times2 = 1;
-            }
-
-            loadTestAttempt(test1, user, times1, questions1, cache1);
-            loadTestAttempt(test2, user, times2, questions2, cache2);
-            times1++;
-            times2++;
         }
     }
 

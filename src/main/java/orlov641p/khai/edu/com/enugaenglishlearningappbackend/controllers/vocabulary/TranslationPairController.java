@@ -9,6 +9,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.book.dto.request.CustomPageRequest;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.vocabulary.dto.request.TranslationPairRequest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.vocabulary.EnglishWord;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.vocabulary.TranslationPair;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.vocabulary.UkrainianWord;
@@ -59,7 +60,12 @@ public class TranslationPairController {
 
     @PreAuthorize("hasRole('ROLE_ENGLISH_TEACHER_USER')")
     @PostMapping("/translation-pair")
-    public ResponseEntity<TranslationPair> createTranslationPair(@RequestBody TranslationPair translationPair){
+    public ResponseEntity<TranslationPair> createTranslationPair(@RequestBody TranslationPairRequest translationPairRequest){
+        TranslationPair translationPair = TranslationPair.builder()
+                .ukrainianWord(new UkrainianWord(translationPairRequest.getUkrainianWord()))
+                .englishWord(new EnglishWord(translationPairRequest.getEnglishWord()))
+                .build();
+
         TranslationPair savedTranslationPair = translationPairService.create(translationPair);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
