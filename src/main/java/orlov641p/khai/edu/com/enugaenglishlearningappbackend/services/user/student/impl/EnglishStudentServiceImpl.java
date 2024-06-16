@@ -1,5 +1,6 @@
 package orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.user.student.impl;
 
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -101,7 +102,7 @@ public class EnglishStudentServiceImpl implements EnglishStudentService {
 
         EnglishStudent foundEnglishStudent = findById(englishStudent.getId());
 
-        if(!foundEnglishStudent.getUser().equals(englishStudent.getUser())){
+        if(!foundEnglishStudent.getUser().getId().equals(englishStudent.getUser().getId())){
             throw new IllegalArgumentException("Program tried to change user in EnglishStudent class");
         }
 

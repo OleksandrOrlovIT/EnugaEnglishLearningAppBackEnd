@@ -14,6 +14,7 @@ import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.te
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.teacher.dto.response.EnglishTeacherResponse;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.teacher.EnglishTeacher;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.security.annotations.IsAdminOrSelf;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.security.annotations.teacher.IsAdminOrSelfTeacherId;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.security.annotations.teacher.IsAdminOrSelfTeacherRequest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.user.teacher.EnglishTeacherService;
 
@@ -52,7 +53,7 @@ public class EnglishTeacherController {
     }
 
     @GetMapping("/english-teacher/{id}")
-    @IsAdminOrSelfTeacherRequest
+    @IsAdminOrSelfTeacherId
     public EnglishTeacherResponse retrieveEnglishTeacherById(@PathVariable Long id){
         return new EnglishTeacherResponse(englishTeacherService.findById(id));
     }
@@ -77,11 +78,9 @@ public class EnglishTeacherController {
         return ResponseEntity.created(location).body(new EnglishTeacherResponse(savedEnglishTeacher));
     }
 
-    @PutMapping("/english-teacher/{id}")
-    @IsAdminOrSelfTeacherRequest
-    public EnglishTeacherResponse updateEnglishTeacher(@PathVariable Long id,
-                                                       @RequestBody EnglishTeacherUpdateRequest englishTeacherUpdateRequest){
-        englishTeacherUpdateRequest.setEnglishTeacherId(id);
+    @PutMapping("/english-teacher")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public EnglishTeacherResponse updateEnglishTeacher(@RequestBody EnglishTeacherUpdateRequest englishTeacherUpdateRequest){
         return new EnglishTeacherResponse(englishTeacherService.updateFromRequest(englishTeacherUpdateRequest));
     }
 

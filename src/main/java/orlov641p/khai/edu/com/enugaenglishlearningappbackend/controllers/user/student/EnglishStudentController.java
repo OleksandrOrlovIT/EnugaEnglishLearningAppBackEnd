@@ -84,11 +84,10 @@ public class EnglishStudentController {
         return ResponseEntity.created(location).body(new EnglishStudentResponse(savedEnglishStudent));
     }
 
-    @PutMapping("/english-student/{id}")
+    @PutMapping("/english-student")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public EnglishStudentResponse updateEnglishStudent
-            (@PathVariable Long id, @RequestBody EnglishStudentUpdateRequest englishStudentUpdateRequest) {
-        englishStudentUpdateRequest.setEnglishStudentId(id);
+            (@RequestBody EnglishStudentUpdateRequest englishStudentUpdateRequest) {
         return new EnglishStudentResponse(englishStudentService.updateEnglishStudentFromRequest(englishStudentUpdateRequest));
     }
 

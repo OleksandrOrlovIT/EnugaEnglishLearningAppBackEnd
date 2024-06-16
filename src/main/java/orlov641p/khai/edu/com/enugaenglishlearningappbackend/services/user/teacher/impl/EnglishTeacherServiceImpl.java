@@ -81,8 +81,21 @@ public class EnglishTeacherServiceImpl implements EnglishTeacherService {
         checkEnglishTeacherHasTeacherRole(englishTeacher);
 
         EnglishTeacher foundTeacher = findById(englishTeacher.getId());
-        if(!foundTeacher.getUser().equals(englishTeacher.getUser())){
-            throw new IllegalArgumentException("Program tried to change user in EnglishTeacher class");
+        if(!foundTeacher.getUser().getId().equals(englishTeacher.getUser().getId())){
+            User oldUser = foundTeacher.getUser();
+
+            oldUser.getRoles().add(Role.ROLE_USER_WITH_SUBSCRIPTION);
+            oldUser.getRoles().remove(Role.ROLE_ENGLISH_STUDENT_USER);
+            oldUser.getRoles().remove(Role.ROLE_ENGLISH_TEACHER_USER);
+
+            userService.update(oldUser);
+
+            User newUser = englishTeacher.getUser();
+            newUser.getRoles().add(Role.ROLE_ENGLISH_STUDENT_USER);
+            newUser.getRoles().add(Role.ROLE_ENGLISH_TEACHER_USER);
+            newUser.getRoles().add(Role.ROLE_USER_WITH_SUBSCRIPTION);
+
+            userService.update(newUser);
         }
 
         return englishTeacherRepository.save(englishTeacher);
@@ -92,7 +105,7 @@ public class EnglishTeacherServiceImpl implements EnglishTeacherService {
     public EnglishTeacher updateFromRequest(EnglishTeacherUpdateRequest englishTeacherUpdateRequest) {
         User user = checkRequiredUserIsAlreadyTeacherOrStudent(englishTeacherUpdateRequest.getUserId());
 
-        EnglishTeacher foundTeacher = findByUserId(englishTeacherUpdateRequest.getEnglishTeacherId());
+        EnglishTeacher foundTeacher = findById(englishTeacherUpdateRequest.getEnglishTeacherId());
 
         foundTeacher.setUser(user);
 
@@ -110,7 +123,11 @@ public class EnglishTeacherServiceImpl implements EnglishTeacherService {
             throw new IllegalArgumentException("User already exists as a student with id = " + user.getId());
         }
 
-        return user;
+        user.getRoles().add(Role.ROLE_USER_WITH_SUBSCRIPTION);
+        user.getRoles().add(Role.ROLE_ENGLISH_STUDENT_USER);
+        user.getRoles().add(Role.ROLE_ENGLISH_TEACHER_USER);
+
+        return userService.update(user);
     }
 
     @Override
