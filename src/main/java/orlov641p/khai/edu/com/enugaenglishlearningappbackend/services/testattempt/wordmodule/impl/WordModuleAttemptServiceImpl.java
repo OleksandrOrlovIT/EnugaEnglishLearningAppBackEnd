@@ -138,6 +138,21 @@ public class WordModuleAttemptServiceImpl implements WordModuleAttemptService {
     }
 
     @Override
+    public Page<WordModuleAttempt> findLastPublicWordModuleAttemptsPageByUserSortedByDate(WordModuleAttemptPage wordModuleAttemptPage) {
+        User user = userService.findById(wordModuleAttemptPage.getUserId());
+
+        Sort sort = Sort.by(Sort.Direction.DESC, "attemptDate");
+
+        Pageable pageable = PageRequest.of(
+                wordModuleAttemptPage.getPageNumber(),
+                wordModuleAttemptPage.getPageSize(),
+                sort
+        );
+
+        return wordModuleAttemptRepository.findNewestPublicByUserOrderByAttemptDateDesc(user, pageable);
+    }
+
+    @Override
     public WordModuleAttempt findMaximumScoreWordModuleAttempt(WordModuleAttemptWithoutAnswers moduleAttemptWithoutAnswers) {
         User user = userService.findById(moduleAttemptWithoutAnswers.getUserId());
 

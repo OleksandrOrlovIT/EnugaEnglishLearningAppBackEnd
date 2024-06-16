@@ -8,5 +8,5 @@ import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.testattempt.
 public interface EnglishStudentStatService {
     Page<TestAttempt> getEnglishTestAttempts(Long englishStudentId, Pageable pageable);
 
-    Page<WordModuleAttempt> getWordModulesAttempts(Long englishStudentId, Pageable pageable);
+    Page<WordModuleAttempt> getPublicWordModulesAttempts(Long englishStudentId, Pageable pageable);
 }

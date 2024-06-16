@@ -34,13 +34,13 @@ public class EnglishStudentStatServiceImpl implements EnglishStudentStatService 
     }
 
     @Override
-    public Page<WordModuleAttempt> getWordModulesAttempts(Long englishStudentId, Pageable pageable) {
+    public Page<WordModuleAttempt> getPublicWordModulesAttempts(Long englishStudentId, Pageable pageable) {
         EnglishStudent englishStudent = englishStudentService.findById(englishStudentId);
 
         WordModuleAttemptPage wordModuleAttemptPage =
                 new WordModuleAttemptPage(englishStudent.getUser().getId(),
                         pageable.getPageSize(), pageable.getPageNumber());
 
-        return wordModuleAttemptService.findLastWordModuleAttemptsPageByUserSortedByDate(wordModuleAttemptPage);
+        return wordModuleAttemptService.findLastPublicWordModuleAttemptsPageByUserSortedByDate(wordModuleAttemptPage);
     }
 }

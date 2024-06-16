@@ -16,6 +16,8 @@ public interface WordModuleAttemptService extends CrudService<WordModuleAttempt,
 
     Page<WordModuleAttempt> findLastWordModuleAttemptsPageByUserSortedByDate(WordModuleAttemptPage wordModuleAttemptPage);
 
+    Page<WordModuleAttempt> findLastPublicWordModuleAttemptsPageByUserSortedByDate(WordModuleAttemptPage wordModuleAttemptPage);
+
     WordModuleAttempt findMaximumScoreWordModuleAttempt(WordModuleAttemptWithoutAnswers moduleAttemptWithoutAnswers);
 
     WordModuleAttempt findLastWordModuleAttemptScore(WordModuleAttemptWithoutAnswers moduleAttemptWithoutAnswers);

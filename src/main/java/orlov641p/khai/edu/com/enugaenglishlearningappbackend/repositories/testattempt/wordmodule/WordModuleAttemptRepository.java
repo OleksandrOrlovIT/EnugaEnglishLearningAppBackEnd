@@ -22,4 +22,7 @@ public interface WordModuleAttemptRepository extends JpaRepository<WordModuleAtt
     @Query("SELECT wma FROM WordModuleAttempt wma WHERE wma.user = :user AND wma.wordModule.id = :wordModuleId ORDER BY wma.attemptDate DESC")
     List<WordModuleAttempt> findNewestByUserAndWordModuleOrderByAttemptDateDesc(@Param("user") User user,
                                                                                 @Param("wordModuleId") Long wordModuleId);
+
+    @Query("SELECT wma FROM WordModuleAttempt wma WHERE wma.user = :user AND wma.wordModule.visibility = 0 ORDER BY wma.attemptDate DESC")
+    Page<WordModuleAttempt> findNewestPublicByUserOrderByAttemptDateDesc(@Param("user") User user, Pageable pageable);
 }

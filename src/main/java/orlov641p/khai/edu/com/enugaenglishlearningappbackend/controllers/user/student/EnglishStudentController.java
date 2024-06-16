@@ -108,9 +108,10 @@ public class EnglishStudentController {
 
     @PostMapping("/english-student/word-modules-attempts-page/by-teacher")
     @IsTeacherAndHasStudent
-    public Page<WordModuleAttemptResponse> getStudentsWordModulesPageByTeacher(@RequestBody EnglishStudentIdPageRequest request) {
+    public Page<WordModuleAttemptResponse> getStudentsPublicWordModulesAttemptPageByTeacher
+            (@RequestBody EnglishStudentIdPageRequest request) {
         Page<WordModuleAttempt> wordModuleAttemptPage = englishStudentStatService
-                .getWordModulesAttempts(request.getEnglishStudentId(),
+                .getPublicWordModulesAttempts(request.getEnglishStudentId(),
                 PageRequest.of(request.getPageNumber(), request.getPageSize()));
 
         return WordModuleAttemptMapper.convertPageWordModuleAttemptToResponse(wordModuleAttemptPage);
