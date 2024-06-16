@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @PreAuthorize("@englishTeacherSecurity.checkIfRequestedStudentIsTeachersStudent" +
-        "(#request.studentId, #request.englishTeacherId)"
+        "(#request.englishStudentId, #request.englishTeacherId)"
 )
 public @interface IsTeacherAndHasStudent {
 }

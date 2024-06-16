@@ -7,16 +7,21 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.engtest.dto.mapper.TestAttemptMapper;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.engtest.dto.response.TestAttemptResponse;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.wordmodule.dto.mapper.WordModuleAttemptMapper;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.wordmodule.dto.response.WordModuleAttemptResponse;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.student.dto.mapper.EnglishStudentMapper;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.student.dto.request.EnglishStudentIdPageRequest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.student.dto.request.EnglishTeacherIdPageRequest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.student.dto.response.EnglishStudentResponse;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.testattempt.engtest.TestAttempt;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.testattempt.wordmodule.WordModuleAttempt;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.student.EnglishStudent;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.security.annotations.teacher.IsAdminOrSelfTeacherRequest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.security.annotations.teacher.IsTeacherAndHasStudent;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.security.engteacher.EnglishTeacherSecurity;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.user.student.EnglishStudentService;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.user.student.EnglishStudentStatService;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -28,7 +33,7 @@ import java.util.List;
 public class EnglishStudentController {
 
     private final EnglishStudentService englishStudentService;
-    private final EnglishTeacherSecurity englishTeacherSecurity;
+    private final EnglishStudentStatService englishStudentStatService;
 
     @GetMapping("/english-students")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -91,10 +96,22 @@ public class EnglishStudentController {
         return EnglishStudentMapper.convertEnglishStudentPageToResponse(englishStudents);
     }
 
-    //TODO
-    @PostMapping("/english-student/test-attempts-page/by-teacher")
+    @PostMapping("/english-student/english-tests-attempts-page/by-teacher")
     @IsTeacherAndHasStudent
-    public Page<TestAttemptResponse> getStudentsTestAttemptPageByTeacher(@RequestBody EnglishStudentIdPageRequest request) {
-        return null;
+    public Page<TestAttemptResponse> getStudentsTestAttemptsPageByTeacher(@RequestBody EnglishStudentIdPageRequest request) {
+        Page<TestAttempt> testAttemptPage = englishStudentStatService.getEnglishTestAttempts(request.getEnglishStudentId(),
+                PageRequest.of(request.getPageNumber(), request.getPageSize()));
+
+        return TestAttemptMapper.convertPageTestAttemptToResponse(testAttemptPage);
+    }
+
+    @PostMapping("/english-student/word-modules-attempts-page/by-teacher")
+    @IsTeacherAndHasStudent
+    public Page<WordModuleAttemptResponse> getStudentsWordModulesPageByTeacher(@RequestBody EnglishStudentIdPageRequest request) {
+        Page<WordModuleAttempt> wordModuleAttemptPage = englishStudentStatService
+                .getWordModulesAttempts(request.getEnglishStudentId(),
+                PageRequest.of(request.getPageNumber(), request.getPageSize()));
+
+        return WordModuleAttemptMapper.convertPageWordModuleAttemptToResponse(wordModuleAttemptPage);
     }
 }

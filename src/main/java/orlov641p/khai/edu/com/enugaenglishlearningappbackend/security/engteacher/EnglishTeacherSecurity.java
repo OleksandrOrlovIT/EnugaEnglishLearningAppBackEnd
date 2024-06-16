@@ -33,8 +33,9 @@ public class EnglishTeacherSecurity {
         return englishTeacher.getUser().equals(loggedUser);
     }
 
-    public boolean checkIfRequestedStudentIsTeachersStudent(Long studentId, Long englishTeacherId){
+    public boolean checkIfRequestedStudentIsTeachersStudent(Long englishStudentId, Long englishTeacherId){
         User loggedUser = userSecurity.getLoggedUser();
+        System.out.println("Logged user = " + loggedUser);
 
         if(!loggedUser.getRoles().contains(Role.ROLE_ENGLISH_TEACHER_USER)){
             return false;
@@ -45,7 +46,7 @@ public class EnglishTeacherSecurity {
         }
 
         EnglishTeacher englishTeacher = englishTeacherService.findById(englishTeacherId);
-        EnglishStudent englishStudent = englishStudentService.findById(studentId);
+        EnglishStudent englishStudent = englishStudentService.findById(englishStudentId);
 
         return englishStudent.getTeacher().equals(englishTeacher);
     }
