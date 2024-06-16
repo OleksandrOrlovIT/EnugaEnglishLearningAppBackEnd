@@ -12,12 +12,12 @@ import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.student
 public class EnglishStudentResponse {
 
     private Long id;
-    private Long teacherId;
+    private Long englishTeacherId;
     private UserResponse user;
 
     public EnglishStudentResponse(EnglishStudent englishStudent) {
         this.id = englishStudent.getId();
-        this.teacherId = englishStudent.getTeacher().getId();
+        this.englishTeacherId = englishStudent.getTeacher().getId();
         this.user = new UserResponse(englishStudent.getUser());
     }
 }

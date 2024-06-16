@@ -20,6 +20,7 @@ import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.user.stude
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.user.teacher.EnglishTeacherService;
 
 import java.util.List;
+import java.util.Set;
 
 @AllArgsConstructor
 @Service
@@ -52,14 +53,13 @@ public class EnglishStudentServiceImpl implements EnglishStudentService {
     public EnglishStudent create(EnglishStudent englishStudent) {
         checkEnglishStudentNull(englishStudent);
         checkEnglishTeacherExists(englishStudent.getTeacher());
-        checkEnglishStudentHasStudentRole(englishStudent);
 
         EnglishStudent savedEnglishStudent = englishStudentRepository.save(englishStudent);
         User user = savedEnglishStudent.getUser();
 
-        if(!user.getRoles().contains(Role.ROLE_ENGLISH_STUDENT_USER)){
-            user.getRoles().add(Role.ROLE_ENGLISH_STUDENT_USER);
-            userService.update(user);
+        if(!user.getRoles().contains(Role.ROLE_ENGLISH_STUDENT_USER)
+                || !user.getRoles().contains(Role.ROLE_USER_WITH_SUBSCRIPTION)){
+            userService.addRoles(user.getId(), Set.of(Role.ROLE_USER_WITH_SUBSCRIPTION, Role.ROLE_ENGLISH_STUDENT_USER));
         }
 
         return savedEnglishStudent;
@@ -125,13 +125,21 @@ public class EnglishStudentServiceImpl implements EnglishStudentService {
         checkEnglishStudentNull(englishStudent);
 
         englishStudentRepository.delete(englishStudent);
+
+        userService.deleteRoles(englishStudent.getUser().getId(),
+                Set.of(Role.ROLE_USER_WITH_SUBSCRIPTION, Role.ROLE_ENGLISH_STUDENT_USER));
     }
 
     @Override
     public void deleteById(Long id) {
         checkEnglishStudentIdNull(id);
 
+        User user = findById(id).getUser();
+
         englishStudentRepository.deleteById(id);
+
+        userService.deleteRoles(user.getId(),
+                Set.of(Role.ROLE_USER_WITH_SUBSCRIPTION, Role.ROLE_ENGLISH_STUDENT_USER));
     }
 
     @Override

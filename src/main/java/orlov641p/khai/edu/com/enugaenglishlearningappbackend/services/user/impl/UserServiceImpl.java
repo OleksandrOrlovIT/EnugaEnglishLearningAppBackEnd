@@ -15,7 +15,11 @@ import org.springframework.transaction.annotation.Transactional;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.rule.Rule;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.Role;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.User;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.student.EnglishStudent;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.teacher.EnglishTeacher;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.repositories.user.UserRepository;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.repositories.user.student.EnglishStudentRepository;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.repositories.user.teacher.EnglishTeacherRepository;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.user.UserService;
 
 import java.util.HashSet;
@@ -31,6 +35,8 @@ public class UserServiceImpl implements UserService {
     private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EnglishTeacherRepository englishTeacherRepository;
+    private final EnglishStudentRepository englishStudentRepository;
 
     private final Map<Long, Long> roleRevertMap = new ConcurrentHashMap<>();
 
@@ -76,8 +82,28 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User addRoles(Long userId, Set<Role> roles) {
+        User user = findById(userId);
+
+        user.getRoles().addAll(roles);
+
+        return userRepository.save(user);
+    }
+
+    @Override
+    public User deleteRoles(Long userId, Set<Role> roles) {
+        User user = findById(userId);
+
+        user.getRoles().removeAll(roles);
+
+        return userRepository.save(user);
+    }
+
+    @Override
     public void delete(User user) {
         checkUserNull(user);
+
+        deleteFromOtherTables(user);
 
         userRepository.delete(user);
     }
@@ -86,7 +112,25 @@ public class UserServiceImpl implements UserService {
     public void deleteById(Long id) {
         checkUserIdNull(id);
 
+        User user = findById(id);
+
+        deleteFromOtherTables(user);
+
         userRepository.deleteById(id);
+    }
+
+    private void deleteFromOtherTables(User user){
+        EnglishTeacher englishTeacher = englishTeacherRepository.findByUser(user);
+
+        if(englishTeacher != null){
+            englishTeacherRepository.deleteById(englishTeacher.getId());
+        }
+
+        EnglishStudent englishStudent = englishStudentRepository.findByUser(user);
+
+        if(englishStudent != null){
+            englishStudentRepository.deleteById(englishStudent.getId());
+        }
     }
 
     @Override
