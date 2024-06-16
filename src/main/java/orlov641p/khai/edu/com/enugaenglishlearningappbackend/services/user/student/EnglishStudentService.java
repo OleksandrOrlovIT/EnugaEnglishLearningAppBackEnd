@@ -16,4 +16,6 @@ public interface EnglishStudentService extends CrudService<EnglishStudent, Long>
     EnglishStudent updateEnglishStudentFromRequest(EnglishStudentUpdateRequest englishStudentUpdateRequest);
 
     EnglishStudent findByUser(User user);
+
+    Page<EnglishStudent> getEnglishStudentsPage(Pageable pageable);
 }

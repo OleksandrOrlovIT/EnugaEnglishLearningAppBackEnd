@@ -34,6 +34,11 @@ public class EnglishStudentServiceImpl implements EnglishStudentService {
     }
 
     @Override
+    public Page<EnglishStudent> getEnglishStudentsPage(Pageable pageable) {
+        return englishStudentRepository.findAll(pageable);
+    }
+
+    @Override
     public EnglishStudent findById(Long id) {
         checkEnglishStudentIdNull(id);
 

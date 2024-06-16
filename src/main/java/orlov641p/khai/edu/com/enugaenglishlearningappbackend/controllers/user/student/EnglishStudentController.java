@@ -12,14 +12,15 @@ import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testatt
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.wordmodule.dto.mapper.WordModuleAttemptMapper;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.wordmodule.dto.response.WordModuleAttemptResponse;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.student.dto.mapper.EnglishStudentMapper;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.student.dto.request.EnglishStudentCreateRequest;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.student.dto.request.EnglishStudentIdPageRequest;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.student.dto.request.EnglishStudentUpdateRequest;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.student.dto.request.EnglishTeacherIdPageRequest;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.student.dto.request.*;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.student.dto.response.EnglishStudentResponse;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.teacher.dto.mapper.EnglishTeacherMapper;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.teacher.dto.request.EnglishTeacherPage;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.teacher.dto.response.EnglishTeacherResponse;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.testattempt.engtest.TestAttempt;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.testattempt.wordmodule.WordModuleAttempt;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.student.EnglishStudent;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.teacher.EnglishTeacher;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.security.annotations.teacher.IsAdminOrSelfTeacherRequest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.security.annotations.teacher.IsTeacherAndHasStudent;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.user.student.EnglishStudentService;
@@ -49,6 +50,18 @@ public class EnglishStudentController {
         }
 
         return responses;
+    }
+
+    @PostMapping("/english-students/page")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public Page<EnglishStudentResponse> retrieveEnglishStudentsPage
+            (@RequestBody EnglishStudentPageRequest englishStudentPageRequest){
+
+        Page<EnglishStudent> studentsPage = englishStudentService.getEnglishStudentsPage(
+                PageRequest.of(englishStudentPageRequest.getPageNumber(), englishStudentPageRequest.getPageSize())
+        );
+
+        return EnglishStudentMapper.convertEnglishStudentPageToResponse(studentsPage);
     }
 
     @GetMapping("/english-student/{id}")
