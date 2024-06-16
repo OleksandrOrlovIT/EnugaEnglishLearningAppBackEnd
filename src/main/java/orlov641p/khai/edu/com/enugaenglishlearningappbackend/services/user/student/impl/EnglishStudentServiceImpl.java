@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.student.dto.request.EnglishStudentCreateRequest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.student.dto.request.EnglishStudentUpdateRequest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.Role;
@@ -41,19 +42,25 @@ public class EnglishStudentServiceImpl implements EnglishStudentService {
     }
 
     @Override
+    @Transactional
     public EnglishStudent create(EnglishStudent englishStudent) {
         checkEnglishStudentNull(englishStudent);
         checkEnglishTeacherExists(englishStudent.getTeacher());
         checkEnglishStudentHasStudentRole(englishStudent);
 
-        if(englishStudent.getUser() != null) {
-            englishStudent.setUser(userService.create(englishStudent.getUser()));
+        EnglishStudent savedEnglishStudent = englishStudentRepository.save(englishStudent);
+        User user = savedEnglishStudent.getUser();
+
+        if(!user.getRoles().contains(Role.ROLE_ENGLISH_STUDENT_USER)){
+            user.getRoles().add(Role.ROLE_ENGLISH_STUDENT_USER);
+            userService.update(user);
         }
 
-        return englishStudentRepository.save(englishStudent);
+        return savedEnglishStudent;
     }
 
     @Override
+    @Transactional
     public EnglishStudent createEnglishStudentFromRequest(EnglishStudentCreateRequest englishStudentCreateRequest) {
         User foundUser = userService.findById(englishStudentCreateRequest.getUserId());
 

@@ -63,20 +63,30 @@ public class UserLoaderImpl implements UserLoader {
         Set<Role> teachersRoles = Set.of(Role.ROLE_USER_WITHOUT_SUBSCRIPTION, Role.ROLE_USER_WITH_SUBSCRIPTION,
                 Role.ROLE_ENGLISH_STUDENT_USER, Role.ROLE_ENGLISH_TEACHER_USER);
 
+        User user1 = constructUser("englishTeacher1@email.com", "english1", "Teacher1", teachersRoles );
+        User user2 = constructUser("englishTeacher2@email.com", "english2", "Teacher2", teachersRoles );
+        User user3 = constructUser("englishTeacher3@email.com", "english3", "Teacher3", teachersRoles );
+        User user4 = constructUser("test4@email.com", "TestName4", "TestName4", teachersRoles);
+
+        user1 = userService.create(user1);
+        user2 = userService.create(user2);
+        user3 = userService.create(user3);
+        user4 = userService.create(user4);
+
         EnglishTeacher englishTeacher1 = EnglishTeacher.builder()
-                .user(constructUser("englishTeacher1@email.com", "english1", "Teacher1", teachersRoles ))
+                .user(user1)
                 .build();
 
         EnglishTeacher englishTeacher2 = EnglishTeacher.builder()
-                .user(constructUser("englishTeacher2@email.com", "english2", "Teacher2", teachersRoles ))
+                .user(user2)
                 .build();
 
         EnglishTeacher englishTeacher3 = EnglishTeacher.builder()
-                .user(constructUser("englishTeacher3@email.com", "english3", "Teacher3", teachersRoles ))
+                .user(user3)
                 .build();
 
         EnglishTeacher test4englishTeacher = EnglishTeacher.builder().
-                user(constructUser("test4@email.com", "TestName4", "TestName4", teachersRoles))
+                user(user4)
                 .build();
 
         englishTeacher1 = englishTeacherService.create(englishTeacher1);
@@ -92,53 +102,68 @@ public class UserLoaderImpl implements UserLoader {
                 Role.ROLE_ENGLISH_STUDENT_USER);
 
         List<EnglishStudent> englishStudents = new ArrayList<>();
+        User user1 = constructUser("test3@email.com", "test3", "test3", studentRoles);
+        User user2 = constructUser("student1teacher1@email.com", "student1", "teacher1",
+                studentRoles);
+        User user3 = constructUser("student2teacher1@email.com", "student2", "teacher1",
+                studentRoles);
+        User user4 = constructUser("student3teacher1@email.com", "student3", "teacher1",
+                studentRoles);
+        User user5 = constructUser("student1teacher2@email.com", "student1", "teacher2",
+                studentRoles);
+        User user6 = constructUser("student2teacher2@email.com", "student2", "teacher2",
+                studentRoles);
+        User user7 = constructUser("student1teacher3@email.com", "student1", "teacher3",
+                studentRoles);
+
+        user1 = userService.create(user1);
+        user2 = userService.create(user2);
+        user3 = userService.create(user3);
+        user4 = userService.create(user4);
+        user5 = userService.create(user5);
+        user6 = userService.create(user6);
+        user7 = userService.create(user7);
 
         EnglishStudent englishStudentTest3 = EnglishStudent.builder()
                 .teacher(englishTeachers.get(3))
-                .user(constructUser("test3@email.com", "test3", "test3", studentRoles))
+                .user(user1)
                 .build();
 
         englishStudents.add(englishStudentTest3);
 
         EnglishStudent student1Teacher1 = EnglishStudent.builder()
                 .teacher(englishTeachers.get(0))
-                .user(constructUser("student1teacher1@email.com", "student1", "teacher1",
-                        studentRoles))
+                .user(user2)
                 .build();
         englishStudents.add(student1Teacher1);
 
         EnglishStudent student2Teacher1 = EnglishStudent.builder()
                 .teacher(englishTeachers.get(0))
-                .user(constructUser("student2teacher1@email.com", "student2", "teacher1",
-                        studentRoles))
+                .user(user3)
                 .build();
         englishStudents.add(student2Teacher1);
 
         EnglishStudent student3Teacher1 = EnglishStudent.builder()
                 .teacher(englishTeachers.get(0))
-                .user(constructUser("student3teacher1@email.com", "student3", "teacher1",
-                        studentRoles))
+                .user(user4)
                 .build();
         englishStudents.add(student3Teacher1);
 
         EnglishStudent student1Teacher2 = EnglishStudent.builder()
                 .teacher(englishTeachers.get(1))
-                .user(constructUser("student1teacher2@email.com", "student1", "teacher2",
-                        studentRoles))
+                .user(user5)
                 .build();
         englishStudents.add(student1Teacher2);
 
         EnglishStudent student2Teacher2 = EnglishStudent.builder()
                 .teacher(englishTeachers.get(1))
-                .user(constructUser("student2teacher2@email.com", "student2", "teacher2",
-                        studentRoles))
+                .user(user6)
                 .build();
         englishStudents.add(student2Teacher2);
 
         EnglishStudent student1Teacher3 = EnglishStudent.builder()
                 .teacher(englishTeachers.get(2))
-                .user(constructUser("student1teacher3@email.com", "student1", "teacher3",
-                        studentRoles))
+                .user(user7)
                 .build();
         englishStudents.add(student1Teacher3);
 

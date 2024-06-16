@@ -44,7 +44,17 @@ public class EnglishTeacherServiceImpl implements EnglishTeacherService {
         checkEnglishTeacherNull(englishTeacher);
         checkEnglishTeacherHasTeacherRole(englishTeacher);
 
-        return englishTeacherRepository.save(englishTeacher);
+        EnglishTeacher savedTeacher = englishTeacherRepository.save(englishTeacher);
+        User user = savedTeacher.getUser();
+
+        if(!user.getRoles().contains(Role.ROLE_ENGLISH_STUDENT_USER)
+                || !user.getRoles().contains(Role.ROLE_ENGLISH_TEACHER_USER)){
+            user.getRoles().add(Role.ROLE_ENGLISH_STUDENT_USER);
+            user.getRoles().add(Role.ROLE_ENGLISH_TEACHER_USER);
+            userService.update(user);
+        }
+
+        return savedTeacher;
     }
 
     @Override
