@@ -1,11 +1,15 @@
 package orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.teacher;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.teacher.dto.mapper.EnglishTeacherMapper;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.teacher.dto.request.EnglishTeacherCreateRequest;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.teacher.dto.request.EnglishTeacherPage;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.teacher.dto.request.EnglishTeacherUpdateRequest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.teacher.dto.response.EnglishTeacherResponse;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.teacher.EnglishTeacher;
@@ -35,6 +39,16 @@ public class EnglishTeacherController {
         }
 
         return responses;
+    }
+
+    @PostMapping("/english-teachers/page")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public Page<EnglishTeacherResponse> retrieveEnglishTeachersPage(@RequestBody EnglishTeacherPage englishTeacherPage){
+        Page<EnglishTeacher> englishTeachers = englishTeacherService.getEnglishTeacherPage(
+                PageRequest.of(englishTeacherPage.getPageNumber(), englishTeacherPage.getPageSize())
+        );
+
+        return EnglishTeacherMapper.convertEnglishTeacherPageToResponse(englishTeachers);
     }
 
     @GetMapping("/english-teacher/{id}")

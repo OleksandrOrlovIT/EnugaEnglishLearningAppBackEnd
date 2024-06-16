@@ -15,13 +15,13 @@ import java.util.stream.Collectors;
 public class EnglishStudentMapper {
 
     public static Page<EnglishStudentResponse> convertEnglishStudentPageToResponse(Page<EnglishStudent> englishStudents){
-        List<EnglishStudentResponse> testAttemptResponses = englishStudents.getContent().stream()
+        List<EnglishStudentResponse> englishStudentResponses = englishStudents.getContent().stream()
                 .map(EnglishStudentMapper::convertEnglishStudentToResponse)
                 .collect(Collectors.toList());
 
         Pageable pageable = englishStudents.getPageable();
 
-        return new PageImpl<>(testAttemptResponses, pageable, englishStudents.getTotalElements());
+        return new PageImpl<>(englishStudentResponses, pageable, englishStudents.getTotalElements());
     }
 
     public static EnglishStudentResponse convertEnglishStudentToResponse(EnglishStudent englishStudent){

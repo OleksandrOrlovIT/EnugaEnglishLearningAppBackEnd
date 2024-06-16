@@ -1,5 +1,7 @@
 package orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.user.teacher;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.teacher.dto.request.EnglishTeacherCreateRequest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.teacher.dto.request.EnglishTeacherUpdateRequest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.User;
@@ -14,4 +16,6 @@ public interface EnglishTeacherService extends CrudService<EnglishTeacher, Long>
     EnglishTeacher createFromRequest(EnglishTeacherCreateRequest englishTeacherCreateRequest);
 
     EnglishTeacher updateFromRequest(EnglishTeacherUpdateRequest englishTeacherUpdateRequest);
+
+    Page<EnglishTeacher> getEnglishTeacherPage(Pageable pageable);
 }
