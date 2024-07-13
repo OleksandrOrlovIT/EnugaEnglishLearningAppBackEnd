@@ -6,7 +6,9 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.engtest.dto.mapper.EnglishTestMapper;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.engtest.dto.response.EnglishTestResponse;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.engtest.dto.mapper.TestAttemptMapper;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.engtest.dto.request.TestAttemptRequest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.engtest.dto.response.TestAttemptResponse;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.engtest.EnglishTest;
@@ -16,6 +18,10 @@ import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.engtest.En
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+
+import static orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.engtest.dto.mapper.EnglishTestMapper.englishTestListToResponseList;
+import static orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.engtest.dto.mapper.EnglishTestMapper.englishTestToResponse;
+import static orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.engtest.dto.mapper.TestAttemptMapper.convertTestAttemptToResponse;
 
 @AllArgsConstructor
 @RestController
@@ -27,18 +33,12 @@ public class EnglishTestController {
 
     @GetMapping("/english-tests")
     public List<EnglishTestResponse> retrieveEnglishTests(){
-        List<EnglishTestResponse> englishTestResponses = new ArrayList<>();
-
-        for(EnglishTest englishTest : englishTestService.findAll()){
-            englishTestResponses.add(new EnglishTestResponse(englishTest));
-        }
-
-        return englishTestResponses;
+        return englishTestListToResponseList(englishTestService.findAll());
     }
 
     @GetMapping("/english-test/{id}")
     public EnglishTestResponse retrieveEnglishTestById(@PathVariable Long id){
-        return new EnglishTestResponse(englishTestService.findById(id));
+        return englishTestToResponse(englishTestService.findById(id));
     }
 
     @PreAuthorize("hasRole('ROLE_ENGLISH_TEACHER_USER')")
@@ -51,7 +51,7 @@ public class EnglishTestController {
                 .buildAndExpand(savedEnglishTest.getId())
                 .toUri();
 
-        return ResponseEntity.created(location).body(new EnglishTestResponse(savedEnglishTest));
+        return ResponseEntity.created(location).body(englishTestToResponse(savedEnglishTest));
     }
 
     @PreAuthorize("hasRole('ROLE_ENGLISH_TEACHER_USER')")
@@ -63,7 +63,7 @@ public class EnglishTestController {
 
         englishTest.setId(id);
 
-        return new EnglishTestResponse(englishTestService.update(englishTest));
+        return englishTestToResponse(englishTestService.update(englishTest));
     }
 
     @PreAuthorize("hasRole('ROLE_ENGLISH_TEACHER_USER')")
@@ -76,7 +76,7 @@ public class EnglishTestController {
     @PostMapping("/english-test/take")
     public TestAttemptResponse takeEnglishTest(@RequestBody TestAttemptRequest testAttemptRequest){
         if(userSecurity.hasRoleAdminOrIsSelf(testAttemptRequest.getUserId())) {
-            return new TestAttemptResponse(englishTestService.takeTheTest(testAttemptRequest));
+            return convertTestAttemptToResponse(englishTestService.takeTheTest(testAttemptRequest));
         } else {
             throw new AccessDeniedException("Access Denied");
         }

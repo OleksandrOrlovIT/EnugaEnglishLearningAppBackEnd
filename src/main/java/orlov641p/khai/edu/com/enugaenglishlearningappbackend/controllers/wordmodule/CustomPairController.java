@@ -12,6 +12,9 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import static orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.wordmodule.dto.mapper.CustomPairMapper.customPairListToCustomPairResponseList;
+import static orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.wordmodule.dto.mapper.CustomPairMapper.customPairToCustomPairResponse;
+
 @AllArgsConstructor
 @RestController
 @RequestMapping("/v1")
@@ -20,29 +23,17 @@ public class CustomPairController {
 
     @GetMapping("/custom-pairs")
     public List<CustomPairResponse> retrieveCustomPairs(){
-        List<CustomPairResponse> customPairResponses = new ArrayList<>();
-
-        for(CustomPair customPair : customPairService.findAll()){
-            customPairResponses.add(new CustomPairResponse(customPair));
-        }
-
-        return customPairResponses;
+        return customPairListToCustomPairResponseList(customPairService.findAll());
     }
 
     @GetMapping("/custom-pair/{id}")
     public CustomPairResponse retrieveCustomPairById(@PathVariable Long id){
-        return new CustomPairResponse(customPairService.findById(id));
+        return customPairToCustomPairResponse(customPairService.findById(id));
     }
 
     @GetMapping("/custom-pairs/word-module/{wordModuleId}")
     public List<CustomPairResponse> retrieveCustomPairsByWordModuleId(@PathVariable Long wordModuleId){
-        List<CustomPairResponse> customPairResponses = new ArrayList<>();
-
-        for(CustomPair customPair : customPairService.getCustomPairsByWordModuleId(wordModuleId)){
-            customPairResponses.add(new CustomPairResponse(customPair));
-        }
-
-        return customPairResponses;
+        return customPairListToCustomPairResponseList(customPairService.getCustomPairsByWordModuleId(wordModuleId));
     }
 
     @PostMapping("/custom-pair")
@@ -54,7 +45,7 @@ public class CustomPairController {
                 .buildAndExpand(savedCustomPair.getId())
                 .toUri();
 
-        return ResponseEntity.created(location).body(new CustomPairResponse(savedCustomPair));
+        return ResponseEntity.created(location).body(customPairToCustomPairResponse(savedCustomPair));
     }
 
     @PutMapping("/custom-pair/{id}")
@@ -63,7 +54,7 @@ public class CustomPairController {
             return null;
         }
 
-        return new CustomPairResponse(customPairService.update(customPair));
+        return customPairToCustomPairResponse(customPairService.update(customPair));
     }
 
     @DeleteMapping("/custom-pair/{id}")
@@ -72,4 +63,3 @@ public class CustomPairController {
         return ResponseEntity.noContent().build();
     }
 }
-

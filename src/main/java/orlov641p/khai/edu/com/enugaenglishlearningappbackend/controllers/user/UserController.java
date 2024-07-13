@@ -20,6 +20,8 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import static orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.dto.mapper.UserMapper.*;
+
 @AllArgsConstructor
 @RestController
 @RequestMapping("/v1")
@@ -30,15 +32,7 @@ public class UserController {
     @GetMapping("/users")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<UserResponse> retrieveUsers(){
-        List<User> users = userService.findAll();
-
-        List<UserResponse> responses = new ArrayList<>();
-
-        for(User user : users){
-            responses.add(new UserResponse(user));
-        }
-
-        return responses;
+        return userListToUserResponseList(userService.findAll());
     }
 
     @PostMapping("/users/page")
@@ -48,13 +42,13 @@ public class UserController {
 
         Page<User> users = userService.getUserPage(pageable);
 
-        return UserMapper.userPageToUserResponsePage(users);
+        return userPageToUserResponsePage(users);
     }
 
     @GetMapping("/user/{id}")
     @IsAdminOrSelf
     public UserResponse retrieveUserById(@PathVariable Long id){
-        return new UserResponse(userService.findById(id));
+        return convertUserToUserResponse(userService.findById(id));
     }
 
     @PostMapping("/user")
@@ -67,7 +61,7 @@ public class UserController {
                 .buildAndExpand(savedUser.getId())
                 .toUri();
 
-        return ResponseEntity.created(location).body(new UserResponse(savedUser));
+        return ResponseEntity.created(location).body(convertUserToUserResponse(savedUser));
     }
 
     @PutMapping("/user/{id}")
@@ -77,7 +71,7 @@ public class UserController {
             return null;
         }
 
-        return new UserResponse(userService.update(user));
+        return convertUserToUserResponse(userService.update(user));
     }
 
     @PutMapping("/user/{id}/without-roles")
@@ -87,9 +81,9 @@ public class UserController {
             return null;
         }
 
-        User user = UserMapper.convertUserWithoutRolesRequestToUser(request);
+        User user = convertUserWithoutRolesRequestToUser(request);
 
-        return new UserResponse(userService.updateUserWithoutRoles(user));
+        return convertUserToUserResponse(userService.updateUserWithoutRoles(user));
     }
 
     @PutMapping("/user/{id}/upgrade-account")
@@ -101,7 +95,7 @@ public class UserController {
             return null;
         }
 
-        return new UserResponse(userService.upgradeUserSubscription(user));
+        return convertUserToUserResponse(userService.upgradeUserSubscription(user));
     }
 
     @DeleteMapping("/user/{id}")

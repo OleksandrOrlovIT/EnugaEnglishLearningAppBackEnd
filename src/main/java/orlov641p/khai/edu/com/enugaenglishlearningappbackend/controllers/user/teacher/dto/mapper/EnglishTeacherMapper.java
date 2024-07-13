@@ -25,4 +25,8 @@ public class EnglishTeacherMapper {
     public static EnglishTeacherResponse convertEnglishTeacherToResponse(EnglishTeacher englishTeacher) {
         return new EnglishTeacherResponse(englishTeacher);
     }
+
+    public static List<EnglishTeacherResponse> convertEnglishTeacherListToResponse(List<EnglishTeacher> englishTeachers) {
+        return englishTeachers.stream().map(EnglishTeacherMapper::convertEnglishTeacherToResponse).collect(Collectors.toList());
+    }
 }

@@ -30,6 +30,10 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import static orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.engtest.dto.mapper.TestAttemptMapper.convertPageTestAttemptToResponse;
+import static orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.wordmodule.dto.mapper.WordModuleAttemptMapper.convertPageWordModuleAttemptToResponse;
+import static orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.student.dto.mapper.EnglishStudentMapper.*;
+
 @AllArgsConstructor
 @RestController
 @RequestMapping("/v1")
@@ -41,15 +45,7 @@ public class EnglishStudentController {
     @GetMapping("/english-students")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<EnglishStudentResponse> retrieveEnglishStudents() {
-        List<EnglishStudent> englishStudents = englishStudentService.findAll();
-
-        List<EnglishStudentResponse> responses = new ArrayList<>();
-
-        for (EnglishStudent englishStudent : englishStudents) {
-            responses.add(new EnglishStudentResponse(englishStudent));
-        }
-
-        return responses;
+        return convertEnglishStudentListToEnglishStudentResponseList(englishStudentService.findAll());
     }
 
     @PostMapping("/english-students/page")
@@ -61,13 +57,13 @@ public class EnglishStudentController {
                 PageRequest.of(englishStudentPageRequest.getPageNumber(), englishStudentPageRequest.getPageSize())
         );
 
-        return EnglishStudentMapper.convertEnglishStudentPageToResponse(studentsPage);
+        return convertEnglishStudentPageToResponse(studentsPage);
     }
 
     @GetMapping("/english-student/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public EnglishStudentResponse retrieveEnglishStudentById(@PathVariable Long id) {
-        return new EnglishStudentResponse(englishStudentService.findById(id));
+        return convertEnglishStudentToResponse(englishStudentService.findById(id));
     }
 
     @PostMapping("/english-student")
@@ -81,14 +77,14 @@ public class EnglishStudentController {
                 .buildAndExpand(savedEnglishStudent.getId())
                 .toUri();
 
-        return ResponseEntity.created(location).body(new EnglishStudentResponse(savedEnglishStudent));
+        return ResponseEntity.created(location).body(convertEnglishStudentToResponse(savedEnglishStudent));
     }
 
     @PutMapping("/english-student")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public EnglishStudentResponse updateEnglishStudent
             (@RequestBody EnglishStudentUpdateRequest englishStudentUpdateRequest) {
-        return new EnglishStudentResponse(englishStudentService.updateEnglishStudentFromRequest(englishStudentUpdateRequest));
+        return convertEnglishStudentToResponse(englishStudentService.updateEnglishStudentFromRequest(englishStudentUpdateRequest));
     }
 
     @DeleteMapping("/english-student/{id}")
@@ -106,7 +102,7 @@ public class EnglishStudentController {
                 PageRequest.of(request.getPageNumber(), request.getPageSize())
         );
 
-        return EnglishStudentMapper.convertEnglishStudentPageToResponse(englishStudents);
+        return convertEnglishStudentPageToResponse(englishStudents);
     }
 
     @PostMapping("/english-student/english-tests-attempts-page/by-teacher")
@@ -115,7 +111,7 @@ public class EnglishStudentController {
         Page<TestAttempt> testAttemptPage = englishStudentStatService.getEnglishTestAttempts(request.getEnglishStudentId(),
                 PageRequest.of(request.getPageNumber(), request.getPageSize()));
 
-        return TestAttemptMapper.convertPageTestAttemptToResponse(testAttemptPage);
+        return convertPageTestAttemptToResponse(testAttemptPage);
     }
 
     @PostMapping("/english-student/word-modules-attempts-page/by-teacher")
@@ -126,6 +122,6 @@ public class EnglishStudentController {
                 .getPublicWordModulesAttempts(request.getEnglishStudentId(),
                 PageRequest.of(request.getPageNumber(), request.getPageSize()));
 
-        return WordModuleAttemptMapper.convertPageWordModuleAttemptToResponse(wordModuleAttemptPage);
+        return convertPageWordModuleAttemptToResponse(wordModuleAttemptPage);
     }
 }

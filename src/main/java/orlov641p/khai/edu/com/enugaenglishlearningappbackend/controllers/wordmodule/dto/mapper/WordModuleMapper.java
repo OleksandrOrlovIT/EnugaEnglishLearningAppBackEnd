@@ -34,4 +34,8 @@ public class WordModuleMapper {
                 .customPairs(wordModuleRequest.getCustomPairs())
                 .build();
     }
+
+    public static List<WordModuleResponse> convertWordModuleListToResponseList(List<WordModule> wordModules){
+        return wordModules.stream().map(WordModuleMapper::convertWordModuleToResponse).toList();
+    }
 }

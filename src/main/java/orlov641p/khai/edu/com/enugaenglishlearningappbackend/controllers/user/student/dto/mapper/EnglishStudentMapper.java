@@ -27,4 +27,9 @@ public class EnglishStudentMapper {
     public static EnglishStudentResponse convertEnglishStudentToResponse(EnglishStudent englishStudent){
         return new EnglishStudentResponse(englishStudent);
     }
+
+    public static List<EnglishStudentResponse> convertEnglishStudentListToEnglishStudentResponseList
+            (List<EnglishStudent> englishStudents){
+        return englishStudents.stream().map(EnglishStudentMapper::convertEnglishStudentToResponse).toList();
+    }
 }

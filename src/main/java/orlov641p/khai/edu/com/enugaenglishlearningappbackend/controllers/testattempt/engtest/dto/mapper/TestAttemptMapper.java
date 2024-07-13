@@ -23,4 +23,8 @@ public class TestAttemptMapper {
     public static TestAttemptResponse convertTestAttemptToResponse(TestAttempt testAttempt){
         return new TestAttemptResponse(testAttempt);
     }
+
+    public static List<TestAttemptResponse> convertTestAttemptListToResponseList(List<TestAttempt> testAttemptList){
+        return testAttemptList.stream().map(TestAttemptMapper::convertTestAttemptToResponse).collect(Collectors.toList());
+    }
 }

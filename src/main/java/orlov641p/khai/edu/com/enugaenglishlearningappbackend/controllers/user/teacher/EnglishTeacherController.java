@@ -22,6 +22,8 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import static orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.user.teacher.dto.mapper.EnglishTeacherMapper.*;
+
 @AllArgsConstructor
 @RestController
 @RequestMapping("/v1")
@@ -31,15 +33,7 @@ public class EnglishTeacherController {
     @GetMapping("/english-teachers")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<EnglishTeacherResponse> retrieveEnglishTeachers(){
-        List<EnglishTeacher> englishTeachers = englishTeacherService.findAll();
-
-        List<EnglishTeacherResponse> responses = new ArrayList<>();
-
-        for(EnglishTeacher englishTeacher : englishTeachers){
-            responses.add(new EnglishTeacherResponse(englishTeacher));
-        }
-
-        return responses;
+        return convertEnglishTeacherListToResponse(englishTeacherService.findAll());
     }
 
     @PostMapping("/english-teachers/page")
@@ -49,19 +43,19 @@ public class EnglishTeacherController {
                 PageRequest.of(englishTeacherPage.getPageNumber(), englishTeacherPage.getPageSize())
         );
 
-        return EnglishTeacherMapper.convertEnglishTeacherPageToResponse(englishTeachers);
+        return convertEnglishTeacherPageToResponse(englishTeachers);
     }
 
     @GetMapping("/english-teacher/{id}")
     @IsAdminOrSelfTeacherId
     public EnglishTeacherResponse retrieveEnglishTeacherById(@PathVariable Long id){
-        return new EnglishTeacherResponse(englishTeacherService.findById(id));
+        return convertEnglishTeacherToResponse(englishTeacherService.findById(id));
     }
 
     @GetMapping("/english-teacher/user/{id}")
     @IsAdminOrSelf
     public EnglishTeacherResponse retrieveEnglishTeacherByUserId(@PathVariable Long id){
-        return new EnglishTeacherResponse(englishTeacherService.findByUserId(id));
+        return convertEnglishTeacherToResponse(englishTeacherService.findByUserId(id));
     }
 
     @PostMapping("/english-teacher")
@@ -75,13 +69,13 @@ public class EnglishTeacherController {
                 .buildAndExpand(savedEnglishTeacher.getId())
                 .toUri();
 
-        return ResponseEntity.created(location).body(new EnglishTeacherResponse(savedEnglishTeacher));
+        return ResponseEntity.created(location).body(convertEnglishTeacherToResponse(savedEnglishTeacher));
     }
 
     @PutMapping("/english-teacher")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public EnglishTeacherResponse updateEnglishTeacher(@RequestBody EnglishTeacherUpdateRequest englishTeacherUpdateRequest){
-        return new EnglishTeacherResponse(englishTeacherService.updateFromRequest(englishTeacherUpdateRequest));
+        return convertEnglishTeacherToResponse(englishTeacherService.updateFromRequest(englishTeacherUpdateRequest));
     }
 
     @DeleteMapping("/english-teacher/{id}")

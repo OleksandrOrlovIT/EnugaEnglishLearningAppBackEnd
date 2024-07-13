@@ -8,7 +8,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.engtest.dto.mapper.TestAttemptMapper;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.engtest.dto.request.TestAttemptPage;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.engtest.dto.request.TestAttemptWithoutAnswers;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.engtest.dto.response.TestAttemptResponse;
@@ -17,8 +16,9 @@ import orlov641p.khai.edu.com.enugaenglishlearningappbackend.security.user.UserS
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.testattempt.engtest.TestAttemptService;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
+
+import static orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.engtest.dto.mapper.TestAttemptMapper.*;
 
 @AllArgsConstructor
 @RestController
@@ -31,22 +31,14 @@ public class TestAttemptController {
     @GetMapping("/test-attempts")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<TestAttemptResponse> retrieveTestAttempts(){
-        List<TestAttempt> testAttempts = testAttemptService.findAll();
-
-        List<TestAttemptResponse> testAttemptResponses = new ArrayList<>();
-
-        for(TestAttempt testAttempt : testAttempts) {
-            testAttemptResponses.add(new TestAttemptResponse(testAttempt));
-        }
-
-        return testAttemptResponses;
+        return convertTestAttemptListToResponseList(testAttemptService.findAll());
     }
 
     @PostMapping("/test-attempts/user/stats")
     public Page<TestAttemptResponse> getPageByUser(@RequestBody @Validated TestAttemptPage testAttemptPage){
         if(userSecurity.hasRoleAdminOrIsSelf(testAttemptPage.userId)){
             Page<TestAttempt> testAttempts = testAttemptService.findTestAttemptsPageByUser(testAttemptPage);
-            return TestAttemptMapper.convertPageTestAttemptToResponse(testAttempts);
+            return convertPageTestAttemptToResponse(testAttempts);
         } else {
             throw new AccessDeniedException("Access is denied");
         }
@@ -57,7 +49,7 @@ public class TestAttemptController {
         if(userSecurity.hasRoleAdminOrIsSelf(testAttemptPage.userId)) {
             Page<TestAttempt> testAttempts = testAttemptService.findLastTestAttemptsPageByUserSortedByDate(testAttemptPage);
 
-            return TestAttemptMapper.convertPageTestAttemptToResponse(testAttempts);
+            return convertPageTestAttemptToResponse(testAttempts);
         } else {
             throw new AccessDeniedException("Access is denied");
         }
@@ -66,7 +58,7 @@ public class TestAttemptController {
     @PostMapping("/test-attempts/user/stats-best")
     public TestAttemptResponse getBestTestAttemptByUserId(@RequestBody TestAttemptWithoutAnswers testAttemptWithoutAnswers){
         if(userSecurity.hasRoleAdminOrIsSelf(testAttemptWithoutAnswers.getUserId())) {
-            return new TestAttemptResponse(testAttemptService.findMaximumScoreAttempt(testAttemptWithoutAnswers));
+            return convertTestAttemptToResponse(testAttemptService.findMaximumScoreAttempt(testAttemptWithoutAnswers));
         } else {
             throw new AccessDeniedException("Access is denied");
         }
@@ -75,7 +67,7 @@ public class TestAttemptController {
     @PostMapping("/test-attempts/user/stats-last")
     public TestAttemptResponse getLastTestAttemptByUserId(@RequestBody TestAttemptWithoutAnswers testAttemptWithoutAnswers){
         if(userSecurity.hasRoleAdminOrIsSelf(testAttemptWithoutAnswers.getUserId())) {
-            return new TestAttemptResponse(testAttemptService.findLastAttemptScore(testAttemptWithoutAnswers));
+            return convertTestAttemptToResponse(testAttemptService.findLastAttemptScore(testAttemptWithoutAnswers));
         } else {
             throw new AccessDeniedException("Access is denied");
         }
@@ -84,13 +76,13 @@ public class TestAttemptController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/test-attempt/{id}")
     public TestAttemptResponse retrieveTestAttemptById(@PathVariable Long id){
-        return new TestAttemptResponse(testAttemptService.findById(id));
+        return convertTestAttemptToResponse(testAttemptService.findById(id));
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/test-attempt")
     public ResponseEntity<TestAttemptResponse> createTestAttempt(@RequestBody TestAttempt testAttempt){
-        TestAttemptResponse savedTestAttempt = new TestAttemptResponse(testAttemptService.create(testAttempt));
+        TestAttemptResponse savedTestAttempt = convertTestAttemptToResponse(testAttemptService.create(testAttempt));
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
@@ -106,7 +98,7 @@ public class TestAttemptController {
         if(testAttemptService.findById(id) == null) {
             return null;
         }
-        return new TestAttemptResponse(testAttemptService.update(testAttempt));
+        return convertTestAttemptToResponse(testAttemptService.update(testAttempt));
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")

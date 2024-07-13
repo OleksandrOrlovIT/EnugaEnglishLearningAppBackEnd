@@ -15,8 +15,10 @@ import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.testattempt.
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.testattempt.wordmodule.WordModuleAttemptService;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
+
+import static orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.wordmodule.dto.mapper.WordModuleAttemptMapper.convertWordModuleAttemptListToResponse;
+import static orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.wordmodule.dto.mapper.WordModuleAttemptMapper.convertWordModuleAttemptToResponse;
 
 @AllArgsConstructor
 @RestController
@@ -26,15 +28,7 @@ public class WordAttemptController {
 
     @GetMapping("/word-module-attempts")
     public List<WordModuleAttemptResponse> retrieveWordModuleAttempts(){
-        List<WordModuleAttempt> wordModuleAttempts = wordModuleAttemptService.findAll();
-
-        List<WordModuleAttemptResponse> wordModuleAttemptResponses = new ArrayList<>();
-
-        for(WordModuleAttempt wordModuleAttempt : wordModuleAttempts) {
-            wordModuleAttemptResponses.add(new WordModuleAttemptResponse(wordModuleAttempt));
-        }
-
-        return wordModuleAttemptResponses;
+        return convertWordModuleAttemptListToResponse(wordModuleAttemptService.findAll());
     }
 
     @PostMapping("/word-module-attempts/user/stats")
@@ -61,7 +55,7 @@ public class WordAttemptController {
     public WordModuleAttemptResponse getBestWordModuleAttemptByUserId
             (@RequestBody WordModuleAttemptWithoutAnswers testAttemptWithoutAnswers){
 
-        return new WordModuleAttemptResponse(
+        return convertWordModuleAttemptToResponse(
                 wordModuleAttemptService.findMaximumScoreWordModuleAttempt(testAttemptWithoutAnswers)
         );
     }
@@ -69,21 +63,21 @@ public class WordAttemptController {
     @PostMapping("/word-module-attempts/user/stats-last")
     public WordModuleAttemptResponse getLastWordModuleAttemptByUserId
             (@RequestBody WordModuleAttemptWithoutAnswers testAttemptWithoutAnswers){
-        return new WordModuleAttemptResponse(
+        return convertWordModuleAttemptToResponse(
                 wordModuleAttemptService.findLastWordModuleAttemptScore(testAttemptWithoutAnswers)
         );
     }
 
     @GetMapping("/word-module-attempt/{id}")
     public WordModuleAttemptResponse retrieveWordModuleAttemptById(@PathVariable Long id){
-        return new WordModuleAttemptResponse(wordModuleAttemptService.findById(id));
+        return convertWordModuleAttemptToResponse(wordModuleAttemptService.findById(id));
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/word-module-attempt")
     public ResponseEntity<WordModuleAttemptResponse> createWordModuleAttempt(@RequestBody WordModuleAttempt wordModuleAttempt){
         WordModuleAttemptResponse savedWordModuleAttempt =
-                new WordModuleAttemptResponse(wordModuleAttemptService.create(wordModuleAttempt));
+                convertWordModuleAttemptToResponse(wordModuleAttemptService.create(wordModuleAttempt));
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
@@ -100,7 +94,7 @@ public class WordAttemptController {
         if(wordModuleAttemptService.findById(id) == null) {
             return null;
         }
-        return new WordModuleAttemptResponse(wordModuleAttemptService.update(wordModuleAttempt));
+        return convertWordModuleAttemptToResponse(wordModuleAttemptService.update(wordModuleAttempt));
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")

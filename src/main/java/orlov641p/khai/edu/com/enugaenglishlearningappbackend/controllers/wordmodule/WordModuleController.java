@@ -10,6 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.wordmodule.dto.mapper.WordModuleAttemptMapper;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.wordmodule.dto.request.WordModuleAttemptRequest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.wordmodule.dto.response.WordModuleAttemptResponse;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.wordmodule.dto.mapper.WordModuleMapper;
@@ -28,6 +29,9 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import static orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.wordmodule.dto.mapper.WordModuleAttemptMapper.convertWordModuleAttemptToResponse;
+import static orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.wordmodule.dto.mapper.WordModuleMapper.*;
+
 @AllArgsConstructor
 @RestController
 @RequestMapping("/v1")
@@ -40,13 +44,7 @@ public class WordModuleController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/word-modules")
     public List<WordModuleResponse> retrieveWordModules() {
-        List<WordModuleResponse> wordModuleResponses = new ArrayList<>();
-
-        for (WordModule wordModule : wordModuleService.findAll()) {
-            wordModuleResponses.add(new WordModuleResponse(wordModule));
-        }
-
-        return wordModuleResponses;
+        return convertWordModuleListToResponseList(wordModuleService.findAll());
     }
 
     @GetMapping("/word-module/{id}")
@@ -54,7 +52,7 @@ public class WordModuleController {
         WordModule wordModule = wordModuleService.findById(id);
 
         if (userSecurity.hasRoleAdminOrIsSelfOrPublicVisibility(wordModule)) {
-            return new WordModuleResponse(wordModule);
+            return convertWordModuleToResponse(wordModule);
         } else {
             throw new AccessDeniedException("Access Denied");
         }
@@ -74,7 +72,7 @@ public class WordModuleController {
                     .buildAndExpand(savedWordModule.getId())
                     .toUri();
 
-            return ResponseEntity.created(location).body(new WordModuleResponse(savedWordModule));
+            return ResponseEntity.created(location).body(convertWordModuleToResponse(savedWordModule));
         } else {
             throw new AccessDeniedException("Access Denied");
         }
@@ -93,7 +91,7 @@ public class WordModuleController {
 
             wordModule.setId(id);
 
-            return new WordModuleResponse(wordModuleService.update(wordModule));
+            return convertWordModuleToResponse(wordModuleService.update(wordModule));
         } else {
             throw new AccessDeniedException("Access Denied");
         }
@@ -117,7 +115,7 @@ public class WordModuleController {
 
         if (userSecurity.hasRoleAdminOrIsSelfOrPublicVisibility(wordModule)
                 && userSecurity.authUserTriesToTakeTest(wordModuleAttemptRequest.getUserId())) {
-            return new WordModuleAttemptResponse(wordModuleService.takeTheTest(wordModuleAttemptRequest));
+            return convertWordModuleAttemptToResponse(wordModuleService.takeTheTest(wordModuleAttemptRequest));
         } else {
             throw new AccessDeniedException("Access Denied");
         }
@@ -129,7 +127,7 @@ public class WordModuleController {
             Pageable pageable = PageRequest.of(page.getPageNumber(), page.getPageSize());
             Page<WordModule> wordModules =
                     wordModuleService.findPageByUserOrderByIdDesc(page.getUserId(), pageable);
-            return WordModuleMapper.convertPageTestAttemptToResponse(wordModules);
+            return convertPageTestAttemptToResponse(wordModules);
         } else {
             throw new AccessDeniedException("Access Denied");
         }
@@ -138,26 +136,14 @@ public class WordModuleController {
     @IsAdminOrSelf
     @GetMapping("/word-module/user/{id}")
     public List<WordModuleResponse> getWordModulesByUserId(@PathVariable Long id) {
-        List<WordModuleResponse> wordModuleResponses = new ArrayList<>();
-
-        for (WordModule wordModule : wordModuleService.findByUserOrderByIdDesc(id)) {
-            wordModuleResponses.add(new WordModuleResponse(wordModule));
-        }
-
-        return wordModuleResponses;
+        return convertWordModuleListToResponseList(wordModuleService.findByUserOrderByIdDesc(id));
     }
 
     @GetMapping("/word-module/public-without-logged-user")
     public List<WordModuleResponse> getPublicWordModulesWithoutUser() {
-        List<WordModuleResponse> wordModuleResponses = new ArrayList<>();
-
         Long userId = userSecurity.getLoggedUser().getId();
 
-        for (WordModule wordModule : wordModuleService.findByVisibilityPublicAndUserNot(userId)) {
-            wordModuleResponses.add(new WordModuleResponse(wordModule));
-        }
-
-        return wordModuleResponses;
+        return convertWordModuleListToResponseList(wordModuleService.findByVisibilityPublicAndUserNot(userId));
     }
 
     @PostMapping("/word-module/public-without-logged-user")
@@ -169,6 +155,6 @@ public class WordModuleController {
         Page<WordModule> wordModules =
                 wordModuleService.findPageByVisibilityPublicAndUserNot(userId, pageable);
 
-        return WordModuleMapper.convertPageTestAttemptToResponse(wordModules);
+        return convertPageTestAttemptToResponse(wordModules);
     }
 }

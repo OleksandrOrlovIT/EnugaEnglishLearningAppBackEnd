@@ -3,6 +3,7 @@ package orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testat
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.engtest.dto.mapper.TestAttemptMapper;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.wordmodule.dto.response.WordModuleAttemptResponse;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.testattempt.wordmodule.WordModuleAttempt;
 
@@ -22,5 +23,11 @@ public class WordModuleAttemptMapper {
 
     public static WordModuleAttemptResponse convertWordModuleAttemptToResponse(WordModuleAttempt wordModuleAttempt){
         return new WordModuleAttemptResponse(wordModuleAttempt);
+    }
+
+    public static List<WordModuleAttemptResponse> convertWordModuleAttemptListToResponse
+            (List<WordModuleAttempt> wordModuleAttempts) {
+        return wordModuleAttempts.stream().map(WordModuleAttemptMapper::convertWordModuleAttemptToResponse)
+                .collect(Collectors.toList());
     }
 }

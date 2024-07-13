@@ -34,4 +34,8 @@ public class UserMapper {
     public static UserResponse convertUserToUserResponse(User user){
         return new UserResponse(user);
     }
+
+    public static List<UserResponse> userListToUserResponseList(List<User> users){
+        return users.stream().map(UserMapper::convertUserToUserResponse).collect(Collectors.toList());
+    }
 }
