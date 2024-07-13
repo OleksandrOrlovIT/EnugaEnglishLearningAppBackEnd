@@ -1,4 +1,4 @@
-package orlov641p.khai.edu.com.enugaenglishlearningappbackend.security.annotations;
+package orlov641p.khai.edu.com.enugaenglishlearningappbackend.security.annotations.user;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 

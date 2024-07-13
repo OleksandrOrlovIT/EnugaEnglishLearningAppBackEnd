@@ -11,9 +11,7 @@ import orlov641p.khai.edu.com.enugaenglishlearningappbackend.repositories.vocabu
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.vocabulary.EnglishWordService;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 @AllArgsConstructor
 @Service

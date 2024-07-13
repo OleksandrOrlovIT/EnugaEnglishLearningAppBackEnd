@@ -5,12 +5,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.wordmodule.dto.mapper.WordModuleAttemptMapper;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.wordmodule.dto.request.WordModuleAttemptRequest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.wordmodule.dto.response.WordModuleAttemptResponse;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.wordmodule.dto.mapper.WordModuleMapper;
@@ -20,13 +18,17 @@ import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.wordmod
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.wordmodule.dto.response.WordModuleResponse;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.User;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.wordmodule.WordModule;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.security.annotations.IsAdminOrSelf;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.security.annotations.user.IsAdminOrSelf;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.security.annotations.user.IsAdminOrSelfIdFromRequest;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.security.annotations.user.IsAdminOrSelfIdOrWordModuleOwner;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.security.annotations.wordmodule.IsAuthUserTriesToTakeTheTest;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.security.annotations.wordmodule.IsLoggedUserAdminOrWordModuleOwner;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.security.annotations.wordmodule.IsPublicWordModuleOrAdminOrOwner;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.security.user.UserSecurity;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.user.UserService;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.wordmodule.WordModuleService;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 
 import static orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.wordmodule.dto.mapper.WordModuleAttemptMapper.convertWordModuleAttemptToResponse;
@@ -38,8 +40,8 @@ import static orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.
 public class WordModuleController {
 
     private final WordModuleService wordModuleService;
-    private final UserSecurity userSecurity;
     private final UserService userService;
+    private final UserSecurity userSecurity;
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/word-modules")
@@ -47,90 +49,68 @@ public class WordModuleController {
         return convertWordModuleListToResponseList(wordModuleService.findAll());
     }
 
+    @IsAdminOrSelfIdOrWordModuleOwner
     @GetMapping("/word-module/{id}")
     public WordModuleResponse retrieveWordModuleById(@PathVariable Long id) {
         WordModule wordModule = wordModuleService.findById(id);
 
-        if (userSecurity.hasRoleAdminOrIsSelfOrPublicVisibility(wordModule)) {
-            return convertWordModuleToResponse(wordModule);
-        } else {
-            throw new AccessDeniedException("Access Denied");
-        }
+        return convertWordModuleToResponse(wordModule);
     }
 
+    @IsAdminOrSelfIdFromRequest
     @PostMapping("/word-module")
-    public ResponseEntity<WordModuleResponse> createWordModule(@RequestBody WordModuleRequest wordModuleRequest) {
-        if (userSecurity.hasRoleAdminOrIsSelf(wordModuleRequest.getUserId())) {
-            User user = userService.findById(wordModuleRequest.getUserId());
+    public ResponseEntity<WordModuleResponse> createWordModule(@RequestBody WordModuleRequest request) {
+        User user = userService.findById(request.getUserId());
 
-            WordModule wordModule = WordModuleMapper.convertWordModuleRequestToWordModule(wordModuleRequest, user);
+        WordModule wordModule = WordModuleMapper.convertWordModuleRequestToWordModule(request, user);
 
-            WordModule savedWordModule = wordModuleService.create(wordModule);
+        WordModule savedWordModule = wordModuleService.create(wordModule);
 
-            URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                    .path("/{id}")
-                    .buildAndExpand(savedWordModule.getId())
-                    .toUri();
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(savedWordModule.getId())
+                .toUri();
 
-            return ResponseEntity.created(location).body(convertWordModuleToResponse(savedWordModule));
-        } else {
-            throw new AccessDeniedException("Access Denied");
-        }
+        return ResponseEntity.created(location).body(convertWordModuleToResponse(savedWordModule));
     }
 
+    @IsAdminOrSelfIdFromRequest
     @PutMapping("/word-module/{id}")
-    public WordModuleResponse updateWordModule(@PathVariable Long id, @RequestBody WordModuleRequest wordModuleRequest) {
-        if (userSecurity.hasRoleAdminOrIsSelf(wordModuleRequest.getUserId())) {
-            if (wordModuleService.findById(id) == null) {
-                return null;
-            }
-
-            User user = userService.findById(wordModuleRequest.getUserId());
-
-            WordModule wordModule = WordModuleMapper.convertWordModuleRequestToWordModule(wordModuleRequest, user);
-
-            wordModule.setId(id);
-
-            return convertWordModuleToResponse(wordModuleService.update(wordModule));
-        } else {
-            throw new AccessDeniedException("Access Denied");
+    public WordModuleResponse updateWordModule(@PathVariable Long id, @RequestBody WordModuleRequest request) {
+        if (wordModuleService.findById(id) == null) {
+            return null;
         }
+
+        User user = userService.findById(request.getUserId());
+
+        WordModule wordModule = WordModuleMapper.convertWordModuleRequestToWordModule(request, user);
+
+        wordModule.setId(id);
+
+        return convertWordModuleToResponse(wordModuleService.update(wordModule));
     }
 
+    @IsLoggedUserAdminOrWordModuleOwner
     @DeleteMapping("/word-module/{id}")
     public ResponseEntity<Void> deleteWordModule(@PathVariable Long id) {
-        WordModule wordModule = wordModuleService.findById(id);
-
-        if (userSecurity.hasRoleAdminOrIsSelf(wordModule.getUser().getId())) {
-            wordModuleService.deleteById(id);
-            return ResponseEntity.noContent().build();
-        } else {
-            throw new AccessDeniedException("Access Denied");
-        }
+        wordModuleService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 
+    @IsPublicWordModuleOrAdminOrOwner
+    @IsAuthUserTriesToTakeTheTest
     @PostMapping("/word-module/take")
-    public WordModuleAttemptResponse takeWordModuleTest(@RequestBody WordModuleAttemptRequest wordModuleAttemptRequest) {
-        WordModule wordModule = wordModuleService.findById(wordModuleAttemptRequest.getWordModuleId());
-
-        if (userSecurity.hasRoleAdminOrIsSelfOrPublicVisibility(wordModule)
-                && userSecurity.authUserTriesToTakeTest(wordModuleAttemptRequest.getUserId())) {
-            return convertWordModuleAttemptToResponse(wordModuleService.takeTheTest(wordModuleAttemptRequest));
-        } else {
-            throw new AccessDeniedException("Access Denied");
-        }
+    public WordModuleAttemptResponse takeWordModuleTest(@RequestBody WordModuleAttemptRequest request) {
+        return convertWordModuleAttemptToResponse(wordModuleService.takeTheTest(request));
     }
 
+    @IsAdminOrSelfIdFromRequest
     @PostMapping("/word-module/user")
-    public Page<WordModuleResponse> getWordModulesPageByUser(@RequestBody @Validated PageWithUserIdRequest page) {
-        if (userSecurity.hasRoleAdminOrIsSelf(page.getUserId())) {
-            Pageable pageable = PageRequest.of(page.getPageNumber(), page.getPageSize());
-            Page<WordModule> wordModules =
-                    wordModuleService.findPageByUserOrderByIdDesc(page.getUserId(), pageable);
-            return convertPageTestAttemptToResponse(wordModules);
-        } else {
-            throw new AccessDeniedException("Access Denied");
-        }
+    public Page<WordModuleResponse> getWordModulesPageByUser(@RequestBody @Validated PageWithUserIdRequest request) {
+        Pageable pageable = PageRequest.of(request.getPageNumber(), request.getPageSize());
+        Page<WordModule> wordModules =
+                wordModuleService.findPageByUserOrderByIdDesc(request.getUserId(), pageable);
+        return convertPageTestAttemptToResponse(wordModules);
     }
 
     @IsAdminOrSelf

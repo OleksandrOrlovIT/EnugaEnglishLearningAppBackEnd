@@ -16,7 +16,8 @@ import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 class BookLoaderServiceImplTest {
     @Mock

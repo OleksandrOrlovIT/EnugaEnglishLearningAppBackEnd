@@ -3,7 +3,6 @@ package orlov641p.khai.edu.com.enugaenglishlearningappbackend.repositories.wordm
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.wordmodule.CustomPair;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.wordmodule.WordModule;
 
 import java.util.List;
 

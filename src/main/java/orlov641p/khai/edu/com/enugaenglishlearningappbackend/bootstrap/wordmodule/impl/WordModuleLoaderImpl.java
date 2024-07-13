@@ -3,12 +3,9 @@ package orlov641p.khai.edu.com.enugaenglishlearningappbackend.bootstrap.wordmodu
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.bootstrap.wordmodule.WordModuleLoader;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.engtest.EnglishTest;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.engtest.Question;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.User;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.wordmodule.CustomPair;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.wordmodule.WordModule;

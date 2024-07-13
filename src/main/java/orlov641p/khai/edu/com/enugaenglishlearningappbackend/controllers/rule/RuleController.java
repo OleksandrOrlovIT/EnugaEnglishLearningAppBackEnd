@@ -7,8 +7,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.rule.Rule;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.rule.RuleService;
 
-import java.util.List;
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/v1")

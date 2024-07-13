@@ -1,7 +1,10 @@
 package orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.book;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.proxy.HibernateProxy;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.BaseEntity;
 

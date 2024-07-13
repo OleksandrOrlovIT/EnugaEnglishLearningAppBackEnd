@@ -1,6 +1,5 @@
 package orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.vocabulary;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import lombok.Builder;

@@ -2,21 +2,17 @@ package orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.engtes
 
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.engtest.dto.mapper.EnglishTestMapper;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.engtest.dto.response.EnglishTestResponse;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.engtest.dto.mapper.TestAttemptMapper;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.engtest.dto.request.TestAttemptRequest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.engtest.dto.response.TestAttemptResponse;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.engtest.EnglishTest;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.security.user.UserSecurity;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.security.annotations.user.IsAdminOrSelfIdFromRequest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.engtest.EnglishTestService;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 
 import static orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.engtest.dto.mapper.EnglishTestMapper.englishTestListToResponseList;
@@ -29,7 +25,6 @@ import static orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.
 public class EnglishTestController {
 
     private final EnglishTestService englishTestService;
-    private final UserSecurity userSecurity;
 
     @GetMapping("/english-tests")
     public List<EnglishTestResponse> retrieveEnglishTests(){
@@ -73,12 +68,9 @@ public class EnglishTestController {
         return ResponseEntity.noContent().build();
     }
 
+    @IsAdminOrSelfIdFromRequest
     @PostMapping("/english-test/take")
-    public TestAttemptResponse takeEnglishTest(@RequestBody TestAttemptRequest testAttemptRequest){
-        if(userSecurity.hasRoleAdminOrIsSelf(testAttemptRequest.getUserId())) {
-            return convertTestAttemptToResponse(englishTestService.takeTheTest(testAttemptRequest));
-        } else {
-            throw new AccessDeniedException("Access Denied");
-        }
+    public TestAttemptResponse takeEnglishTest(@RequestBody TestAttemptRequest request){
+        return convertTestAttemptToResponse(englishTestService.takeTheTest(request));
     }
 }

@@ -9,7 +9,6 @@ import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.wordmodule.C
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.wordmodule.CustomPairService;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 
 import static orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.wordmodule.dto.mapper.CustomPairMapper.customPairListToCustomPairResponseList;

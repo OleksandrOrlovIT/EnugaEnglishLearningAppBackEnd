@@ -2,7 +2,6 @@ package orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.vocabular
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.vocabulary.EnglishWord;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.vocabulary.UkrainianWord;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.CrudService;
 

@@ -3,7 +3,6 @@ package orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testat
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +11,7 @@ import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testatt
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.engtest.dto.request.TestAttemptWithoutAnswers;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.testattempt.engtest.dto.response.TestAttemptResponse;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.testattempt.engtest.TestAttempt;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.security.annotations.user.IsAdminOrSelfIdFromRequest;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.security.user.UserSecurity;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.testattempt.engtest.TestAttemptService;
 
@@ -30,58 +30,46 @@ public class TestAttemptController {
 
     @GetMapping("/test-attempts")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public List<TestAttemptResponse> retrieveTestAttempts(){
+    public List<TestAttemptResponse> retrieveTestAttempts() {
         return convertTestAttemptListToResponseList(testAttemptService.findAll());
     }
 
+    @IsAdminOrSelfIdFromRequest
     @PostMapping("/test-attempts/user/stats")
-    public Page<TestAttemptResponse> getPageByUser(@RequestBody @Validated TestAttemptPage testAttemptPage){
-        if(userSecurity.hasRoleAdminOrIsSelf(testAttemptPage.userId)){
-            Page<TestAttempt> testAttempts = testAttemptService.findTestAttemptsPageByUser(testAttemptPage);
-            return convertPageTestAttemptToResponse(testAttempts);
-        } else {
-            throw new AccessDeniedException("Access is denied");
-        }
+    public Page<TestAttemptResponse> getPageByUser(@RequestBody @Validated TestAttemptPage request) {
+        Page<TestAttempt> testAttempts = testAttemptService.findTestAttemptsPageByUser(request);
+        return convertPageTestAttemptToResponse(testAttempts);
     }
 
+    @IsAdminOrSelfIdFromRequest
     @PostMapping("/test-attempts/user/stats-list-last")
-    public Page<TestAttemptResponse> getPageByUserSortedByDate(@RequestBody @Validated TestAttemptPage testAttemptPage){
-        if(userSecurity.hasRoleAdminOrIsSelf(testAttemptPage.userId)) {
-            Page<TestAttempt> testAttempts = testAttemptService.findLastTestAttemptsPageByUserSortedByDate(testAttemptPage);
+    public Page<TestAttemptResponse> getPageByUserSortedByDate(@RequestBody @Validated TestAttemptPage request) {
+        Page<TestAttempt> testAttempts = testAttemptService.findLastTestAttemptsPageByUserSortedByDate(request);
 
-            return convertPageTestAttemptToResponse(testAttempts);
-        } else {
-            throw new AccessDeniedException("Access is denied");
-        }
+        return convertPageTestAttemptToResponse(testAttempts);
     }
 
+    @IsAdminOrSelfIdFromRequest
     @PostMapping("/test-attempts/user/stats-best")
-    public TestAttemptResponse getBestTestAttemptByUserId(@RequestBody TestAttemptWithoutAnswers testAttemptWithoutAnswers){
-        if(userSecurity.hasRoleAdminOrIsSelf(testAttemptWithoutAnswers.getUserId())) {
-            return convertTestAttemptToResponse(testAttemptService.findMaximumScoreAttempt(testAttemptWithoutAnswers));
-        } else {
-            throw new AccessDeniedException("Access is denied");
-        }
+    public TestAttemptResponse getBestTestAttemptByUserId(@RequestBody TestAttemptWithoutAnswers request) {
+        return convertTestAttemptToResponse(testAttemptService.findMaximumScoreAttempt(request));
     }
 
+    @IsAdminOrSelfIdFromRequest
     @PostMapping("/test-attempts/user/stats-last")
-    public TestAttemptResponse getLastTestAttemptByUserId(@RequestBody TestAttemptWithoutAnswers testAttemptWithoutAnswers){
-        if(userSecurity.hasRoleAdminOrIsSelf(testAttemptWithoutAnswers.getUserId())) {
-            return convertTestAttemptToResponse(testAttemptService.findLastAttemptScore(testAttemptWithoutAnswers));
-        } else {
-            throw new AccessDeniedException("Access is denied");
-        }
+    public TestAttemptResponse getLastTestAttemptByUserId(@RequestBody TestAttemptWithoutAnswers request) {
+        return convertTestAttemptToResponse(testAttemptService.findLastAttemptScore(request));
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/test-attempt/{id}")
-    public TestAttemptResponse retrieveTestAttemptById(@PathVariable Long id){
+    public TestAttemptResponse retrieveTestAttemptById(@PathVariable Long id) {
         return convertTestAttemptToResponse(testAttemptService.findById(id));
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/test-attempt")
-    public ResponseEntity<TestAttemptResponse> createTestAttempt(@RequestBody TestAttempt testAttempt){
+    public ResponseEntity<TestAttemptResponse> createTestAttempt(@RequestBody TestAttempt testAttempt) {
         TestAttemptResponse savedTestAttempt = convertTestAttemptToResponse(testAttemptService.create(testAttempt));
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -94,8 +82,8 @@ public class TestAttemptController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/test-attempt/{id}")
-    public TestAttemptResponse updateTestAttempt(@PathVariable Long id, @RequestBody TestAttempt testAttempt){
-        if(testAttemptService.findById(id) == null) {
+    public TestAttemptResponse updateTestAttempt(@PathVariable Long id, @RequestBody TestAttempt testAttempt) {
+        if (testAttemptService.findById(id) == null) {
             return null;
         }
         return convertTestAttemptToResponse(testAttemptService.update(testAttempt));
@@ -103,7 +91,7 @@ public class TestAttemptController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/test-attempt/{id}")
-    public ResponseEntity<Void> deleteTestAttempt(@PathVariable Long id){
+    public ResponseEntity<Void> deleteTestAttempt(@PathVariable Long id) {
         testAttemptService.deleteById(id);
         return ResponseEntity.noContent().build();
     }

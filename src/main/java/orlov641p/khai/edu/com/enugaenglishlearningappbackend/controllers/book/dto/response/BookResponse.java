@@ -1,6 +1,8 @@
 package orlov641p.khai.edu.com.enugaenglishlearningappbackend.controllers.book.dto.response;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.book.enums.BookGenre;
 
 @NoArgsConstructor

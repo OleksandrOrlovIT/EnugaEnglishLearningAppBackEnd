@@ -10,7 +10,6 @@ import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.engtest.Engl
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.engtest.Question;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.testattempt.engtest.TestAttempt;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.User;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.wordmodule.CustomPair;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.engtest.EnglishTestService;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.engtest.QuestionService;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.testattempt.engtest.TestAttemptService;
