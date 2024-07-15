@@ -24,7 +24,7 @@ public class EnglishStudent extends BaseEntity {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "teacher_id")
+    @JoinColumn(name = "teacher_id", nullable = false)
     private EnglishTeacher teacher;
 
     @Builder

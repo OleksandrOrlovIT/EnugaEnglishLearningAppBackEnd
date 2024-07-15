@@ -29,6 +29,7 @@ class QuestionServiceImplTest {
 
     private static final String QUESTION_TEXT = "Some text";
     private static final String ANSWER = "Answer";
+    private static final String TEST_NAME = "Test Name";
 
     private static Question validQuestion;
     private static EnglishTest englishTest;
@@ -45,6 +46,7 @@ class QuestionServiceImplTest {
     @BeforeEach
     void setUp() {
          englishTest = EnglishTest.builder()
+                 .testName(TEST_NAME)
                  .build();
 
          validQuestion = Question.builder()
@@ -180,7 +182,11 @@ class QuestionServiceImplTest {
         List<Question> questions = new ArrayList<>(List.of(validQuestion));
         assertEquals(questions, questionService.findAll());
 
-        Question question = Question.builder().englishTest(englishTest).build();
+        Question question = Question.builder()
+                .questionText(QUESTION_TEXT + "NEW ONE")
+                .answer(ANSWER + "NEW ONE")
+                .englishTest(englishTest)
+                .build();
         questions.add(question);
         questionService.create(question);
 

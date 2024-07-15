@@ -146,7 +146,7 @@ class WordModule {
     void findAll_2(){
         validEnglishTest.setId(null);
         englishTestService.create(validEnglishTest);
-        EnglishTest tempEnglishTest = EnglishTest.builder().build();
+        EnglishTest tempEnglishTest = EnglishTest.builder().testName("SOME TEST NAME").build();
         ID = englishTestService.create(tempEnglishTest).getId();
 
         List<EnglishTest> englishTestList = List.of(validEnglishTest, tempEnglishTest);

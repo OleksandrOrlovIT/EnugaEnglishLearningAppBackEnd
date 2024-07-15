@@ -1,6 +1,7 @@
 package orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.book;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,8 +19,10 @@ import java.util.Objects;
 @Entity
 public class Book extends BaseEntity {
 
+    @NotEmpty
     private String title;
 
+    @NotEmpty
     private String author;
 
     @Enumerated(EnumType.ORDINAL)

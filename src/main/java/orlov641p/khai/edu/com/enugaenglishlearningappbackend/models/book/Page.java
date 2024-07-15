@@ -1,6 +1,9 @@
 package orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.book;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,6 +19,8 @@ import java.util.Objects;
 @Entity
 public class Page extends BaseEntity {
 
+    @NotNull
+    @Min(1)
     private Integer pageNumber;
 
     @Lob

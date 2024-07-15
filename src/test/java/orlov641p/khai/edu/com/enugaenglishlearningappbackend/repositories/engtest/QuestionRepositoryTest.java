@@ -25,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class QuestionRepositoryTest {
     private static final String QUESTION_TEXT = "QUESTION_TEXT";
     private static final String ANSWER = "ANSWER";
+    private static final String TEST_NAME = "TEST_NAME";
     private Question question;
     private EnglishTest englishTest;
 
@@ -44,6 +45,7 @@ class QuestionRepositoryTest {
         question.setAnswer(ANSWER);
 
         englishTest = new EnglishTest();
+        englishTest.setTestName(TEST_NAME);
         englishTest = englishTestRepository.save(englishTest);
 
         question.setEnglishTest(englishTest);
@@ -89,6 +91,7 @@ class QuestionRepositoryTest {
 
         Question question2  = new Question();
         question2.setQuestionText("QuestionText2");
+        question2.setAnswer(ANSWER);
         question2.setEnglishTest(englishTest);
         entityManager.persist(question2);
 
@@ -104,6 +107,7 @@ class QuestionRepositoryTest {
     void findByEnglishTestId_WhenEnglishTestIdExists_ReturnsQuestions() {
         Question question2  = new Question();
         question2.setQuestionText("QuestionText2");
+        question2.setAnswer(ANSWER);
         question2.setEnglishTest(englishTest);
 
         questionRepository.save(question);

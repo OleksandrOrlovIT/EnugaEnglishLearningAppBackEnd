@@ -1,6 +1,10 @@
 package orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.testattempt.engtest;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,11 +32,15 @@ public class TestAttempt extends BaseEntity {
     @JoinColumn(name = "test_id", nullable = false)
     private EnglishTest englishTest;
 
+    @NotNull
     @Column(columnDefinition = "TIMESTAMP")
     private LocalDateTime attemptDate;
 
+    @NotNull
+    @Min(0)
     private Integer rightAnswers;
 
+    @NotNull
     @ElementCollection
     @CollectionTable(name = "test_attempt_wrong_answers",
                      joinColumns = @JoinColumn(name = "test_attempt_id"))
@@ -40,6 +48,8 @@ public class TestAttempt extends BaseEntity {
     @Column(name = "wrong_answer")
     private Map<Long, String> wrongAnswers;
 
+    @NotNull
+    @DecimalMin(value = "0.00")
     private Double successPercentage;
 
     @Builder

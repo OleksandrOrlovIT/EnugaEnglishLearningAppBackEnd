@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class RuleRepositoryTest {
 
     private static final String RULE_NAME = "RULE_NAME";
+    private static final String RULE_DESCRIPTION = "RULE_DESCRIPTION";
     private Rule rule;
 
     @Autowired
@@ -35,6 +36,7 @@ class RuleRepositoryTest {
     void setRule(){
         rule = new Rule();
         rule.setRuleName(RULE_NAME);
+        rule.setDescription(RULE_DESCRIPTION);
     }
 
     @Transactional
@@ -77,6 +79,7 @@ class RuleRepositoryTest {
 
         Rule rule2 = new Rule();
         rule2.setRuleName("RULE_NAME_2");
+        rule2.setDescription(RULE_DESCRIPTION);
         entityManager.persist(rule2);
 
         List<Rule> rules = ruleRepository.findAll();

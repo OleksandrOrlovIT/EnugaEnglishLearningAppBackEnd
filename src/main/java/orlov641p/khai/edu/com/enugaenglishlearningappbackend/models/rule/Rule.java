@@ -3,6 +3,7 @@ package orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.rule;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,8 +23,10 @@ import java.util.Objects;
 @Table(name = "rules")
 public class Rule extends BaseEntity {
 
+    @NotEmpty
     private String ruleName;
 
+    @NotEmpty
     @Column(length = 1000)
     private String description;
 

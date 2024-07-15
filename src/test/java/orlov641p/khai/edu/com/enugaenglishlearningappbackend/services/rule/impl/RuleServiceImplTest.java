@@ -125,7 +125,7 @@ class RuleServiceImplTest {
         List<Rule> rules = new java.util.ArrayList<>(List.of(validRule));
         assertEquals(rules, ruleService.findAll());
 
-        Rule rule = Rule.builder().build();
+        Rule rule = Rule.builder().ruleName("SOMERULE").description("SOMETHING").build();
         rules.add(rule);
         ruleService.create(rule);
 

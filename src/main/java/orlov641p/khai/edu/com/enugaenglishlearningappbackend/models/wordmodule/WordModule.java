@@ -1,6 +1,7 @@
 package orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.wordmodule;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,6 +21,7 @@ import java.util.Objects;
 @Entity
 public class WordModule extends BaseEntity {
 
+    @NotEmpty
     private String moduleName;
 
     @Enumerated(EnumType.ORDINAL)

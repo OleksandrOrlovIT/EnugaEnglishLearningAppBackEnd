@@ -5,6 +5,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,9 +20,11 @@ import java.util.Objects;
 @Entity
 public class Question extends BaseEntity {
 
+    @NotEmpty
     @Column(length = 1000)
     private String questionText;
 
+    @NotEmpty
     private String answer;
 
     @JsonIgnore

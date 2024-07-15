@@ -2,6 +2,7 @@ package orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.vocabulary;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,9 +18,11 @@ import java.util.Objects;
 @Entity
 public class TranslationPair extends BaseEntity {
 
+    @NotNull
     @ManyToOne
     private EnglishWord englishWord;
 
+    @NotNull
     @ManyToOne
     private UkrainianWord ukrainianWord;
 

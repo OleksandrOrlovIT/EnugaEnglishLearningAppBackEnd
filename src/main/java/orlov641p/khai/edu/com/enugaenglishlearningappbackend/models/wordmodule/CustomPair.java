@@ -3,6 +3,7 @@ package orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.wordmodule;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,8 +19,10 @@ import java.util.Objects;
 @Entity
 public class CustomPair extends BaseEntity {
 
+    @NotEmpty
     private String word;
 
+    @NotEmpty
     private String translation;
 
     @ManyToOne

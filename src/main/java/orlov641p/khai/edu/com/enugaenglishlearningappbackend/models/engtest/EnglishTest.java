@@ -3,6 +3,7 @@ package orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.engtest;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,6 +20,7 @@ import java.util.Objects;
 @Entity
 public class EnglishTest extends BaseEntity {
 
+    @NotEmpty
     private String testName;
 
     @OneToMany(mappedBy = "englishTest", cascade = CascadeType.REMOVE)
