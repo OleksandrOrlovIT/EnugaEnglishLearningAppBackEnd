@@ -82,6 +82,10 @@ public class UserServiceImpl implements UserService {
     public User addRoles(Long userId, Set<Role> roles) {
         User user = findById(userId);
 
+        if(roles == null){
+            throw new IllegalArgumentException("Roles can't be null");
+        }
+
         user.getRoles().addAll(roles);
 
         return userRepository.save(user);
@@ -90,6 +94,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public User deleteRoles(Long userId, Set<Role> roles) {
         User user = findById(userId);
+
+        if(roles == null){
+            throw new IllegalArgumentException("Roles can't be null");
+        }
 
         user.getRoles().removeAll(roles);
 
@@ -198,9 +206,13 @@ public class UserServiceImpl implements UserService {
 
     protected void revertUserWithSubscriptionRole(Long userId) {
         log.info("Reverting subscription from user with id = {}", userId);
-        User user = findById(userId);
-        user.getRoles().remove(Role.ROLE_USER_WITH_SUBSCRIPTION);
-        userRepository.save(user);
+        try {
+            User user = findById(userId);
+            user.getRoles().remove(Role.ROLE_USER_WITH_SUBSCRIPTION);
+            userRepository.save(user);
+        } catch (EntityNotFoundException e) {
+            log.error(e.getMessage());
+        }
     }
 
     private void checkUserNull(User user) {
