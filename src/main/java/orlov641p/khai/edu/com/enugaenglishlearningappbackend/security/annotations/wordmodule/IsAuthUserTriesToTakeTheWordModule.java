@@ -1,4 +1,4 @@
-package orlov641p.khai.edu.com.enugaenglishlearningappbackend.security.annotations.user;
+package orlov641p.khai.edu.com.enugaenglishlearningappbackend.security.annotations.wordmodule;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 
@@ -9,6 +9,6 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-@PreAuthorize("@userSecurity.hasRoleAdminOrIsSelfOrPublicVisibilityByWordModuleId(#id)")
-public @interface IsAdminOrSelfIdOrWordModuleOwner {
+@PreAuthorize("@wordModuleSecurity.isAuthUserTriesToTakeWordModule(#request.userId)")
+public @interface IsAuthUserTriesToTakeTheWordModule {
 }

@@ -15,7 +15,6 @@ import orlov641p.khai.edu.com.enugaenglishlearningappbackend.services.wordmodule
 public class UserSecurity {
 
     private final UserService userService;
-    private final WordModuleService wordModuleService;
 
     public User getLoggedUser(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -35,33 +34,9 @@ public class UserSecurity {
         return user != null && user.getUsername().equals(currentUsername);
     }
 
-    public boolean IsLoggedUserAdminOrWordModuleOwner(Long id){
-        User user = getLoggedUser();
+    public boolean isPassedUserIdMatchesLoggedUser(Long id){
+        User requestUser = userService.findById(id);
 
-        return hasRoleAdminOrIsSelf(user.getId()) || wordModuleService.findById(id).getUser().equals(user);
-    }
-
-    public boolean hasRoleAdminOrIsSelfOrPublicVisibilityByWordModuleId(Long id) {
-        WordModule wordModule = wordModuleService.findById(id);
-        return hasRoleAdminOrIsSelfOrPublicVisibility(wordModule);
-    }
-
-    public boolean hasRoleAdminOrIsSelfOrPublicVisibility(WordModule wordModule){
-        return wordModule.getVisibility().equals(Visibility.PUBLIC) ||
-                hasRoleAdminOrIsSelf(wordModule.getUser().getId());
-    }
-
-    public boolean isAuthUserTriesToTakeTest(Long userId){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentUsername = authentication.getName();
-
-        User requestUser = userService.findById(userId);
-
-        return currentUsername.equals(requestUser.getUsername());
-    }
-
-    public boolean IsPublicWordModuleOrAdminOrOwner(Long userId, Long wordModuleId){
-        return wordModuleService.findById(wordModuleId).getVisibility().equals(Visibility.PUBLIC) ||
-                hasRoleAdminOrIsSelf(userId);
+        return requestUser.equals(getLoggedUser());
     }
 }

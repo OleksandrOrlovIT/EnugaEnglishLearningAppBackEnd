@@ -9,6 +9,6 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-@PreAuthorize("@userSecurity.IsPublicWordModuleOrAdminOrOwner(#request.userId, #request.wordModuleId)")
+@PreAuthorize("@wordModuleSecurity.IsPublicWordModuleOrAdminOrOwner(#request.userId, #request.wordModuleId)")
 public @interface IsPublicWordModuleOrAdminOrOwner {
 }

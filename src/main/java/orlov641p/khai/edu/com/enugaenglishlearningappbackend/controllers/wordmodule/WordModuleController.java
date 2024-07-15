@@ -20,8 +20,8 @@ import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.user.User;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.models.wordmodule.WordModule;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.security.annotations.user.IsAdminOrSelf;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.security.annotations.user.IsAdminOrSelfIdFromRequest;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.security.annotations.user.IsAdminOrSelfIdOrWordModuleOwner;
-import orlov641p.khai.edu.com.enugaenglishlearningappbackend.security.annotations.wordmodule.IsAuthUserTriesToTakeTheTest;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.security.annotations.wordmodule.IsAdminOrSelfIdOrWordModuleOwner;
+import orlov641p.khai.edu.com.enugaenglishlearningappbackend.security.annotations.wordmodule.IsAuthUserTriesToTakeTheWordModule;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.security.annotations.wordmodule.IsLoggedUserAdminOrWordModuleOwner;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.security.annotations.wordmodule.IsPublicWordModuleOrAdminOrOwner;
 import orlov641p.khai.edu.com.enugaenglishlearningappbackend.security.user.UserSecurity;
@@ -98,7 +98,7 @@ public class WordModuleController {
     }
 
     @IsPublicWordModuleOrAdminOrOwner
-    @IsAuthUserTriesToTakeTheTest
+    @IsAuthUserTriesToTakeTheWordModule
     @PostMapping("/word-module/take")
     public WordModuleAttemptResponse takeWordModuleTest(@RequestBody WordModuleAttemptRequest request) {
         return convertWordModuleAttemptToResponse(wordModuleService.takeTheTest(request));
